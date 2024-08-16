@@ -75,3 +75,7 @@ PAYER_ACCOUNT="$(dfx ledger account-id --of-principal "$PAYER")"
 dfx canister call "$MATH_CANISTER_ID" paid_is_prime '(record{account="'$PAYER_ACCOUNT'"}, 1234567)'
 ```
 Your canister will retrieve the pre-approved payment before proceeding with the API call.
+
+## Detailed design
+
+### Flow: Attached cycles

@@ -1,4 +1,4 @@
 [workspace]
-members = ["src/api", "src/guard"
+members = ["src/api", "src/example", "src/guard"
 ]
 resolver = "2"

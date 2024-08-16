@@ -1,5 +1,5 @@
 [package]
-name = "papi-api"
+name = "ic-papi-api"
 version = "0.1.0"
 edition = "2021"
 

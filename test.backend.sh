@@ -14,6 +14,7 @@ UPGRADE_VERSIONS="v0.0.13,v0.0.19,v0.0.25"
 #  echo "Building ic-chainfusion-signer canister."
 #  cargo build --locked --target wasm32-unknown-unknown --release -p ic-chainfusion-signer
 #fi
+cargo build --locked --target wasm32-unknown-unknown --release
 
 # We use a previous version of the release to ensure upgradability
 

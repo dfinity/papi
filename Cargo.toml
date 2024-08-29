@@ -5,6 +5,7 @@ resolver = "2"
 
 [workspace.dependencies]
 pocket-ic = "2.2.0"
+candid = "0.10.10"
 
 [profile.release]
 lto = true

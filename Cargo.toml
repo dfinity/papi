@@ -6,6 +6,8 @@ resolver = "2"
 [workspace.dependencies]
 pocket-ic = "2.2.0"
 candid = "0.10.10"
+ic-cdk = "0.15.1"
+ic-cdk-macros = "0.15.0"
 
 [profile.release]
 lto = true

@@ -4,7 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+ic-cdk-macros = { workspace = true }
+ic-cdk = { workspace = true }
+candid = { workspace = true }
 
 [dev-dependencies]
 pocket-ic = { workspace = true }
-candid = { workspace = true }

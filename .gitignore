@@ -1,1 +1,4 @@
+# Rust build artefacts
 /target
+# Testing tool
+pocket-ic

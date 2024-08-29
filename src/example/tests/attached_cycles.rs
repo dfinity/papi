@@ -1,5 +1,5 @@
-use candid::Principal;
-use pocket_ic::PocketIc;
+use candid::{decode_one, encode_one, CandidType, Deserialize, Principal};
+use pocket_ic::{PocketIc, WasmResult};
 use std::{fs::read, path, path::PathBuf};
 
 /// Test setup.
@@ -29,9 +29,36 @@ impl TestSetup {
         let path = Self::wasm_path();
         read(&path).expect(&format!("Could not find the backend wasm: {path:?}"))
     }
+    /// Makes an update call to the canister.
+    fn update<T>(&self, caller: Principal, method: &str, arg: impl CandidType) -> Result<T, String>
+    where
+        T: for<'a> Deserialize<'a> + CandidType,
+    {
+        self.pic
+            .update_call(
+                self.api_canister_id.clone(),
+                caller,
+                method,
+                encode_one(arg).unwrap(),
+            )
+            .map_err(|e| {
+                format!(
+                    "Update call error calling method '{method}'. RejectionCode: {:?}, Error: {}",
+                    e.code, e.description
+                )
+            })
+            .and_then(|reply| match reply {
+                WasmResult::Reply(reply) => decode_one(&reply)
+                    .map_err(|e| format!("Decoding response from '{method}' failed: {e}")),
+                WasmResult::Reject(error) => Err(error),
+            })
+    }
 }
 
 #[test]
 fn test_counter_canister() {
-    let _setup = TestSetup::new();
+    let setup = TestSetup::new();
+    setup
+        .update::<String>(Principal::anonymous(), "free", ())
+        .expect("Failed to make free API call");
 }

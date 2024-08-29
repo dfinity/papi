@@ -1,8 +1,6 @@
-
 use ic_cdk_macros::update;
 
-
 #[update()]
-async fn caller_eth_address() -> String {
-    "Hello world!".to_string()
+async fn free() -> String {
+    "Yes, I am free!".to_string()
 }

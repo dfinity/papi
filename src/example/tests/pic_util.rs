@@ -55,6 +55,11 @@ pub trait PicCanisterTrait {
                 WasmResult::Reject(error) => Err(error),
             })
     }
+        /// The path to a typical Cargo Wasm build.
+        fn cargo_wasm_path(name: &str) -> String {
+            format!("target/wasm32-unknown-unknown/release/{}.wasm", name)
+        }
+    
 }
 
 /// A typical canister running on PocketIC.
@@ -64,11 +69,20 @@ pub struct PicCanister {
 }
 
 impl PicCanisterTrait for PicCanister {
+    /// The shared PocketIc instance.
     fn pic(&self) -> Arc<PocketIc> {
         self.pic.clone()
     }
+    /// The ID of this canister.
     fn canister_id(&self) -> Principal {
         self.canister_id.clone()
+    }
+}
+
+impl PicCanister {
+    /// Creates a new canister.
+    pub fn new(pic: Arc<PocketIc>, wasm_path: &str) -> Self {
+        PicCanisterBuilder::default().with_wasm(wasm_path).deploy_to(pic)
     }
 }
 
@@ -217,20 +231,19 @@ impl PicCanisterBuilder {
         }
     }
     /// Setup the backend canister.
-    pub fn deploy_to(&mut self, pic: &PocketIc) -> Principal {
-        let canister_id = self.canister_id(pic);
-        self.add_cycles(pic);
-        self.install(pic);
-        self.set_controllers(pic);
-        canister_id
+    pub fn deploy_to(&mut self, pic: Arc<PocketIc>) -> PicCanister {
+        let canister_id = self.canister_id(&pic);
+        self.add_cycles(&pic);
+        self.install(&pic);
+        self.set_controllers(&pic);
+        PicCanister {
+            pic: pic.clone(),
+            canister_id,
+        }
     }
     /// Deploy to a new pic.
     pub fn deploy(&mut self) -> PicCanister {
-        let pic = PocketIc::new();
-        let canister_id = self.deploy_to(&pic);
-        PicCanister {
-            pic: Arc::new(pic),
-            canister_id,
-        }
+        let pic = Arc::new(PocketIc::new());
+        self.deploy_to(pic.clone())
     }
 }

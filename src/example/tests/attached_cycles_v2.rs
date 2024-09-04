@@ -17,10 +17,10 @@ pub struct AttachedCyclesTestSetup {
 impl Default for AttachedCyclesTestSetup {
     fn default() -> Self {
         let pic = Arc::new(PocketIc::new());
-        let api_canister = PicCanister::new(pic.clone(), &PicCanister::cargo_wasm_path("example"));
+        let api_canister = PicCanister::new(pic.clone(), &PicCanister::cargo_wasm_path("example_backend"));
         let customer_canister = PicCanister::new(
             pic.clone(),
-            &PicCanister::cargo_wasm_path("example_backend"),
+            &PicCanister::cargo_wasm_path("customer_backend"),
         );
         Self {
             pic,
@@ -36,9 +36,12 @@ fn test_setup_works() {
 }
 
 #[test]
-fn api_call_succeeds_with_sufficient_cycles_only() {
+fn inter_canister_call_succeeds_with_sufficient_cycles_only() {
     let setup = AttachedCyclesTestSetup::default();
-    let result: Result<Result<(), PaymentError>, String> = setup.customer_canister.update(Principal::anonymous(), "call_with_attached_cycles", ());
+    let cycles = 1000000u128;
+    let arg = (cycles, setup.api_canister.canister_id(), "cost_1000_cycles".to_string());
+    let result: Result<Result<(), PaymentError>, String> = setup.customer_canister.update(Principal::anonymous(), "call_with_attached_cycles", arg);
+    let result = result.expect("Failed to reach paid API");
 }
 
 

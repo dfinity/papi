@@ -12,5 +12,5 @@ async fn free() -> String {
 #[update()]
 async fn cost_1000_cycles() -> Result<String, PaymentError> {
     AttachedCyclesPayment::deduct(1000)?;
-    Ok("Yes, I am free!".to_string())
+    Ok("Yes, you paid 1000 cycles!".to_string())
 }

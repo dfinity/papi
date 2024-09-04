@@ -39,8 +39,10 @@ fn test_setup_works() {
 fn inter_canister_call_succeeds_with_sufficient_cycles_only() {
     let setup = AttachedCyclesTestSetup::default();
     let cycles = 1000000u128;
-    let arg = (cycles, setup.api_canister.canister_id(), "cost_1000_cycles".to_string());
-    let result: Result<Result<(), PaymentError>, String> = setup.customer_canister.update(Principal::anonymous(), "call_with_attached_cycles", arg);
+//    let arg = (cycles, setup.api_canister.canister_id(), "cost_1000_cycles".to_string());
+//    let result: Result<Result<(), PaymentError>, String> = setup.customer_canister.update(Principal::anonymous(), "call_with_attached_cycles", arg);
+    let args = setup.api_canister.canister_id();
+    let result: Result<Result<String, PaymentError>, String> = setup.customer_canister.update(Principal::anonymous(), "call_with_attached_cycles", args);
     let result = result.expect("Failed to reach paid API");
 }
 

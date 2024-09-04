@@ -1,8 +1,10 @@
+use ic_cdk::api::call::CallResult;
 use pic_tool::{PicCanister, PicCanisterTrait};
 use candid::{decode_one, encode_one, CandidType, Deserialize, Principal};
 use pocket_ic::{PocketIc, WasmResult};
 use std::fs;
 use std::sync::Arc;
+use ic_papi_api::PaymentError;
 
 pub struct AttachedCyclesTestSetup {
     /// The PocketIC instance.
@@ -32,6 +34,13 @@ impl Default for AttachedCyclesTestSetup {
 fn test_setup_works() {
     let _setup = AttachedCyclesTestSetup::default();
 }
+
+#[test]
+fn api_call_succeeds_with_sufficient_cycles_only() {
+    let setup = AttachedCyclesTestSetup::default();
+    let result: Result<Result<(), PaymentError>, String> = setup.customer_canister.update(Principal::anonymous(), "call_with_attached_cycles", ());
+}
+
 
 mod pic_tool {
     use candid::{decode_one, encode_one, CandidType, Deserialize, Principal};

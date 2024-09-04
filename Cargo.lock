@@ -300,6 +300,7 @@ dependencies = [
  "candid",
  "ic-cdk 0.15.1",
  "ic-cdk-macros 0.15.0",
+ "ic-papi-api",
  "pocket-ic",
 ]
 

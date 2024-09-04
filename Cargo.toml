@@ -9,6 +9,8 @@ ic-cdk = "0.15.1"
 ic-cdk-macros = "0.15.0"
 serde = "1"
 serde_bytes = "0.11"
+ic-papi-api = { path = "src/api" }
+ic-papi-guard = { path = "src/guard" }
 
 [profile.release]
 lto = true

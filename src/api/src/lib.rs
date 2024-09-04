@@ -3,7 +3,7 @@ use candid::{CandidType, Deserialize};
 #[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum PaymentError {
-    InsufficientFunds,
+    InsufficientFunds{needed: u64, available: u64},
 }
 
 #[non_exhaustive]

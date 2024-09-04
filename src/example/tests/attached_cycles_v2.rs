@@ -38,12 +38,16 @@ fn test_setup_works() {
 #[test]
 fn inter_canister_call_succeeds_with_sufficient_cycles_only() {
     let setup = AttachedCyclesTestSetup::default();
-    let cycles = 1000000u128;
-//    let arg = (cycles, setup.api_canister.canister_id(), "cost_1000_cycles".to_string());
-//    let result: Result<Result<(), PaymentError>, String> = setup.customer_canister.update(Principal::anonymous(), "call_with_attached_cycles", arg);
-    let args = (setup.api_canister.canister_id(), "cost_1000_cycles".to_string(), cycles);
-    let result: Result<Result<String, PaymentError>, String> = setup.customer_canister.update(Principal::anonymous(), "call_with_attached_cycles", args);
-    let result = result.expect("Failed to reach paid API");
+    for cycles in 995u64..1005 {
+        let args = (setup.api_canister.canister_id(), "cost_1000_cycles".to_string(), cycles);
+        let result: Result<Result<String, PaymentError>, String> = setup.customer_canister.update(Principal::anonymous(), "call_with_attached_cycles", args);
+        let result = result.expect("Failed to reach paid API");
+        if cycles < 1000 {
+            assert_eq!(result, Err(PaymentError::InsufficientFunds{needed: 1000, available: cycles}), "Should have failed with only {} cycles attached", cycles);
+        } else {
+            assert_eq!(result, Ok("Yes, you paid 1000 cycles!".to_string()), "Should have succeeded with {} cycles attached", cycles);
+        }
+    }
 }
 
 

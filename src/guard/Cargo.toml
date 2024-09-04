@@ -1,5 +1,5 @@
 [package]
-name = "papi-guard"
+name = "ic-papi-guard"
 version = "0.1.0"
 edition = "2021"
 

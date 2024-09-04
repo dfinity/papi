@@ -11,6 +11,7 @@ ic-cdk-macros = { workspace = true }
 ic-cdk = { workspace = true }
 candid = { workspace = true }
 ic-papi-api = { path = "../api" }
+ic-papi-guard = { path = "../guard" }
 
 [dev-dependencies]
 pocket-ic = { workspace = true }

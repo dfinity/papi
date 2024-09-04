@@ -301,6 +301,7 @@ dependencies = [
  "ic-cdk 0.15.1",
  "ic-cdk-macros 0.15.0",
  "ic-papi-api",
+ "ic-papi-guard",
  "pocket-ic",
 ]
 
@@ -611,6 +612,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-papi-guard"
+version = "0.1.0"
+dependencies = [
+ "ic-cdk 0.15.1",
+ "ic-papi-api",
+]
+
+[[package]]
 name = "ic0"
 version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -834,14 +843,6 @@ name = "overload"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b15813163c1d831bf4a13c3610c05c0d03b39feb07f7e09fa234dac9b15aaf39"
-
-[[package]]
-name = "papi-guard"
-version = "0.1.0"
-dependencies = [
- "ic-cdk 0.15.1",
- "ic-papi-api",
-]
 
 [[package]]
 name = "parking_lot"

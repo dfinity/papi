@@ -22,7 +22,7 @@ impl TestSetup {
         }
     }
     fn wasm_path() -> PathBuf {
-        path::absolute("../../target/wasm32-unknown-unknown/release/example.wasm").unwrap()
+        path::absolute("../../target/wasm32-unknown-unknown/release/example/paid_service.wasm").unwrap()
     }
     /// Reads the backend Wasm bytes from the configured path.
     fn wasm_bytes() -> Vec<u8> {

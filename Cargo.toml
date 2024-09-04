@@ -1,5 +1,5 @@
 [workspace]
-members = ["src/api", "src/customer_backend", "src/example", "src/guard"]
+members = ["src/api", "src/example/customer_backend", "src/example/paid_service", "src/guard"]
 resolver = "2"
 
 [workspace.dependencies]

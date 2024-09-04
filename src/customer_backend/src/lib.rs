@@ -5,9 +5,8 @@ use candid::Principal;
 
 /// Calls an arbitrary method on an arbitrary canister with an arbitrary amount of cycles attached.
 #[update()]
-async fn call_with_attached_cycles(canister_id: Principal) -> Result<String, PaymentError> {
-    let cycles = 20000;
-    let  method = "cost_1000_cycles".to_string();
+async fn call_with_attached_cycles(call_params: (Principal, String, u128)) -> Result<String, PaymentError> {
+    let (canister_id, method, cycles) = call_params;
     let arg = ();
     let (ans, ): (Result<String, PaymentError>,) = call_with_payment128(canister_id, &method, arg, cycles).await.unwrap();
     ans

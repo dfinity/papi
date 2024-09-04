@@ -144,7 +144,7 @@ mod pic_tool {
         }
         /// The path to a typical Cargo Wasm build.
         fn cargo_wasm_path(name: &str) -> String {
-            format!("../../target/wasm32-unknown-unknown/release/{}.wasm", name)
+            format!("../../../target/wasm32-unknown-unknown/release/{}.wasm", name)
         }
     }
 

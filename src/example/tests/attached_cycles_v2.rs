@@ -1,10 +1,10 @@
-use ic_cdk::api::call::CallResult;
-use pic_tool::{PicCanister, PicCanisterTrait};
 use candid::{decode_one, encode_one, CandidType, Deserialize, Principal};
+use ic_cdk::api::call::CallResult;
+use ic_papi_api::PaymentError;
+use pic_tool::{PicCanister, PicCanisterTrait};
 use pocket_ic::{PocketIc, WasmResult};
 use std::fs;
 use std::sync::Arc;
-use ic_papi_api::PaymentError;
 
 pub struct AttachedCyclesTestSetup {
     /// The PocketIC instance.
@@ -17,7 +17,10 @@ pub struct AttachedCyclesTestSetup {
 impl Default for AttachedCyclesTestSetup {
     fn default() -> Self {
         let pic = Arc::new(PocketIc::new());
-        let api_canister = PicCanister::new(pic.clone(), &PicCanister::cargo_wasm_path("example_backend"));
+        let api_canister = PicCanister::new(
+            pic.clone(),
+            &PicCanister::cargo_wasm_path("example_backend"),
+        );
         let customer_canister = PicCanister::new(
             pic.clone(),
             &PicCanister::cargo_wasm_path("customer_backend"),
@@ -39,36 +42,61 @@ fn test_setup_works() {
 fn inter_canister_call_succeeds_with_sufficient_cycles_only() {
     let setup = AttachedCyclesTestSetup::default();
     for cycles in 995u64..1005 {
-        let args = (setup.api_canister.canister_id(), "cost_1000_cycles".to_string(), cycles);
-        let result: Result<Result<String, PaymentError>, String> = setup.customer_canister.update(Principal::anonymous(), "call_with_attached_cycles", args);
+        let args = (
+            setup.api_canister.canister_id(),
+            "cost_1000_cycles".to_string(),
+            cycles,
+        );
+        let result: Result<Result<String, PaymentError>, String> = setup.customer_canister.update(
+            Principal::anonymous(),
+            "call_with_attached_cycles",
+            args,
+        );
         let result = result.expect("Failed to reach paid API");
         if cycles < 1000 {
-            assert_eq!(result, Err(PaymentError::InsufficientFunds{needed: 1000, available: cycles}), "Should have failed with only {} cycles attached", cycles);
+            assert_eq!(
+                result,
+                Err(PaymentError::InsufficientFunds {
+                    needed: 1000,
+                    available: cycles
+                }),
+                "Should have failed with only {} cycles attached",
+                cycles
+            );
         } else {
-            assert_eq!(result, Ok("Yes, you paid 1000 cycles!".to_string()), "Should have succeeded with {} cycles attached", cycles);
+            assert_eq!(
+                result,
+                Ok("Yes, you paid 1000 cycles!".to_string()),
+                "Should have succeeded with {} cycles attached",
+                cycles
+            );
         }
     }
 }
-
 
 mod pic_tool {
     use candid::{decode_one, encode_one, CandidType, Deserialize, Principal};
     use pocket_ic::{PocketIc, WasmResult};
     use std::fs;
     use std::sync::Arc;
-    
+
     /// Common methods for interacting with a canister using `PocketIc`.
     pub trait PicCanisterTrait {
         /// A shared PocketIc instance.
         ///
         /// Note: `PocketIc` uses interior mutability for query and update calls.  No external mut annotation or locks appear to be necessary.
         fn pic(&self) -> Arc<PocketIc>;
-    
+
         /// The ID of this canister.
         fn canister_id(&self) -> Principal;
-    
+
         /// Makes an update call to the canister.
-        fn update<T>(&self, caller: Principal, method: &str, arg: impl CandidType) -> Result<T, String>
+        fn update<T>(
+            &self,
+            caller: Principal,
+            method: &str,
+            arg: impl CandidType,
+        ) -> Result<T, String>
         where
             T: for<'a> Deserialize<'a> + CandidType,
         {
@@ -87,10 +115,15 @@ mod pic_tool {
                     WasmResult::Reject(error) => Err(error),
                 })
         }
-    
+
         /// Makes a query call to the canister.
         #[allow(dead_code)]
-        fn query<T>(&self, caller: Principal, method: &str, arg: impl CandidType) -> Result<T, String>
+        fn query<T>(
+            &self,
+            caller: Principal,
+            method: &str,
+            arg: impl CandidType,
+        ) -> Result<T, String>
         where
             T: for<'a> Deserialize<'a> + CandidType,
         {
@@ -114,13 +147,13 @@ mod pic_tool {
             format!("../../target/wasm32-unknown-unknown/release/{}.wasm", name)
         }
     }
-    
+
     /// A typical canister running on PocketIC.
     pub struct PicCanister {
         pub pic: Arc<PocketIc>,
         pub canister_id: Principal,
     }
-    
+
     impl PicCanisterTrait for PicCanister {
         /// The shared PocketIc instance.
         fn pic(&self) -> Arc<PocketIc> {
@@ -131,7 +164,7 @@ mod pic_tool {
             self.canister_id.clone()
         }
     }
-    
+
     impl PicCanister {
         /// Creates a new canister.
         pub fn new(pic: Arc<PocketIc>, wasm_path: &str) -> Self {
@@ -140,7 +173,7 @@ mod pic_tool {
                 .deploy_to(pic)
         }
     }
-    
+
     /// Canister installer, using the builder pattern, for use in test environmens using `PocketIC`.
     ///
     /// # Example

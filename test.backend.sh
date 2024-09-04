@@ -12,4 +12,4 @@ scripts/pic-install
 
 # Run tests
 echo "Running integration tests."
-cargo test -p example_baxckend "${@}"
+cargo test -p example_backend "${@}"

@@ -55,11 +55,10 @@ pub trait PicCanisterTrait {
                 WasmResult::Reject(error) => Err(error),
             })
     }
-        /// The path to a typical Cargo Wasm build.
-        fn cargo_wasm_path(name: &str) -> String {
-            format!("../../target/wasm32-unknown-unknown/release/{}.wasm", name)
-        }
-    
+    /// The path to a typical Cargo Wasm build.
+    fn cargo_wasm_path(name: &str) -> String {
+        format!("../../target/wasm32-unknown-unknown/release/{}.wasm", name)
+    }
 }
 
 /// A typical canister running on PocketIC.
@@ -82,7 +81,9 @@ impl PicCanisterTrait for PicCanister {
 impl PicCanister {
     /// Creates a new canister.
     pub fn new(pic: Arc<PocketIc>, wasm_path: &str) -> Self {
-        PicCanisterBuilder::default().with_wasm(wasm_path).deploy_to(pic)
+        PicCanisterBuilder::default()
+            .with_wasm(wasm_path)
+            .deploy_to(pic)
     }
 }
 

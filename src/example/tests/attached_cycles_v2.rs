@@ -1,9 +1,8 @@
-mod pic_tool;
+use crate::pic_tool::{PicCanister, PicCanisterTrait};
 use candid::{decode_one, encode_one, CandidType, Deserialize, Principal};
 use pocket_ic::{PocketIc, WasmResult};
 use std::fs;
 use std::sync::Arc;
-use pic_tool::{PicCanisterTrait, PicCanister};
 
 pub struct AttachedCyclesTestSetup {
     /// The PocketIC instance.
@@ -17,7 +16,10 @@ impl Default for AttachedCyclesTestSetup {
     fn default() -> Self {
         let pic = Arc::new(PocketIc::new());
         let api_canister = PicCanister::new(pic.clone(), &PicCanister::cargo_wasm_path("example"));
-        let customer_canister = PicCanister::new(pic.clone(), &PicCanister::cargo_wasm_path("example_backend"));
+        let customer_canister = PicCanister::new(
+            pic.clone(),
+            &PicCanister::cargo_wasm_path("example_backend"),
+        );
         Self {
             pic,
             api_canister,

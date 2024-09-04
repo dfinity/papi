@@ -246,6 +246,7 @@ dependencies = [
  "candid",
  "ic-cdk 0.15.1",
  "ic-cdk-macros 0.15.0",
+ "ic-papi-api",
  "pocket-ic",
 ]
 
@@ -604,6 +605,8 @@ name = "ic-papi-api"
 version = "0.1.0"
 dependencies = [
  "candid",
+ "serde",
+ "serde_bytes",
 ]
 
 [[package]]

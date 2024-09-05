@@ -1,5 +1,5 @@
 use crate::util::cycles_depositor::{self, CyclesDepositorPic};
-use crate::util::cycles_ledger::{Account, CyclesLedgerPic, InitArgs, LedgerArgs};
+use crate::util::cycles_ledger::{Account, ApproveArgs, CyclesLedgerPic, InitArgs, LedgerArgs};
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{de, encode_one, Nat, Principal};
 use ic_papi_api::PaymentError;
@@ -63,7 +63,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
         }
     }
 }
-impl CallerPaysWithIcRc2TestSetup{
+impl CallerPaysWithIcRc2TestSetup {
     const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
 
     /// Deposit 100 * the ledger fee in the user's ledger wallet. That should be enough to be getting on with.
@@ -73,8 +73,7 @@ impl CallerPaysWithIcRc2TestSetup{
         let deposit = megasquigs + Self::LEDGER_FEE;
         self.pic.add_cycles(self.wallet.canister_id, deposit);
         // .. Send cycles to the cycles ledger.
-        self
-            .wallet
+        self.wallet
             .deposit(
                 self.user,
                 &cycles_depositor::DepositArg {
@@ -93,8 +92,7 @@ impl CallerPaysWithIcRc2TestSetup{
     }
     /// Gets the user balance
     fn user_balance(&self) -> Nat {
-        self
-            .ledger
+        self.ledger
             .icrc_1_balance_of(
                 self.user,
                 &Account {
@@ -106,13 +104,10 @@ impl CallerPaysWithIcRc2TestSetup{
     }
     /// Asserts that the user's ledger balance is a certain value.
     fn assert_user_balance_eq<T>(&self, expected_balance: T, message: String)
-      where T: Into<Nat>
-     {
-        assert_eq!(
-            self.user_balance(),
-            expected_balance.into(),
-            "{}", message
-        );
+    where
+        T: Into<Nat>,
+    {
+        assert_eq!(self.user_balance(), expected_balance.into(), "{}", message);
     }
 }
 
@@ -126,12 +121,33 @@ fn icrc2_payment_works() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.
-    setup.assert_user_balance_eq(0u32, "Initially the user balance in the ledger should be zero".to_string()); 
+    setup.assert_user_balance_eq(
+        0u32,
+        "Initially the user balance in the ledger should be zero".to_string(),
+    );
     // .. Get enough to play with lots of transactions.
     const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
     let mut remainder = 100u128; // Multiple of fees we have left to play with.
     setup.fund_user(LEDGER_FEE * remainder);
-    setup.assert_user_balance_eq(LEDGER_FEE * remainder, "Test setup failed when providing the user with funds".to_string()); 
+    setup.assert_user_balance_eq(
+        LEDGER_FEE * remainder,
+        "Test setup failed when providing the user with funds".to_string(),
+    );
     // Exercise the protocol...
-    setup.ledger
+    let api_method = "cost_1000_cycles";
+    let api_fee = 1_000u128;
+    setup
+        .ledger
+        .icrc_2_approve(
+            setup.user,
+            &ApproveArgs {
+                spender: Account {
+                    owner: setup.paid_service.canister_id(),
+                    subaccount: None,
+                },
+                amount: Nat::from(api_fee),
+                ..ApproveArgs::default()
+            },
+        )
+        .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
 }

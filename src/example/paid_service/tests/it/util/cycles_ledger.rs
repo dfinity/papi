@@ -228,6 +228,23 @@ pub struct ApproveArgs {
     pub expires_at: Option<u64>,
     pub spender: Account,
 }
+impl Default for ApproveArgs {
+    fn default() -> Self {
+        Self {
+            fee: None,
+            memo: None,
+            from_subaccount: None,
+            created_at_time: None,
+            amount: candid::Nat::from(0u32),
+            expected_allowance: None,
+            expires_at: None,
+            spender: Account {
+                owner: Principal::anonymous(),
+                subaccount: None,
+            },
+        }
+    }
+}
 #[derive(CandidType, Deserialize, Debug)]
 pub enum ApproveError {
     GenericError {
@@ -474,41 +491,45 @@ impl CyclesLedgerPic {
         self.update(caller, "icrc1_balance_of", arg0)
     }
     /*
-     pub fn icrc_1_decimals(&self, caller: Principal) -> Result<(u8,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc1_decimals", ())
-     }
-     pub fn icrc_1_fee(&self, caller: Principal) -> Result<(candid::Nat,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc1_fee", ())
-     }
-     pub fn icrc_1_metadata(&self, caller: Principal) -> Result<(Vec<(String,MetadataValue,)>,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc1_metadata", ())
-     }
-     pub fn icrc_1_minting_account(&self, caller: Principal) -> Result<(Option<Account>,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc1_minting_account", ())
-     }
-     pub fn icrc_1_name(&self, caller: Principal) -> Result<(String,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc1_name", ())
-     }
-     pub fn icrc_1_supported_standards(&self, caller: Principal) -> Result<(Vec<SupportedStandard>,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc1_supported_standards", ())
-     }
-     pub fn icrc_1_symbol(&self, caller: Principal) -> Result<(String,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc1_symbol", ())
-     }
-     pub fn icrc_1_total_supply(&self, caller: Principal) -> Result<(candid::Nat,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc1_total_supply", ())
-     }
-     pub fn icrc_1_transfer(&self, caller: Principal, arg0: &TransferArgs) -> Result<(std::result::Result<BlockIndex, TransferError>,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc1_transfer", (arg0,))
-     }
-     pub fn icrc_2_allowance(&self, caller: Principal, arg0: &AllowanceArgs) -> Result<(Allowance,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc2_allowance", (arg0,))
-     }
-     */
-     pub fn icrc_2_approve(&self, caller: Principal, arg0: &ApproveArgs) -> srd::result::Result<std::result::Result<candid::Nat, ApproveError>, String> {
-       self.update( caller, "icrc2_approve", arg0)
-     }
-     /*
+    pub fn icrc_1_decimals(&self, caller: Principal) -> Result<(u8,)> {
+      self.pic.update_call(self.canister_id, caller, "icrc1_decimals", ())
+    }
+    pub fn icrc_1_fee(&self, caller: Principal) -> Result<(candid::Nat,)> {
+      self.pic.update_call(self.canister_id, caller, "icrc1_fee", ())
+    }
+    pub fn icrc_1_metadata(&self, caller: Principal) -> Result<(Vec<(String,MetadataValue,)>,)> {
+      self.pic.update_call(self.canister_id, caller, "icrc1_metadata", ())
+    }
+    pub fn icrc_1_minting_account(&self, caller: Principal) -> Result<(Option<Account>,)> {
+      self.pic.update_call(self.canister_id, caller, "icrc1_minting_account", ())
+    }
+    pub fn icrc_1_name(&self, caller: Principal) -> Result<(String,)> {
+      self.pic.update_call(self.canister_id, caller, "icrc1_name", ())
+    }
+    pub fn icrc_1_supported_standards(&self, caller: Principal) -> Result<(Vec<SupportedStandard>,)> {
+      self.pic.update_call(self.canister_id, caller, "icrc1_supported_standards", ())
+    }
+    pub fn icrc_1_symbol(&self, caller: Principal) -> Result<(String,)> {
+      self.pic.update_call(self.canister_id, caller, "icrc1_symbol", ())
+    }
+    pub fn icrc_1_total_supply(&self, caller: Principal) -> Result<(candid::Nat,)> {
+      self.pic.update_call(self.canister_id, caller, "icrc1_total_supply", ())
+    }
+    pub fn icrc_1_transfer(&self, caller: Principal, arg0: &TransferArgs) -> Result<(std::result::Result<BlockIndex, TransferError>,)> {
+      self.pic.update_call(self.canister_id, caller, "icrc1_transfer", (arg0,))
+    }
+    pub fn icrc_2_allowance(&self, caller: Principal, arg0: &AllowanceArgs) -> Result<(Allowance,)> {
+      self.pic.update_call(self.canister_id, caller, "icrc2_allowance", (arg0,))
+    }
+    */
+    pub fn icrc_2_approve(
+        &self,
+        caller: Principal,
+        arg0: &ApproveArgs,
+    ) -> std::result::Result<std::result::Result<candid::Nat, ApproveError>, String> {
+        self.update(caller, "icrc2_approve", arg0)
+    }
+    /*
      pub fn icrc_2_transfer_from(&self, caller: Principal, arg0: &TransferFromArgs) -> Result<(std::result::Result<candid::Nat, TransferFromError>,)> {
        self.pic.update_call(self.canister_id, caller, "icrc2_transfer_from", (arg0,))
      }

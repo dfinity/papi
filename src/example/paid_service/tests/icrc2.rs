@@ -22,7 +22,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
         );
         let customer_canister = PicCanister::new(
             pic.clone(),
-            &PicCanister::cargo_wasm_path("example_app_backend"),
+            &PicCanister::cargo_wasm_path("cycles_ledger"),
         );
         Self {
             pic,
@@ -144,6 +144,10 @@ mod pic_tool {
         /// The path to a typical Cargo Wasm build.
         fn cargo_wasm_path(name: &str) -> String {
             format!("../../../target/wasm32-unknown-unknown/release/{}.wasm", name)
+        }
+        /// The path to a Wasm after `dfx install`.
+        fn dfx_wasm_path(name: &str) -> String {
+            format!(".dfx/local/canisters/{name}/{name}.wasm.gz")
         }
     }
 

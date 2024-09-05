@@ -77,6 +77,7 @@ mod pic_tool {
     use candid::{decode_one, encode_one, CandidType, Deserialize, Principal};
     use pocket_ic::{PocketIc, WasmResult};
     use std::fs;
+    use std::path::{Path, PathBuf};
     use std::sync::Arc;
 
     /// Common methods for interacting with a canister using `PocketIc`.
@@ -141,9 +142,21 @@ mod pic_tool {
                     WasmResult::Reject(error) => Err(error),
                 })
         }
+        fn workspace_dir() -> PathBuf {
+            let output = std::process::Command::new(env!("CARGO"))
+                .arg("locate-project")
+                .arg("--workspace")
+                .arg("--message-format=plain")
+                .output()
+                .unwrap()
+                .stdout;
+            let cargo_path = Path::new(std::str::from_utf8(&output).unwrap().trim());
+            cargo_path.parent().unwrap().to_path_buf()
+        }
         /// The path to a typical Cargo Wasm build.
         fn cargo_wasm_path(name: &str) -> String {
-            format!("../../../target/wasm32-unknown-unknown/release/{}.wasm", name)
+            let workspace_dir = Self::workspace_dir();
+            workspace_dir.join("target/wasm32-unknown-unknown/release").join(name).with_extension("wasm").to_str().unwrap().to_string()
         }
     }
 

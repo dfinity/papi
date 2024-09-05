@@ -2,3 +2,9 @@
 /target
 # Testing tool
 pocket-ic
+# dfx working dir
+.dfx
+# dfx env file
+.env
+# Local branches
+branches

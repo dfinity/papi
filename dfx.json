@@ -9,8 +9,8 @@
 			"gzip": true
 		},
 		"example_app_backend": {
-			"candid": "src/example/app_backend/example-backend.did",
-			"package": "example-backend",
+			"candid": "src/example/app_backend/example_app_backend.did",
+			"package": "example_app_backend",
 			"type": "rust"
 		},
 		"internet_identity": {

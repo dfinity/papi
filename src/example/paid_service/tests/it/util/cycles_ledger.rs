@@ -6,7 +6,7 @@ use std::sync::Arc;
 use candid::{self, decode_one, encode_args, encode_one, CandidType, Deserialize, Principal};
 use pocket_ic::{PocketIc, WasmResult};
 
-use super::pic_canister::PicCanisterTrait;
+use super::pic_canister::{PicCanister, PicCanisterTrait};
 
 #[derive(CandidType, Deserialize, Debug)]
 pub enum ChangeIndexId {
@@ -437,6 +437,15 @@ impl PicCanisterTrait for CyclesLedgerPic {
     /// The ID of this canister.
     fn canister_id(&self) -> Principal {
         self.canister_id.clone()
+    }
+}
+
+impl From<PicCanister> for CyclesLedgerPic {
+    fn from(pic: PicCanister) -> Self {
+        Self {
+            pic: pic.pic,
+            canister_id: pic.canister_id,
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 use crate::util::cycles_ledger::{CyclesLedgerPic, InitArgs, LedgerArgs};
+use crate::util::cycles_wallet::CyclesWalletPic;
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Principal};
 use ic_papi_api::PaymentError;
@@ -13,14 +14,14 @@ pub struct CallerPaysWithIcRc2TestSetup {
     /// The canister providing the API.
     paid_service: PicCanister,
     /// ICRC2 ledger
-    ledger: PicCanister,
+    ledger: CyclesLedgerPic,
     /// User's wallet.  We use the cycles wallet so that we can top it up easily, but any source of funds will do, with any ICRC-2 token.
-    wallet: PicCanister,
+    wallet: CyclesWalletPic,
 }
 impl Default for CallerPaysWithIcRc2TestSetup {
     fn default() -> Self {
         let pic = Arc::new(PocketIc::new());
-        let api_canister = PicCanister::new(
+        let paid_service = PicCanister::new(
             pic.clone(),
             &PicCanister::cargo_wasm_path("example_paid_service"),
         );
@@ -33,11 +34,13 @@ impl Default for CallerPaysWithIcRc2TestSetup {
                 }))
                 .expect("Failed to encode ledger init arg"),
             )
-            .deploy_to(pic.clone());
-        let  wallet = PicCanister::new(pic.clone(), &PicCanister::dfx_wasm_path("cycles_wallet"));
+            .deploy_to(pic.clone())
+            .into();
+        let wallet =
+            PicCanister::new(pic.clone(), &PicCanister::dfx_wasm_path("cycles_wallet")).into();
         Self {
             pic,
-            paid_service: api_canister,
+            paid_service,
             ledger,
             wallet,
         }
@@ -52,5 +55,4 @@ fn icrc2_test_setup_works() {
 #[test]
 fn icrc2_payment_works() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
-
 }

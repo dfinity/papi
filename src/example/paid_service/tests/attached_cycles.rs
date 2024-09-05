@@ -1,13 +1,12 @@
-use candid::{decode_one, encode_one, CandidType, Deserialize, Principal};
-use ic_cdk::api::call::CallResult;
+use candid::Principal;
 use ic_papi_api::PaymentError;
 use pic_tool::{PicCanister, PicCanisterTrait};
-use pocket_ic::{PocketIc, WasmResult};
-use std::fs;
+use pocket_ic::PocketIc;
 use std::sync::Arc;
 
 pub struct AttachedCyclesTestSetup {
     /// The PocketIC instance.
+    #[allow(dead_code)] // The Arc is used; this makes it accessible without having to refer to a specific canister.
     pic: Arc<PocketIc>,
     /// The canister providing the API.
     api_canister: PicCanister,

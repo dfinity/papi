@@ -1,4 +1,4 @@
-use crate::util::cycles_ledger::CyclesLedgerPic;
+use crate::util::cycles_ledger::{CyclesLedgerPic, InitArgs, LedgerArgs};
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Principal};
 use ic_papi_api::PaymentError;
@@ -24,7 +24,13 @@ impl Default for CallerPaysWithIcRc2TestSetup {
         );
         let ledger = PicCanisterBuilder::default()
             .with_wasm(&PicCanister::cargo_wasm_path("example_paid_service"))
-            .with_arg(encode_one(9).expect("Failed to encode ledger init arg"))
+            .with_arg(
+                encode_one(LedgerArgs::Init(InitArgs {
+                    index_id: None,
+                    max_blocks_per_request: 999,
+                }))
+                .expect("Failed to encode ledger init arg"),
+            )
             .deploy_to(pic.clone());
         Self {
             pic,

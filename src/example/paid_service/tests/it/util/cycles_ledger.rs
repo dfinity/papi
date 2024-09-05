@@ -467,7 +467,7 @@ impl CyclesLedgerPic {
      }
      */
      pub fn icrc_1_balance_of(&self, caller: Principal, arg0: &Account) -> Result<candid::Nat, String> {
-       self.update(caller, "icrc1_balance_of", encode_one(arg0).unwrap())
+       self.update(caller, "icrc1_balance_of", arg0)
      }
      /*
      pub fn icrc_1_decimals(&self, caller: Principal) -> Result<(u8,)> {

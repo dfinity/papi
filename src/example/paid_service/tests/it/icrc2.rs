@@ -5,6 +5,7 @@ use candid::{encode_one, Nat, Principal};
 use ic_papi_api::PaymentError;
 use pocket_ic::PocketIc;
 use std::sync::Arc;
+use std::u128::MAX;
 
 pub struct CallerPaysWithIcRc2TestSetup {
     /// The PocketIC instance.
@@ -73,26 +74,57 @@ fn icrc2_payment_works() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.
-    let balance = setup.ledger.icrc_1_balance_of(setup.user, &Account { owner: setup.user, subaccount: None }).expect("Could not get user balance");
-    assert_eq!(balance, Nat::from(0u32), "User should have zero balance in the ledger");
-    // .. Get enough to play with lots of transactions.
-    const CYCLES_LEDGER_FEE: u128 = 100_000_000; // The docuumented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
-    let deposit = CYCLES_LEDGER_FEE * 100;
-    // .. Magic cycles into existence (test only - not IRL).
-    setup.pic.add_cycles(setup.wallet.canister_id, deposit);
-    // .. Send cycles to the cycles ledger.
-    setup.wallet.deposit(
-        setup.user,
-        &cycles_depositor::DepositArg {
-            to: cycles_depositor::Account {
+    let balance = setup
+        .ledger
+        .icrc_1_balance_of(
+            setup.user,
+            &Account {
                 owner: setup.user,
                 subaccount: None,
             },
-            memo: None,
-            cycles: candid::Nat::from(deposit),
-        },
-    ).expect("Failed to deposit funds in the ledger");
-    let balance = setup.ledger.icrc_1_balance_of(setup.user, &Account { owner: setup.user, subaccount: None }).expect("Could not get user balance");
-    const MIN_BALANCE: u64 = 1_000_000;
-    assert!(balance >= Nat::from(MIN_BALANCE), "User needs a balance of at least {MIN_BALANCE} in the ledger but has only {balance}");
+        )
+        .expect("Could not get user balance");
+    assert_eq!(
+        balance,
+        Nat::from(0u32),
+        "User should have zero balance in the ledger"
+    );
+    // .. Get enough to play with lots of transactions.
+    const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
+    let mut remainder = 100u128; // Multiple of fees we have left to play with.
+    let deposit = LEDGER_FEE * remainder;
+    // .. Magic cycles into existence (test only - not IRL).
+    setup.pic.add_cycles(setup.wallet.canister_id, deposit);
+    // .. Send cycles to the cycles ledger.
+    setup
+        .wallet
+        .deposit(
+            setup.user,
+            &cycles_depositor::DepositArg {
+                to: cycles_depositor::Account {
+                    owner: setup.user,
+                    subaccount: None,
+                },
+                memo: None,
+                cycles: candid::Nat::from(deposit),
+            },
+        )
+        .expect("Failed to deposit funds in the ledger");
+    // .. That should have cost one fee.
+    remainder -= 1;
+    let balance = setup
+        .ledger
+        .icrc_1_balance_of(
+            setup.user,
+            &Account {
+                owner: setup.user,
+                subaccount: None,
+            },
+        )
+        .expect("Could not get user balance");
+    assert_eq!(
+        balance,
+        Nat::from(remainder * LEDGER_FEE),
+        "Expected to have been charged one standard fee for the deposit"
+    );
 }

@@ -462,14 +462,18 @@ impl CyclesLedgerPic {
         self.update(caller, "deposit", (arg0,))
     }
     /*
-     pub fn http_request(&self, caller: Principal, arg0: &HttpRequest) -> Result<(HttpResponse,)> {
-       self.pic.update_call(self.canister_id, caller, "http_request", (arg0,))
-     }
-     */
-     pub fn icrc_1_balance_of(&self, caller: Principal, arg0: &Account) -> Result<candid::Nat, String> {
-       self.update(caller, "icrc1_balance_of", arg0)
-     }
-     /*
+    pub fn http_request(&self, caller: Principal, arg0: &HttpRequest) -> Result<(HttpResponse,)> {
+      self.pic.update_call(self.canister_id, caller, "http_request", (arg0,))
+    }
+    */
+    pub fn icrc_1_balance_of(
+        &self,
+        caller: Principal,
+        arg0: &Account,
+    ) -> Result<candid::Nat, String> {
+        self.update(caller, "icrc1_balance_of", arg0)
+    }
+    /*
      pub fn icrc_1_decimals(&self, caller: Principal) -> Result<(u8,)> {
        self.pic.update_call(self.canister_id, caller, "icrc1_decimals", ())
      }

@@ -1,0 +1,5 @@
+type PaymentError = variant {
+  InsufficientFunds : record { needed : nat64; available : nat64 };
+};
+type Result = variant { Ok : text; Err : PaymentError };
+service : { cost_1000_cycles : () -> (Result); free : () -> (text) }

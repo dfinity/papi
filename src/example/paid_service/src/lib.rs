@@ -1,4 +1,4 @@
-use ic_cdk_macros::update;
+use ic_cdk_macros::{update, export_candid};
 use ic_papi_api::PaymentError;
 use ic_papi_guard::guards::attached_cycles::AttachedCyclesPayment;
 use ic_papi_guard::guards::PaymentGuard;
@@ -14,3 +14,5 @@ async fn cost_1000_cycles() -> Result<String, PaymentError> {
     AttachedCyclesPayment::default().deduct(1000)?;
     Ok("Yes, you paid 1000 cycles!".to_string())
 }
+
+export_candid!();

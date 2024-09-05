@@ -1,0 +1,36 @@
+{
+	"dfx": "0.20.0",
+	"canisters": {
+		"example_paid_service": {
+			"candid": "src/example/paid_service/example-paid-service.did",
+			"package": "example_paid_service",
+			"type": "rust",
+			"optimize": "cycles",
+			"gzip": true
+		},
+		"example_app_backend": {
+			"candid": "src/example/app_backend/example-backend.did",
+			"package": "example-backend",
+			"type": "rust"
+		},
+		"internet_identity": {
+			"type": "custom",
+			"candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+			"wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz",
+			"remote": {
+				"id": {
+					"ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+				}
+			},
+			"frontend": {}
+		}
+	},
+	"defaults": {
+		"build": {
+			"args": "",
+			"packtool": ""
+		}
+	},
+	"output_env_file": ".env",
+	"version": 1
+}

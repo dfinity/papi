@@ -14,7 +14,8 @@ pub struct CallerPaysWithIcRc2TestSetup {
     paid_service: PicCanister,
     /// ICRC2 ledger
     ledger: PicCanister,
-    /// User's cycles wallet
+    /// User's wallet.  We use the cycles wallet so that we can top it up easily, but any source of funds will do, with any ICRC-2 token.
+    wallet: PicCanister,
 }
 impl Default for CallerPaysWithIcRc2TestSetup {
     fn default() -> Self {
@@ -33,10 +34,12 @@ impl Default for CallerPaysWithIcRc2TestSetup {
                 .expect("Failed to encode ledger init arg"),
             )
             .deploy_to(pic.clone());
+        let  wallet = PicCanister::new(pic.clone(), &PicCanister::dfx_wasm_path("cycles_wallet"));
         Self {
             pic,
             paid_service: api_canister,
             ledger,
+            wallet,
         }
     }
 }

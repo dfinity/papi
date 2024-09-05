@@ -1,5 +1,5 @@
+use crate::util::cycles_depositor::{self, CyclesDepositorPic};
 use crate::util::cycles_ledger::{CyclesLedgerPic, InitArgs, LedgerArgs};
-use crate::util::cycles_wallet::CyclesWalletPic;
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Principal};
 use ic_papi_api::PaymentError;
@@ -15,8 +15,10 @@ pub struct CallerPaysWithIcRc2TestSetup {
     paid_service: PicCanister,
     /// ICRC2 ledger
     ledger: CyclesLedgerPic,
+    /// User
+    user: Principal,
     /// User's wallet.  We use the cycles wallet so that we can top it up easily, but any source of funds will do, with any ICRC-2 token.
-    wallet: CyclesWalletPic,
+    wallet: CyclesDepositorPic,
 }
 impl Default for CallerPaysWithIcRc2TestSetup {
     fn default() -> Self {
@@ -25,7 +27,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             pic.clone(),
             &PicCanister::cargo_wasm_path("example_paid_service"),
         );
-        let ledger = PicCanisterBuilder::default()
+        let ledger = CyclesLedgerPic::from(PicCanisterBuilder::default()
             .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
             .with_arg(
                 encode_one(LedgerArgs::Init(InitArgs {
@@ -34,14 +36,19 @@ impl Default for CallerPaysWithIcRc2TestSetup {
                 }))
                 .expect("Failed to encode ledger init arg"),
             )
-            .deploy_to(pic.clone())
-            .into();
-        let wallet =
-            PicCanister::new(pic.clone(), &PicCanister::dfx_wasm_path("cycles_wallet")).into();
+            .deploy_to(pic.clone()));
+        let user = Principal::from_text("xzg7k-thc6c-idntg-knmtz-2fbhh-utt3e-snqw6-5xph3-54pbp-7axl5-tae").unwrap();
+        let wallet = PicCanisterBuilder::default()
+        .with_wasm(&PicCanister::dfx_wasm_path("cycles_wallet"))
+        .with_controllers(vec![user])
+        .with_arg(encode_one(cycles_depositor::InitArg{ledger_id: ledger.canister_id}).unwrap())
+        .deploy_to(pic.clone())
+        .into();
         Self {
             pic,
             paid_service,
             ledger,
+            user,
             wallet,
         }
     }
@@ -57,4 +64,6 @@ fn icrc2_payment_works() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
     // Add cycles to the wallet
     setup.pic.add_cycles(setup.wallet.canister_id, 100_000_000);
+    // Send cycles to the cycles ledger.
+//    setup.wallet.deposit(caller, arg0);
 }

@@ -24,11 +24,10 @@
 				}
 			}
 		},
-		"cycles_wallet": {
+		"cycles_depositor": {
 			"type": "custom",
-			"candid": "https://github.com/dfinity/cycles-wallet/releases/download/20240410/wallet.did",
-			"wasm": "https://github.com/dfinity/cycles-wallet/releases/download/20240410/wallet.wasm",
-			"gzip": true
+			"candid": "https://github.com/dfinity/cycles-ledger/releases/download/cycles-ledger-v1.0.1/depositor.did",
+			"wasm": "https://github.com/dfinity/cycles-ledger/releases/download/cycles-ledger-v1.0.1/depositor.wasm.gz"
 		}
 	},
 	"defaults": {

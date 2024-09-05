@@ -1,0 +1,11 @@
+[package]
+name = "pocket-cycles-ledger"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { workspace = true }
+serde_bytes = { workspace = true }
+pocket-ic = { workspace = true }
+candid = { workspace = true }
+ic-cdk = { workspace = true }

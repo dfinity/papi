@@ -1,7 +1,7 @@
 use crate::util::cycles_depositor::{self, CyclesDepositorPic};
-use crate::util::cycles_ledger::{CyclesLedgerPic, InitArgs, LedgerArgs};
+use crate::util::cycles_ledger::{Account, CyclesLedgerPic, InitArgs, LedgerArgs};
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
-use candid::{encode_one, Principal};
+use candid::{encode_one, Nat, Principal};
 use ic_papi_api::PaymentError;
 use pocket_ic::PocketIc;
 use std::sync::Arc;
@@ -72,8 +72,12 @@ fn icrc2_test_setup_works() {
 fn icrc2_payment_works() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
     // Add cycles to the wallet
+    // .. At first the balance should be zero.
+    let balance = setup.ledger.icrc_1_balance_of(setup.user, &Account { owner: setup.user, subaccount: None }).expect("Could not get user balance");
+    assert_eq!(balance, Nat::from(0u32), "User should have zero balance in the ledger");
+    // .. Magic cycles into existence (test only - not IRL).
     setup.pic.add_cycles(setup.wallet.canister_id, 100_000_000);
-    // Send cycles to the cycles ledger.
+    // .. Send cycles to the cycles ledger.
     setup.wallet.deposit(
         setup.user,
         &cycles_depositor::DepositArg {
@@ -84,5 +88,8 @@ fn icrc2_payment_works() {
             memo: None,
             cycles: candid::Nat::from(100_000u32),
         },
-    );
+    ).expect("Failed to deposit funds in the ledger");
+    let balance = setup.ledger.icrc_1_balance_of(setup.user, &Account { owner: setup.user, subaccount: None }).expect("Could not get user balance");
+    const MIN_BALANCE: u64 = 1_000_000;
+    assert!(balance >= Nat::from(MIN_BALANCE), "User needs a balance of at least {MIN_BALANCE} in the ledger but has only {balance}");
 }

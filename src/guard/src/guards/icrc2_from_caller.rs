@@ -8,7 +8,7 @@ pub struct IcRc2FromCaller {
 }
 
 impl PaymentGuard for IcRc2FromCaller {
-    fn deduct(&self, fee: u64) -> Result<(), PaymentError> {
+    fn deduct(&self, _fee: u64) -> Result<(), PaymentError> {
         unimplemented!()
     }
 }

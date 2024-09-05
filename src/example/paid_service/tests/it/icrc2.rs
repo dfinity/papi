@@ -44,3 +44,9 @@ impl Default for CallerPaysWithIcRc2TestSetup {
 fn icrc2_test_setup_works() {
     let _setup = CallerPaysWithIcRc2TestSetup::default();
 }
+
+#[test]
+fn icrc2_payment_works() {
+    let setup = CallerPaysWithIcRc2TestSetup::default();
+    
+}

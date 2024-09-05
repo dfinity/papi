@@ -6,6 +6,8 @@ use std::sync::Arc;
 use candid::{self, decode_one, encode_args, encode_one, CandidType, Deserialize, Principal};
 use pocket_ic::{PocketIc, WasmResult};
 
+use super::pic_canister::PicCanisterTrait;
+
 #[derive(CandidType, Deserialize, Debug)]
 pub enum ChangeIndexId {
     SetTo(Principal),
@@ -427,25 +429,14 @@ pub struct CyclesLedgerPic {
     pub canister_id: Principal,
 }
 
-impl CyclesLedgerPic {
-    fn update<T>(&self, caller: Principal, method: &str, arg: impl CandidType) -> Result<T, String>
-    where
-        T: for<'a> Deserialize<'a> + CandidType,
-    {
-        self.pic
-            .update_call(self.canister_id, caller, method, encode_one(arg).unwrap())
-            .map_err(|e| {
-                format!(
-                    "Update call error. RejectionCode: {:?}, Error: {}",
-                    e.code, e.description
-                )
-            })
-            .and_then(|reply| match reply {
-                WasmResult::Reply(reply) => {
-                    decode_one(&reply).map_err(|e| format!("Decoding failed: {e}"))
-                }
-                WasmResult::Reject(error) => Err(error),
-            })
+impl PicCanisterTrait for CyclesLedgerPic {
+    /// The shared PocketIc instance.
+    fn pic(&self) -> Arc<PocketIc> {
+        self.pic.clone()
+    }
+    /// The ID of this canister.
+    fn canister_id(&self) -> Principal {
+        self.canister_id.clone()
     }
 }
 

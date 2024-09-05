@@ -33,7 +33,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
 }
 
 #[test]
-fn test_setup_works() {
+fn icrc2_test_setup_works() {
     let _setup = CallerPaysWithIcRc2TestSetup::default();
 }
 

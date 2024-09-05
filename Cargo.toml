@@ -1,10 +1,9 @@
 [workspace]
-members = ["src/api", "src/declarations/cycles_ledger", "src/example/app_backend", "src/example/paid_service", "src/guard"]
+members = ["src/api", "src/example/app_backend", "src/example/paid_service", "src/guard"]
 resolver = "2"
 
 [workspace.dependencies]
 pocket-ic = "4.0.0"
-pocket-cycles-ledger = { path = "src/declarations/cycles_ledger" }
 candid = "0.10.10"
 ic-cdk = "0.15.1"
 ic-cdk-macros = "0.15.0"

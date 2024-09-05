@@ -5,4 +5,5 @@ edition = "2021"
 
 [dependencies]
 ic-cdk = "0.15.0"
-ic-papi-api = { path = "../api" }
+ic-papi-api = { workspace = true }
+candid = { workspace = true }

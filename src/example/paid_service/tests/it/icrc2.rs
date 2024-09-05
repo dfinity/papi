@@ -55,4 +55,6 @@ fn icrc2_test_setup_works() {
 #[test]
 fn icrc2_payment_works() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
+    // Add cycles to the wallet
+    setup.pic.add_cycles(setup.wallet.canister_id, 100_000_000);
 }

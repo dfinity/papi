@@ -1,12 +1,13 @@
+use crate::util::pic_canister::{PicCanister, PicCanisterTrait};
 use candid::Principal;
 use ic_papi_api::PaymentError;
-use crate::util::pic_canister::{PicCanister, PicCanisterTrait};
 use pocket_ic::PocketIc;
 use std::sync::Arc;
 
 pub struct AttachedCyclesTestSetup {
     /// The PocketIC instance.
-    #[allow(dead_code)] // The Arc is used; this makes it accessible without having to refer to a specific canister.
+    #[allow(dead_code)]
+    // The Arc is used; this makes it accessible without having to refer to a specific canister.
     pic: Arc<PocketIc>,
     /// The canister providing the API.
     api_canister: PicCanister,

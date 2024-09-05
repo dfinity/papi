@@ -1,4 +1,4 @@
-use ic_cdk_macros::{update, export_candid};
+use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::PaymentError;
 use ic_papi_guard::guards::attached_cycles::AttachedCyclesPayment;
 use ic_papi_guard::guards::PaymentGuard;

@@ -240,17 +240,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "customer_backend"
-version = "0.1.0"
-dependencies = [
- "candid",
- "ic-cdk 0.15.1",
- "ic-cdk-macros 0.15.0",
- "ic-papi-api",
- "pocket-ic",
-]
-
-[[package]]
 name = "data-encoding"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -294,7 +283,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
-name = "example_backend"
+name = "example_customer_backend"
+version = "0.1.0"
+dependencies = [
+ "candid",
+ "ic-cdk 0.15.1",
+ "ic-cdk-macros 0.15.0",
+ "ic-papi-api",
+ "pocket-ic",
+]
+
+[[package]]
+name = "example_paid_service"
 version = "0.1.0"
 dependencies = [
  "candid",

@@ -18,11 +18,11 @@ impl Default for AttachedCyclesTestSetup {
         let pic = Arc::new(PocketIc::new());
         let api_canister = PicCanister::new(
             pic.clone(),
-            &PicCanister::cargo_wasm_path("example_backend"),
+            &PicCanister::cargo_wasm_path("example_paid_service"),
         );
         let customer_canister = PicCanister::new(
             pic.clone(),
-            &PicCanister::cargo_wasm_path("customer_backend"),
+            &PicCanister::cargo_wasm_path("example_customer_backend"),
         );
         Self {
             pic,

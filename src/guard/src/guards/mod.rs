@@ -5,5 +5,5 @@ pub mod attached_cycles;
 pub mod icrc2_from_caller;
 
 pub trait PaymentGuard {
-    fn deduct(fee: u64) -> Result<(), PaymentError>;
+    fn deduct(&self, fee: u64) -> Result<(), PaymentError>;
 }

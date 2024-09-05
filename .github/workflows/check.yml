@@ -1,0 +1,103 @@
+name: 'Code checks'
+on:
+  push:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+defaults:
+  run:
+    shell: bash -euxlo pipefail {0}
+jobs:
+  format:
+    name: 'Format'
+    runs-on: ubuntu-20.04
+    env:
+      TITLE: ${{ github.event.pull_request.title }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install tools
+        run: ./scripts/setup cargo-binstall shfmt yq cargo-sort
+      - name: Install node dependencies
+        run: npm ci --no-audit
+      - name: Format
+        run: ./scripts/fmt
+      - name: Check formatted
+        run: |
+          test -z "$(git status --porcelain | grep -v --file .relaxedfmt)" || {
+                  echo "FIX: Please run ./scripts/fmt"
+                  git diff
+                  exit 1
+          }
+  rust-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Have relevant files changed?
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            test:
+               - '.github/workflows/check.yml'
+               - '**/*.rs'
+               - '**/Cargo.*'
+               - 'rust-toolchain.toml'
+      - uses: actions/cache@v4
+        if: steps.changes.outputs.test == 'true'
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-1
+      - name: Lint rust code
+        if: steps.changes.outputs.test == 'true'
+        run: ./scripts/lint-rs
+      - name: Run Unit Tests
+        if: steps.changes.outputs.test == 'true'
+        shell: bash
+        run: scripts/test-rs
+  installation:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Have relevant files changed?
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            test:
+               - '!**/*.md'
+      - uses: actions/cache@v4
+        if: steps.changes.outputs.test == 'true'
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-1
+      - name: Install dfx
+        uses: dfinity/setup-dfx@main
+      - name: Start dfx
+        run: dfx start --clean --background
+      - name: Deploy all canisters
+        run: dfx deploy
+      - name: Stop dfx
+        run: dfx stop
+  check-pass:
+    needs: ["format", "rust-tests", "installation"]
+    if: ${{ always() }}
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/needs_success
+        with:
+          needs: '${{ toJson(needs) }}'

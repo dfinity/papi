@@ -151,5 +151,11 @@ fn icrc2_payment_works() {
         )
         .expect("Failed to call the ledger to approve")
         .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
-
+    let response: Result<String, PaymentError> = setup.paid_service
+        .update(
+            setup.user,
+            api_method,
+            (            ),
+        )
+        .expect("Failed to call the paid service");
 }

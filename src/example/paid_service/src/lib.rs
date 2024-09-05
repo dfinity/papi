@@ -25,8 +25,11 @@ async fn cost_1000_icrc2_from_caller() -> Result<String, PaymentError> {
             owner: ic_cdk::caller(),
             subaccount: None,
         },
-        ledger_canister_id: Principal::from_text(option_env!("CANISTER_ID_CYCLES_LEDGER").unwrap())
-            .unwrap(),
+        ledger_canister_id: Principal::from_text(
+            option_env!("CANISTER_ID_CYCLES_LEDGER")
+                .expect("CANISTER_ID_CYCLES_LEDGER was not set at compile time"),
+        )
+        .unwrap(),
     };
     guard.deduct(1000)?;
     Ok("Yes, you paid 1000 cycles!".to_string())

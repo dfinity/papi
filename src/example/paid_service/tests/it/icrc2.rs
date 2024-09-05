@@ -132,4 +132,6 @@ fn icrc2_payment_works() {
     let mut remainder = 100u128; // Multiple of fees we have left to play with.
     setup.fund_user(LEDGER_FEE * remainder);
     setup.assert_user_balance_eq(LEDGER_FEE * remainder, "Test setup failed when providing the user with funds".to_string()); 
+    // Exercise the protocol...
+    setup.ledger
 }

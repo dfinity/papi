@@ -504,9 +504,11 @@ impl CyclesLedgerPic {
      pub fn icrc_2_allowance(&self, caller: Principal, arg0: &AllowanceArgs) -> Result<(Allowance,)> {
        self.pic.update_call(self.canister_id, caller, "icrc2_allowance", (arg0,))
      }
-     pub fn icrc_2_approve(&self, caller: Principal, arg0: &ApproveArgs) -> Result<(std::result::Result<candid::Nat, ApproveError>,)> {
-       self.pic.update_call(self.canister_id, caller, "icrc2_approve", (arg0,))
+     */
+     pub fn icrc_2_approve(&self, caller: Principal, arg0: &ApproveArgs) -> srd::result::Result<std::result::Result<candid::Nat, ApproveError>, String> {
+       self.update( caller, "icrc2_approve", arg0)
      }
+     /*
      pub fn icrc_2_transfer_from(&self, caller: Principal, arg0: &TransferFromArgs) -> Result<(std::result::Result<candid::Nat, TransferFromError>,)> {
        self.pic.update_call(self.canister_id, caller, "icrc2_transfer_from", (arg0,))
      }

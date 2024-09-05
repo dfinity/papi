@@ -1,0 +1,5 @@
+# Examples: https://github.com/dfinity/candid/tree/master/tools/didc#toml-config
+
+[rust]
+visibility = "pub(crate)"
+attributes = "#[derive(CandidType, Deserialize, Debug)]"

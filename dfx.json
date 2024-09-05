@@ -17,23 +17,12 @@
 			"type": "custom",
 			"candid": "https://github.com/dfinity/cycles-ledger/releases/download/cycles-ledger-v1.0.1/cycles-ledger.did",
 			"wasm": "https://github.com/dfinity/cycles-ledger/releases/download/cycles-ledger-v1.0.1/cycles-ledger.wasm.gz",
-			"init_arg": "( variant { Init = record { index_id = null; max_blocks_per_request = 9_999 : nat64 }},)"
-		},
-		"cmc": {
-			"type": "custom",
-			"candid": "https://github.com/dfinity/cycles-ledger/releases/download/cycles-ledger-v1.0.1/fake-cmc.did",
-			"wasm": "https://github.com/dfinity/cycles-ledger/releases/download/cycles-ledger-v1.0.1/fake-cmc.wasm.gz"
-		},
-		"internet_identity": {
-			"type": "custom",
-			"candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
-			"wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz",
+			"init_arg": "( variant { Init = record { index_id = null; max_blocks_per_request = 9_999 : nat64 }},)",
 			"remote": {
 				"id": {
-					"ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+					"ic": "um5iw-rqaaa-aaaaq-qaaba-cai"
 				}
-			},
-			"frontend": {}
+			}
 		}
 	},
 	"defaults": {

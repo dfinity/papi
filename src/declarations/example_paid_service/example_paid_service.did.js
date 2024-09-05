@@ -7,7 +7,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const Result = IDL.Variant({ 'Ok' : IDL.Text, 'Err' : PaymentError });
   return IDL.Service({
-    'cost_1000_cycles' : IDL.Func([], [Result], []),
+    'cost_1000_attached_cycles' : IDL.Func([], [Result], []),
     'free' : IDL.Func([], [IDL.Text], []),
   });
 };

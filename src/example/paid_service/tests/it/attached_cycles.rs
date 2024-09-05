@@ -44,7 +44,7 @@ fn inter_canister_call_succeeds_with_sufficient_cycles_only() {
     for cycles in 995u64..1005 {
         let args = (
             setup.api_canister.canister_id(),
-            "cost_1000_cycles".to_string(),
+            "cost_1000_attached_cycles".to_string(),
             cycles,
         );
         let result: Result<Result<String, PaymentError>, String> = setup.customer_canister.update(

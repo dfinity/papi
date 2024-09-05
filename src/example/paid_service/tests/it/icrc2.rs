@@ -134,7 +134,7 @@ fn icrc2_payment_works() {
         "Test setup failed when providing the user with funds".to_string(),
     );
     // Exercise the protocol...
-    let api_method = "cost_1000_cycles";
+    let api_method = "cost_1000_attached_cycles";
     let api_fee = 1_000u128;
     setup
         .ledger

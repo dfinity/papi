@@ -10,7 +10,7 @@ async fn free() -> String {
 
 /// An API method that requires cycles to be attached directly to the call.
 #[update()]
-async fn cost_1000_cycles() -> Result<String, PaymentError> {
+async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
     AttachedCyclesPayment::default().deduct(1000)?;
     Ok("Yes, you paid 1000 cycles!".to_string())
 }

@@ -8,7 +8,7 @@ export type PaymentError = {
 export type Result = { 'Ok' : string } |
   { 'Err' : PaymentError };
 export interface _SERVICE {
-  'cost_1000_cycles' : ActorMethod<[], Result>,
+  'cost_1000_attached_cycles' : ActorMethod<[], Result>,
   'free' : ActorMethod<[], string>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;

@@ -19,11 +19,11 @@ impl Default for CallerPaysWithIcRc2TestSetup {
         let pic = Arc::new(PocketIc::new());
         let api_canister = PicCanister::new(
             pic.clone(),
-            &PicCanister::dfx_wasm_path("example_paid_service"),
+            &PicCanister::cargo_wasm_path("example_paid_service"),
         );
         let customer_canister = PicCanister::new(
             pic.clone(),
-            &PicCanister::dfx_wasm_path("cycles_ledger"),
+            &PicCanister::cargo_wasm_path("example_paid_service"),
         );
         Self {
             pic,
@@ -126,6 +126,11 @@ mod pic_tool {
                 .unwrap()
                 .to_string()
         }
+                /// The path to a typical Cargo Wasm build.
+                fn cargo_wasm_path(name: &str) -> String {
+                    let workspace_dir = Self::workspace_dir();
+                    workspace_dir.join("target/wasm32-unknown-unknown/release").join(name).with_extension("wasm").to_str().unwrap().to_string()
+                }
     }
 
     /// A typical canister running on PocketIC.

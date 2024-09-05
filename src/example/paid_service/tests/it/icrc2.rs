@@ -1,6 +1,6 @@
 use candid::Principal;
 use ic_papi_api::PaymentError;
-use crate::util::pic_canister::{PicCanister, PicCanisterTrait};
+use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use pocket_ic::PocketIc;
 use std::sync::Arc;
 use crate::util::cycles_ledger::CyclesLedgerPic;

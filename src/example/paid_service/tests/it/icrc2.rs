@@ -3,6 +3,7 @@ use ic_papi_api::PaymentError;
 use pic_tool::{PicCanister, PicCanisterTrait};
 use pocket_ic::PocketIc;
 use std::sync::Arc;
+use crate::util::cycles_ledger::CyclesLedgerPic;
 
 pub struct CallerPaysWithIcRc2TestSetup {
     /// The PocketIC instance.

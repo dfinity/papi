@@ -66,6 +66,6 @@ impl CyclesDepositorPic {
         caller: Principal,
         arg0: &DepositArg,
     ) -> std::result::Result<DepositResult, String> {
-        self.update(self.canister_id, "deposit", (arg0,))
+        self.update(self.canister_id, "deposit", arg0)
     }
 }

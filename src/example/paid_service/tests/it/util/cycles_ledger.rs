@@ -527,6 +527,6 @@ impl CyclesLedgerPic {
         caller: Principal,
         arg0: &WithdrawFromArgs,
     ) -> Result<(std::result::Result<BlockIndex, WithdrawFromError>,), String> {
-        self.update(caller, "withdraw_from", encode_args((arg0,)).unwrap())
+        self.update(caller, "withdraw_from", arg0)
     }
 }

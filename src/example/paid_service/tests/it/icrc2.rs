@@ -75,8 +75,11 @@ fn icrc2_payment_works() {
     // .. At first the balance should be zero.
     let balance = setup.ledger.icrc_1_balance_of(setup.user, &Account { owner: setup.user, subaccount: None }).expect("Could not get user balance");
     assert_eq!(balance, Nat::from(0u32), "User should have zero balance in the ledger");
+    // .. Get enough to play with lots of transactions.
+    const CYCLES_LEDGER_FEE: u128 = 100_000_000; // The docuumented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
+    let deposit = CYCLES_LEDGER_FEE * 100;
     // .. Magic cycles into existence (test only - not IRL).
-    setup.pic.add_cycles(setup.wallet.canister_id, 100_000_000);
+    setup.pic.add_cycles(setup.wallet.canister_id, deposit);
     // .. Send cycles to the cycles ledger.
     setup.wallet.deposit(
         setup.user,
@@ -86,7 +89,7 @@ fn icrc2_payment_works() {
                 subaccount: None,
             },
             memo: None,
-            cycles: candid::Nat::from(100_000u32),
+            cycles: candid::Nat::from(deposit),
         },
     ).expect("Failed to deposit funds in the ledger");
     let balance = setup.ledger.icrc_1_balance_of(setup.user, &Account { owner: setup.user, subaccount: None }).expect("Could not get user balance");

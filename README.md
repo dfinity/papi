@@ -1,3 +1,6 @@
+[![Code checks](https://github.com/dfinity/papi/actions/workflows/check.yml/badge.svg)](https://github.com/dfinity/papi/actions/workflows/check.yml)
+[![Integration checks](https://github.com/dfinity/papi/actions/workflows/integration.yml/badge.svg)](https://github.com/dfinity/papi/actions/workflows/integration.yml)
+
 # Get paid for your API.
 
 ## TLDR

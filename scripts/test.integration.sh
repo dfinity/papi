@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 # TODO: Run only if needed
-cargo build --locked --target wasm32-unknown-unknown --release
+dfx deploy
 
 export POCKET_IC_SERVER_VERSION=5.0.0
 export POCKET_IC_SERVER_PATH="target/pocket-ic"

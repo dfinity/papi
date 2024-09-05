@@ -6,7 +6,8 @@
 			"package": "example_paid_service",
 			"type": "rust",
 			"optimize": "cycles",
-			"gzip": true
+			"gzip": true,
+			"dependencies": ["cycles_ledger"]
 		},
 		"example_app_backend": {
 			"candid": "src/example/app_backend/example_app_backend.did",

@@ -302,6 +302,7 @@ dependencies = [
  "ic-cdk-macros 0.15.0",
  "ic-papi-api",
  "ic-papi-guard",
+ "pocket-cycles-ledger",
  "pocket-ic",
 ]
 

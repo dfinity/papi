@@ -15,3 +15,4 @@ ic-papi-guard = { workspace = true }
 
 [dev-dependencies]
 pocket-ic = { workspace = true }
+pocket-cycles-ledger = { workspace = true }

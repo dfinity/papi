@@ -27,23 +27,32 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             pic.clone(),
             &PicCanister::cargo_wasm_path("example_paid_service"),
         );
-        let ledger = CyclesLedgerPic::from(PicCanisterBuilder::default()
-            .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
-            .with_arg(
-                encode_one(LedgerArgs::Init(InitArgs {
-                    index_id: None,
-                    max_blocks_per_request: 999,
-                }))
-                .expect("Failed to encode ledger init arg"),
-            )
-            .deploy_to(pic.clone()));
-        let user = Principal::from_text("xzg7k-thc6c-idntg-knmtz-2fbhh-utt3e-snqw6-5xph3-54pbp-7axl5-tae").unwrap();
+        let ledger = CyclesLedgerPic::from(
+            PicCanisterBuilder::default()
+                .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
+                .with_arg(
+                    encode_one(LedgerArgs::Init(InitArgs {
+                        index_id: None,
+                        max_blocks_per_request: 999,
+                    }))
+                    .expect("Failed to encode ledger init arg"),
+                )
+                .deploy_to(pic.clone()),
+        );
+        let user =
+            Principal::from_text("xzg7k-thc6c-idntg-knmtz-2fbhh-utt3e-snqw6-5xph3-54pbp-7axl5-tae")
+                .unwrap();
         let wallet = PicCanisterBuilder::default()
-        .with_wasm(&PicCanister::dfx_wasm_path("cycles_wallet"))
-        .with_controllers(vec![user])
-        .with_arg(encode_one(cycles_depositor::InitArg{ledger_id: ledger.canister_id}).unwrap())
-        .deploy_to(pic.clone())
-        .into();
+            .with_wasm(&PicCanister::dfx_wasm_path("cycles_wallet"))
+            .with_controllers(vec![user])
+            .with_arg(
+                encode_one(cycles_depositor::InitArg {
+                    ledger_id: ledger.canister_id,
+                })
+                .unwrap(),
+            )
+            .deploy_to(pic.clone())
+            .into();
         Self {
             pic,
             paid_service,
@@ -65,5 +74,15 @@ fn icrc2_payment_works() {
     // Add cycles to the wallet
     setup.pic.add_cycles(setup.wallet.canister_id, 100_000_000);
     // Send cycles to the cycles ledger.
-//    setup.wallet.deposit(caller, arg0);
+    setup.wallet.deposit(
+        setup.user,
+        &cycles_depositor::DepositArg {
+            to: cycles_depositor::Account {
+                owner: setup.user,
+                subaccount: None,
+            },
+            memo: None,
+            cycles: candid::Nat::from(100_000u32),
+        },
+    );
 }

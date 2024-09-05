@@ -14,6 +14,7 @@ pub struct CallerPaysWithIcRc2TestSetup {
     paid_service: PicCanister,
     /// ICRC2 ledger
     ledger: PicCanister,
+    /// User's cycles wallet
 }
 impl Default for CallerPaysWithIcRc2TestSetup {
     fn default() -> Self {
@@ -48,5 +49,5 @@ fn icrc2_test_setup_works() {
 #[test]
 fn icrc2_payment_works() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
-    
+
 }

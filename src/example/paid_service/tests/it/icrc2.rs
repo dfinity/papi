@@ -23,7 +23,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             &PicCanister::cargo_wasm_path("example_paid_service"),
         );
         let ledger = PicCanisterBuilder::default()
-            .with_wasm(&PicCanister::cargo_wasm_path("example_paid_service"))
+            .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
             .with_arg(
                 encode_one(LedgerArgs::Init(InitArgs {
                     index_id: None,

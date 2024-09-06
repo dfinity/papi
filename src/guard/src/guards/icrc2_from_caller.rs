@@ -1,21 +1,35 @@
 use super::{PaymentError, PaymentGuard};
-use candid::Principal;
+use candid::{Nat, Principal};
+use cycles_ledger_client::WithdrawFromArgs;
 
 /// The information required to deduct an ICRC-2 payment from the caller.
 pub struct Icrc2FromCaller {
     /// The payer
-    pub payer: ic_papi_api::Account,
+    pub payer: cycles_ledger_client::Account,
     /// The ledger to deduct the charge from.
     pub ledger_canister_id: Principal,
 }
 
 impl PaymentGuard for Icrc2FromCaller {
-    fn deduct(&self, _fee: u64) -> Result<(), PaymentError> {
-        ic_cdk::api::call::call(
-            self.ledger_canister_id,
-            "",
-            (self.payer, _fee),
-        );
+    async fn deduct(&self, fee: u64) -> Result<(), PaymentError> {
+        cycles_ledger_client::Service(self.ledger_canister_id)
+            .withdraw_from(&WithdrawFromArgs {
+                to: Principal::anonymous(), // TODO: Should presumably be the canister ID of the service
+                from: self.payer.clone(),
+                amount: Nat::from(fee),
+                spender_subaccount: None,
+                created_at_time: None,
+            })
+            .await
+            .map_err(|(rejection_code, string)| {
+                eprintln!(
+                    "Failed to reach ledger canister at {}: {rejection_code:?}: {string}",
+                    self.ledger_canister_id
+                );
+                PaymentError::LedgerUnreachable {
+                    ledger: self.ledger_canister_id,
+                }
+            })?;
         unimplemented!()
     }
 }

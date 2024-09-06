@@ -6,6 +6,5 @@ edition = "2021"
 [dependencies]
 serde = { workspace = true }
 serde_bytes = { workspace = true }
-pocket-ic = { workspace = true }
 candid = { workspace = true }
 ic-cdk = { workspace = true }

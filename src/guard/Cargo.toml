@@ -7,3 +7,4 @@ edition = "2021"
 ic-cdk = "0.15.0"
 ic-papi-api = { workspace = true }
 candid = { workspace = true }
+cycles-ledger-client = { workspace = true }

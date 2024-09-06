@@ -245,7 +245,6 @@ version = "0.1.0"
 dependencies = [
  "candid",
  "ic-cdk 0.15.1",
- "pocket-ic",
  "serde",
  "serde_bytes",
 ]
@@ -620,6 +619,7 @@ name = "ic-papi-api"
 version = "0.1.0"
 dependencies = [
  "candid",
+ "cycles-ledger-client",
  "serde",
  "serde_bytes",
 ]
@@ -629,6 +629,7 @@ name = "ic-papi-guard"
 version = "0.1.0"
 dependencies = [
  "candid",
+ "cycles-ledger-client",
  "ic-cdk 0.15.1",
  "ic-papi-api",
 ]

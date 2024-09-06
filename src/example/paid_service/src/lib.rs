@@ -1,6 +1,6 @@
 use candid::Principal;
 use ic_cdk_macros::{export_candid, update};
-use ic_papi_api::PaymentError;
+use ic_papi_api::{Account, PaymentError};
 use ic_papi_guard::guards::attached_cycles::AttachedCyclesPayment;
 use ic_papi_guard::guards::icrc2_from_caller::Icrc2FromCaller;
 use ic_papi_guard::guards::PaymentGuard;
@@ -13,7 +13,7 @@ async fn free() -> String {
 /// An API method that requires cycles to be attached directly to the call.
 #[update()]
 async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
-    AttachedCyclesPayment::default().deduct(1000)?;
+    AttachedCyclesPayment::default().deduct(1000).await?;
     Ok("Yes, you paid 1000 cycles!".to_string())
 }
 
@@ -21,7 +21,7 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
 #[update()]
 async fn cost_1000_icrc2_from_caller() -> Result<String, PaymentError> {
     let guard = Icrc2FromCaller {
-        payer: ic_papi_api::Account {
+        payer: Account {
             owner: ic_cdk::caller(),
             subaccount: None,
         },
@@ -31,7 +31,7 @@ async fn cost_1000_icrc2_from_caller() -> Result<String, PaymentError> {
         )
         .unwrap(),
     };
-    guard.deduct(1000)?;
+    guard.deduct(1000).await?;
     Ok("Yes, you paid 1000 cycles!".to_string())
 }
 

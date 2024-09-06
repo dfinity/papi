@@ -7,3 +7,4 @@ edition = "2021"
 candid = { workspace = true }
 serde = { workspace = true }
 serde_bytes = { workspace = true }
+cycles-ledger-client = { workspace = true }

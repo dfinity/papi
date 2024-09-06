@@ -11,6 +11,11 @@ pub struct Icrc2FromCaller {
 
 impl PaymentGuard for Icrc2FromCaller {
     fn deduct(&self, _fee: u64) -> Result<(), PaymentError> {
+        ic_cdk::api::call::call(
+            self.ledger_canister_id,
+            "",
+            (self.payer, _fee),
+        );
         unimplemented!()
     }
 }

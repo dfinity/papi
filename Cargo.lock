@@ -240,6 +240,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "cycles-ledger-client"
+version = "0.1.0"
+dependencies = [
+ "candid",
+ "ic-cdk 0.15.1",
+ "pocket-ic",
+ "serde",
+ "serde_bytes",
+]
+
+[[package]]
 name = "data-encoding"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

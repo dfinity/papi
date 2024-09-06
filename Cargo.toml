@@ -1,5 +1,5 @@
 [workspace]
-members = ["src/api", "src/example/app_backend", "src/example/paid_service", "src/guard"]
+members = ["src/api", "src/example/app_backend", "src/example/paid_service", "src/guard", "src/declarations/cycles_ledger"]
 resolver = "2"
 
 [workspace.dependencies]
@@ -11,6 +11,7 @@ serde = "1"
 serde_bytes = "0.11"
 ic-papi-api = { path = "src/api" }
 ic-papi-guard = { path = "src/guard" }
+cycles-ledger-clinet = { path = "src/declarations/cycles_ledger" }
 
 [profile.release]
 lto = true

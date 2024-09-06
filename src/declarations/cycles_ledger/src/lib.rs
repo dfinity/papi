@@ -1,10 +1,8 @@
 // This is an experimental feature to generate Rust binding from Candid.
 // You may want to manually adjust some of the types.
 #![allow(dead_code, unused_imports)]
-use std::sync::Arc;
-
-use candid::{self, decode_one, encode_args, encode_one, CandidType, Deserialize, Principal};
-use pocket_ic::{PocketIc, WasmResult};
+use candid::{self, CandidType, Deserialize, Principal};
+use ic_cdk::api::call::CallResult as Result;
 
 #[derive(CandidType, Deserialize, Debug)]
 pub enum ChangeIndexId { SetTo(Principal), Unset }
@@ -23,10 +21,7 @@ pub enum LedgerArgs { Upgrade(Option<UpgradeArgs>), Init(InitArgs) }
 #[derive(CandidType, Deserialize, Debug)]
 pub struct SubnetFilter { pub subnet_type: Option<String> }
 #[derive(CandidType, Deserialize, Debug)]
-pub enum SubnetSelection {
-  Filter(SubnetFilter),
-  Subnet{ subnet: Principal },
-}
+pub enum SubnetSelection { Filter(SubnetFilter), Subnet{ subnet: Principal } }
 #[derive(CandidType, Deserialize, Debug)]
 pub struct CanisterSettings {
   pub freezing_threshold: Option<candid::Nat>,
@@ -138,10 +133,7 @@ pub enum MetadataValue {
   Text(String),
 }
 #[derive(CandidType, Deserialize, Debug)]
-pub struct SupportedStandard {
-  pub url: String,
-  pub name: String,
-}
+pub struct SupportedStandard { pub url: String, pub name: String }
 #[derive(CandidType, Deserialize, Debug)]
 pub struct TransferArgs {
   pub to: Account,
@@ -163,15 +155,9 @@ pub enum TransferError {
   InsufficientFunds{ balance: candid::Nat },
 }
 #[derive(CandidType, Deserialize, Debug)]
-pub struct AllowanceArgs {
-  pub account: Account,
-  pub spender: Account,
-}
+pub struct AllowanceArgs { pub account: Account, pub spender: Account }
 #[derive(CandidType, Deserialize, Debug)]
-pub struct Allowance {
-  pub allowance: candid::Nat,
-  pub expires_at: Option<u64>,
-}
+pub struct Allowance { pub allowance: candid::Nat, pub expires_at: Option<u64> }
 #[derive(CandidType, Deserialize, Debug)]
 pub struct ApproveArgs {
   pub fee: Option<candid::Nat>,
@@ -227,10 +213,7 @@ pub struct GetArchivesResultItem {
 }
 pub type GetArchivesResult = Vec<GetArchivesResultItem>;
 #[derive(CandidType, Deserialize, Debug)]
-pub struct GetBlocksArgsItem {
-  pub start: candid::Nat,
-  pub length: candid::Nat,
-}
+pub struct GetBlocksArgsItem { pub start: candid::Nat, pub length: candid::Nat }
 pub type GetBlocksArgs = Vec<GetBlocksArgsItem>;
 #[derive(CandidType, Deserialize, Debug)]
 pub enum Value {
@@ -267,10 +250,7 @@ pub struct DataCertificate {
   pub hash_tree: serde_bytes::ByteBuf,
 }
 #[derive(CandidType, Deserialize, Debug)]
-pub struct SupportedBlockType {
-  pub url: String,
-  pub block_type: String,
-}
+pub struct SupportedBlockType { pub url: String, pub block_type: String }
 #[derive(CandidType, Deserialize, Debug)]
 pub struct WithdrawArgs {
   pub to: Principal,
@@ -321,108 +301,76 @@ pub enum WithdrawFromError {
   InsufficientFunds{ balance: candid::Nat },
 }
 
-pub struct CyclesLedgerPic{pub pic: Arc<PocketIc>, pub canister_id: Principal}
-
-impl CyclesLedgerPic {
-  fn update<T>(
-    &self,
-    caller: Principal,
-    method: &str,
-    arg: impl CandidType,
-) -> Result<T, String>
-where
-    T: for<'a> Deserialize<'a> + CandidType,
-{
-    self.pic
-        .update_call(self.canister_id, caller, method, encode_one(arg).unwrap())
-        .map_err(|e| {
-            format!(
-                "Update call error. RejectionCode: {:?}, Error: {}",
-                e.code, e.description
-            )
-        })
-        .and_then(|reply| match reply {
-            WasmResult::Reply(reply) => {
-                decode_one(&reply).map_err(|e| format!("Decoding failed: {e}"))
-            }
-            WasmResult::Reject(error) => Err(error),
-        })
-}
-}
-
-impl CyclesLedgerPic {
-/*
-  pub fn create_canister(&self, caller: Principal, arg0: &CreateCanisterArgs) -> Result<(std::result::Result<CreateCanisterSuccess, CreateCanisterError>,)> {
-    self.pic.update_call(self.canister_id, caller, "create_canister", (arg0,))
+pub struct Service(pub Principal);
+impl Service {
+  pub async fn create_canister(&self, arg0: &CreateCanisterArgs) -> Result<(std::result::Result<CreateCanisterSuccess, CreateCanisterError>,)> {
+    ic_cdk::call(self.0, "create_canister", (arg0,)).await
   }
-  pub fn create_canister_from(&self, caller: Principal, arg0: &CreateCanisterFromArgs) -> Result<(std::result::Result<CreateCanisterSuccess, CreateCanisterFromError>,)> {
-    self.pic.update_call(self.canister_id, caller, "create_canister_from", (arg0,))
+  pub async fn create_canister_from(&self, arg0: &CreateCanisterFromArgs) -> Result<(std::result::Result<CreateCanisterSuccess, CreateCanisterFromError>,)> {
+    ic_cdk::call(self.0, "create_canister_from", (arg0,)).await
   }
-  */
-  pub fn deposit(&self, caller: Principal, arg0: &DepositArgs) -> Result<DepositResult, String> {
-    self.update(caller, "deposit", (arg0,))
+  pub async fn deposit(&self, arg0: &DepositArgs) -> Result<(DepositResult,)> {
+    ic_cdk::call(self.0, "deposit", (arg0,)).await
   }
-  /*
-  pub fn http_request(&self, caller: Principal, arg0: &HttpRequest) -> Result<(HttpResponse,)> {
-    self.pic.update_call(self.canister_id, caller, "http_request", (arg0,))
+  pub async fn http_request(&self, arg0: &HttpRequest) -> Result<(HttpResponse,)> {
+    ic_cdk::call(self.0, "http_request", (arg0,)).await
   }
-  pub fn icrc_1_balance_of(&self, caller: Principal, arg0: &Account) -> Result<(candid::Nat,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc1_balance_of", (arg0,))
+  pub async fn icrc_1_balance_of(&self, arg0: &Account) -> Result<(candid::Nat,)> {
+    ic_cdk::call(self.0, "icrc1_balance_of", (arg0,)).await
   }
-  pub fn icrc_1_decimals(&self, caller: Principal) -> Result<(u8,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc1_decimals", ())
+  pub async fn icrc_1_decimals(&self) -> Result<(u8,)> {
+    ic_cdk::call(self.0, "icrc1_decimals", ()).await
   }
-  pub fn icrc_1_fee(&self, caller: Principal) -> Result<(candid::Nat,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc1_fee", ())
+  pub async fn icrc_1_fee(&self) -> Result<(candid::Nat,)> {
+    ic_cdk::call(self.0, "icrc1_fee", ()).await
   }
-  pub fn icrc_1_metadata(&self, caller: Principal) -> Result<(Vec<(String,MetadataValue,)>,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc1_metadata", ())
+  pub async fn icrc_1_metadata(&self) -> Result<(Vec<(String,MetadataValue,)>,)> {
+    ic_cdk::call(self.0, "icrc1_metadata", ()).await
   }
-  pub fn icrc_1_minting_account(&self, caller: Principal) -> Result<(Option<Account>,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc1_minting_account", ())
+  pub async fn icrc_1_minting_account(&self) -> Result<(Option<Account>,)> {
+    ic_cdk::call(self.0, "icrc1_minting_account", ()).await
   }
-  pub fn icrc_1_name(&self, caller: Principal) -> Result<(String,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc1_name", ())
+  pub async fn icrc_1_name(&self) -> Result<(String,)> {
+    ic_cdk::call(self.0, "icrc1_name", ()).await
   }
-  pub fn icrc_1_supported_standards(&self, caller: Principal) -> Result<(Vec<SupportedStandard>,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc1_supported_standards", ())
+  pub async fn icrc_1_supported_standards(&self) -> Result<(Vec<SupportedStandard>,)> {
+    ic_cdk::call(self.0, "icrc1_supported_standards", ()).await
   }
-  pub fn icrc_1_symbol(&self, caller: Principal) -> Result<(String,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc1_symbol", ())
+  pub async fn icrc_1_symbol(&self) -> Result<(String,)> {
+    ic_cdk::call(self.0, "icrc1_symbol", ()).await
   }
-  pub fn icrc_1_total_supply(&self, caller: Principal) -> Result<(candid::Nat,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc1_total_supply", ())
+  pub async fn icrc_1_total_supply(&self) -> Result<(candid::Nat,)> {
+    ic_cdk::call(self.0, "icrc1_total_supply", ()).await
   }
-  pub fn icrc_1_transfer(&self, caller: Principal, arg0: &TransferArgs) -> Result<(std::result::Result<BlockIndex, TransferError>,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc1_transfer", (arg0,))
+  pub async fn icrc_1_transfer(&self, arg0: &TransferArgs) -> Result<(std::result::Result<BlockIndex, TransferError>,)> {
+    ic_cdk::call(self.0, "icrc1_transfer", (arg0,)).await
   }
-  pub fn icrc_2_allowance(&self, caller: Principal, arg0: &AllowanceArgs) -> Result<(Allowance,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc2_allowance", (arg0,))
+  pub async fn icrc_2_allowance(&self, arg0: &AllowanceArgs) -> Result<(Allowance,)> {
+    ic_cdk::call(self.0, "icrc2_allowance", (arg0,)).await
   }
-  pub fn icrc_2_approve(&self, caller: Principal, arg0: &ApproveArgs) -> Result<(std::result::Result<candid::Nat, ApproveError>,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc2_approve", (arg0,))
+  pub async fn icrc_2_approve(&self, arg0: &ApproveArgs) -> Result<(std::result::Result<candid::Nat, ApproveError>,)> {
+    ic_cdk::call(self.0, "icrc2_approve", (arg0,)).await
   }
-  pub fn icrc_2_transfer_from(&self, caller: Principal, arg0: &TransferFromArgs) -> Result<(std::result::Result<candid::Nat, TransferFromError>,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc2_transfer_from", (arg0,))
+  pub async fn icrc_2_transfer_from(&self, arg0: &TransferFromArgs) -> Result<(std::result::Result<candid::Nat, TransferFromError>,)> {
+    ic_cdk::call(self.0, "icrc2_transfer_from", (arg0,)).await
   }
-  pub fn icrc_3_get_archives(&self, caller: Principal, arg0: &GetArchivesArgs) -> Result<(GetArchivesResult,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc3_get_archives", (arg0,))
+  pub async fn icrc_3_get_archives(&self, arg0: &GetArchivesArgs) -> Result<(GetArchivesResult,)> {
+    ic_cdk::call(self.0, "icrc3_get_archives", (arg0,)).await
   }
-  pub fn icrc_3_get_blocks(&self, caller: Principal, arg0: &GetBlocksArgs) -> Result<(GetBlocksResult,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc3_get_blocks", (arg0,))
+  pub async fn icrc_3_get_blocks(&self, arg0: &GetBlocksArgs) -> Result<(GetBlocksResult,)> {
+    ic_cdk::call(self.0, "icrc3_get_blocks", (arg0,)).await
   }
-  pub fn icrc_3_get_tip_certificate(&self, caller: Principal) -> Result<(Option<DataCertificate>,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc3_get_tip_certificate", ())
+  pub async fn icrc_3_get_tip_certificate(&self) -> Result<(Option<DataCertificate>,)> {
+    ic_cdk::call(self.0, "icrc3_get_tip_certificate", ()).await
   }
-  pub fn icrc_3_supported_block_types(&self, caller: Principal) -> Result<(Vec<SupportedBlockType>,)> {
-    self.pic.update_call(self.canister_id, caller, "icrc3_supported_block_types", encode_args(()))
+  pub async fn icrc_3_supported_block_types(&self) -> Result<(Vec<SupportedBlockType>,)> {
+    ic_cdk::call(self.0, "icrc3_supported_block_types", ()).await
   }
-  pub fn withdraw(&self, caller: Principal, arg0: &WithdrawArgs) -> Result<(std::result::Result<BlockIndex, WithdrawError>,)> {
-    self.pic.update_call(self.canister_id, caller, "withdraw", encode_args((arg0,)).unwrap())
+  pub async fn withdraw(&self, arg0: &WithdrawArgs) -> Result<(std::result::Result<BlockIndex, WithdrawError>,)> {
+    ic_cdk::call(self.0, "withdraw", (arg0,)).await
   }
- */
-  pub fn withdraw_from(&self, caller: Principal, arg0: &WithdrawFromArgs) -> Result<(std::result::Result<BlockIndex, WithdrawFromError>,), String> {
-    self.update(caller, "withdraw_from", encode_args((arg0,)).unwrap())
+  pub async fn withdraw_from(&self, arg0: &WithdrawFromArgs) -> Result<(std::result::Result<BlockIndex, WithdrawFromError>,)> {
+    ic_cdk::call(self.0, "withdraw_from", (arg0,)).await
   }
 }
 

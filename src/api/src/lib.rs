@@ -21,19 +21,21 @@ pub enum PaymentError {
 #[non_exhaustive]
 pub enum PaymentType {
     AttachedCycles,
-    Icrc2(Icrc2Payment),
+    Icrc2Cycles(Icrc2Payer),
 }
 
 /// User's payment details for an ICRC2 payment.
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
-pub struct Icrc2Payment {
-    /// The user's principal and (optionally) subaccount.
+pub struct Icrc2Payer {
+    /// The customer's principal and (optionally) subaccount.
     ///
     /// By default, the caller's main account is used.
-    pub payer: Option<Account>,
+    pub account: Option<Account>,
+    /// The spender, if different from the payer.
+    pub spender_subaccount: Option<serde_bytes::ByteBuf>,
     /// The ledger canister ID.
     ///
-    /// By default, the cycles ledger is used.  A given canister MAY accept other currencies.
+    /// Note: This is included in order to improve error messages if the caller tries to use the wrong ledger.
     pub ledger_canister_id: Option<Principal>,
     /// Corresponds to the `created_at_time` field in ICRC2.
     pub created_at_time: Option<u64>,

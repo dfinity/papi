@@ -124,7 +124,7 @@ fn icrc2_test_setup_works() {
 }
 
 #[test]
-fn icrc2_payment_works() {
+fn caller_pays_by_icrc2() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.

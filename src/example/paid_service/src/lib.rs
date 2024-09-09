@@ -7,12 +7,13 @@ use ic_papi_api::{Account, PaymentError};
 use ic_papi_guard::guards::attached_cycles::AttachedCyclesPayment;
 use ic_papi_guard::guards::icrc2_from_caller::Icrc2FromCaller;
 use ic_papi_guard::guards::PaymentGuard;
-use state::{payment_ledger, set_payment_ledger};
+pub use state::InitArgs;
+use state::{payment_ledger, set_init_args};
 
 #[init]
-fn init(ledger: Option<Principal>) {
-    if let Some(init_args) = ledger {
-        set_payment_ledger(init_args);
+fn init(init_args: Option<InitArgs>) {
+    if let Some(init_args) = init_args {
+        set_init_args(init_args);
     }
 }
 

@@ -166,9 +166,12 @@ fn icrc2_payment_works() {
             .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
         // Check that the user has been charged for the approve.
         expected_user_balance -= LEDGER_FEE;
-        setup.assert_user_balance_eq(expected_user_balance, "Expected the user balance to be charged for the ICRC2 approve".to_string());
+        setup.assert_user_balance_eq(
+            expected_user_balance,
+            "Expected the user balance to be charged for the ICRC2 approve".to_string(),
+        );
 
-            // Check the balance beforehand
+        // Check the balance beforehand
         let service_canister_cycles_before =
             setup.pic.cycle_balance(setup.paid_service.canister_id);
         // Call the API
@@ -188,7 +191,10 @@ fn icrc2_payment_works() {
                 "Should have failed with only {} cycles attached",
                 payment
             );
-            setup.assert_user_balance_eq(expected_user_balance, "Expected the user balance to be unchanged by a failed ICRC2".to_string());
+            setup.assert_user_balance_eq(
+                expected_user_balance,
+                "Expected the user balance to be unchanged by a failed ICRC2".to_string(),
+            );
         } else {
             assert_eq!(
                 response,
@@ -204,7 +210,11 @@ fn icrc2_payment_works() {
                 service_canister_cycles_before - service_canister_cycles_after
             );
             expected_user_balance -= api_fee + LEDGER_FEE;
-            setup.assert_user_balance_eq(expected_user_balance, "Expected the user balance to be the initial balance minus the ledger and API fees".to_string());
+            setup.assert_user_balance_eq(
+                expected_user_balance,
+                "Expected the user balance to be the initial balance minus the ledger and API fees"
+                    .to_string(),
+            );
         }
     }
 }

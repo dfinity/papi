@@ -1,7 +1,7 @@
 use super::{PaymentError, PaymentGuard};
 use candid::{Nat, Principal};
 use cycles_ledger_client::WithdrawFromArgs;
-use ic_papi_api::{Account, Icrc2Payer};
+use ic_papi_api::Account;
 
 pub struct Icrc2CyclesPaymentGuard {
     /// The payer

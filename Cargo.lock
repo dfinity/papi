@@ -308,6 +308,7 @@ name = "example_paid_service"
 version = "0.1.0"
 dependencies = [
  "candid",
+ "cycles-ledger-client",
  "ic-cdk 0.15.1",
  "ic-cdk-macros 0.15.0",
  "ic-papi-api",

@@ -1,6 +1,7 @@
 use crate::util::cycles_depositor::{self, CyclesDepositorPic};
 use crate::util::cycles_ledger::{
     Account, ApproveArgs, CyclesLedgerPic, InitArgs as LedgerInitArgs, LedgerArgs,
+    WithdrawFromError,
 };
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{de, encode_one, Nat, Principal};
@@ -147,7 +148,7 @@ fn icrc2_payment_works() {
                         owner: setup.paid_service.canister_id(),
                         subaccount: None,
                     },
-                    amount: Nat::from(api_fee),
+                    amount: Nat::from(payment + LEDGER_FEE),
                     ..ApproveArgs::default()
                 },
             )
@@ -160,9 +161,11 @@ fn icrc2_payment_works() {
         if payment < api_fee {
             assert_eq!(
                 response,
-                Err(PaymentError::InsufficientFunds {
-                    needed: api_fee as u64,    // TODO: Change up to 128
-                    available: payment as u64, // TODO: Change up to 128
+                Err(PaymentError::LedgerError {
+                    ledger: setup.ledger.canister_id(),
+                    error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
+                        allowance: Nat::from(payment + LEDGER_FEE), // TODO: Change up to 128
+                    }
                 }),
                 "Should have failed with only {} cycles attached",
                 payment

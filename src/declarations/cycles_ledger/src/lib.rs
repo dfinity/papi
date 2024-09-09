@@ -96,7 +96,7 @@ pub struct CreateCanisterFromArgs {
     pub amount: candid::Nat,
     pub creation_args: Option<CmcCreateCanisterArgs>,
 }
-#[derive(CandidType, Deserialize, Debug, Clone)]
+#[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum RejectionCode {
     NoError,
     CanisterError,
@@ -388,7 +388,7 @@ pub struct WithdrawFromArgs {
     pub created_at_time: Option<u64>,
     pub amount: candid::Nat,
 }
-#[derive(CandidType, Deserialize, Debug, Clone)]
+#[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum WithdrawFromError {
     GenericError {
         message: String,

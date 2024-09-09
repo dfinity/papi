@@ -1,6 +1,6 @@
 use super::{PaymentError, PaymentGuard};
 use candid::{Nat, Principal};
-use cycles_ledger_client::WithdrawFromArgs;
+use cycles_ledger_client::{WithdrawFromArgs, WithdrawFromError};
 
 /// The information required to deduct an ICRC-2 payment from the caller.
 pub struct Icrc2FromCaller {
@@ -29,19 +29,21 @@ impl PaymentGuard for Icrc2FromCaller {
                 PaymentError::LedgerUnreachable {
                     ledger: self.ledger_canister_id,
                 }
-            })?.0.map_err(
-                |e| {
-                    // TODO: Improve error handling
-                    eprintln!(
-                        "Failed to withdraw from ledger canister at {}: {e:?}",
-                        self.ledger_canister_id
-                    );
-                    match e {
-                        _ => PaymentError::LedgerError {
-                            ledger: self.ledger_canister_id,
-                        }
-                    }
+            })?
+            .0
+            .map_err(|e| {
+                // TODO: Improve error handling
+                eprintln!(
+                    "Failed to withdraw from ledger canister at {}: {e:?}",
+                    self.ledger_canister_id
+                );
+                match e {
+                    error => PaymentError::LedgerError {
+                        ledger: self.ledger_canister_id,
+                        error,
+                    },
                 }
-            ).map(|_| ())
+            })
+            .map(|_| ())
     }
 }

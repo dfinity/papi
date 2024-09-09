@@ -1,9 +1,20 @@
+mod stable_memory;
+
 use candid::Principal;
+use ic_cdk::init;
 use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::{Account, PaymentError};
 use ic_papi_guard::guards::attached_cycles::AttachedCyclesPayment;
 use ic_papi_guard::guards::icrc2_from_caller::Icrc2FromCaller;
 use ic_papi_guard::guards::PaymentGuard;
+use stable_memory::{payment_ledger, set_payment_ledger};
+
+#[init]
+fn init(ledger: Option<Principal>) {
+    if let Some(init_args) = ledger {
+        set_payment_ledger(init_args);
+    }
+}
 
 #[update()]
 async fn free() -> String {
@@ -25,11 +36,7 @@ async fn cost_1000_icrc2_from_caller() -> Result<String, PaymentError> {
             owner: ic_cdk::caller(),
             subaccount: None,
         },
-        ledger_canister_id: Principal::from_text(
-            option_env!("CANISTER_ID_CYCLES_LEDGER")
-                .expect("CANISTER_ID_CYCLES_LEDGER was not set at compile time"),
-        )
-        .unwrap(),
+        ledger_canister_id: payment_ledger(),
     };
     guard.deduct(1000).await?;
     Ok("Yes, you paid 1000 cycles!".to_string())

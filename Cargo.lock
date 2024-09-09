@@ -312,6 +312,7 @@ dependencies = [
  "ic-cdk-macros 0.15.0",
  "ic-papi-api",
  "ic-papi-guard",
+ "ic-stable-structures",
  "pocket-ic",
  "serde",
  "serde_bytes",
@@ -632,6 +633,15 @@ dependencies = [
  "cycles-ledger-client",
  "ic-cdk 0.15.1",
  "ic-papi-api",
+]
+
+[[package]]
+name = "ic-stable-structures"
+version = "0.6.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03f3044466a69802de74e710dc0300b706a05696a0531c942ca856751a13b0db"
+dependencies = [
+ "ic_principal",
 ]
 
 [[package]]

@@ -12,8 +12,9 @@ ic-cdk = { workspace = true }
 candid = { workspace = true }
 ic-papi-api = { workspace = true }
 ic-papi-guard = { workspace = true }
+ic-stable-structures = { workspace = true }
+serde = { workspace = true }
+serde_bytes = { workspace = true }
 
 [dev-dependencies]
 pocket-ic = { workspace = true }
-serde = { workspace = true }
-serde_bytes = { workspace = true }

@@ -1,5 +1,7 @@
 use crate::util::cycles_depositor::{self, CyclesDepositorPic};
-use crate::util::cycles_ledger::{Account, ApproveArgs, CyclesLedgerPic, InitArgs, LedgerArgs};
+use crate::util::cycles_ledger::{
+    Account, ApproveArgs, CyclesLedgerPic, InitArgs as LedgerInitArgs, LedgerArgs,
+};
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{de, encode_one, Nat, Principal};
 use ic_papi_api::PaymentError;
@@ -24,15 +26,11 @@ pub struct CallerPaysWithIcRc2TestSetup {
 impl Default for CallerPaysWithIcRc2TestSetup {
     fn default() -> Self {
         let pic = Arc::new(PocketIc::new());
-        let paid_service = PicCanister::new(
-            pic.clone(),
-            &PicCanister::cargo_wasm_path("example_paid_service"),
-        );
         let ledger = CyclesLedgerPic::from(
             PicCanisterBuilder::default()
                 .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
                 .with_arg(
-                    encode_one(LedgerArgs::Init(InitArgs {
+                    encode_one(LedgerArgs::Init(LedgerInitArgs {
                         index_id: None,
                         max_blocks_per_request: 999,
                     }))
@@ -40,6 +38,10 @@ impl Default for CallerPaysWithIcRc2TestSetup {
                 )
                 .deploy_to(pic.clone()),
         );
+        let paid_service = PicCanisterBuilder::default()
+            .with_wasm(&PicCanister::cargo_wasm_path("example_paid_service"))
+            .with_arg(encode_one(Some(ledger.canister_id)).unwrap())
+            .deploy_to(pic.clone());
         let user =
             Principal::from_text("xzg7k-thc6c-idntg-knmtz-2fbhh-utt3e-snqw6-5xph3-54pbp-7axl5-tae")
                 .unwrap();
@@ -136,23 +138,43 @@ fn icrc2_payment_works() {
     // Exercise the protocol...
     let api_method = "cost_1000_icrc2_from_caller";
     let api_fee = 1_000u128;
-    setup
-        .ledger
-        .icrc_2_approve(
-            setup.user,
-            &ApproveArgs {
-                spender: Account {
-                    owner: setup.paid_service.canister_id(),
-                    subaccount: None,
+    for payment in (api_fee - 5)..(api_fee + 5) {
+        setup
+            .ledger
+            .icrc_2_approve(
+                setup.user,
+                &ApproveArgs {
+                    spender: Account {
+                        owner: setup.paid_service.canister_id(),
+                        subaccount: None,
+                    },
+                    amount: Nat::from(api_fee),
+                    ..ApproveArgs::default()
                 },
-                amount: Nat::from(api_fee),
-                ..ApproveArgs::default()
-            },
-        )
-        .expect("Failed to call the ledger to approve")
-        .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
-    let response: Result<String, PaymentError> = setup
-        .paid_service
-        .update(setup.user, api_method, ())
-        .expect("Failed to call the paid service");
+            )
+            .expect("Failed to call the ledger to approve")
+            .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
+        let response: Result<String, PaymentError> = setup
+            .paid_service
+            .update(setup.user, api_method, ())
+            .expect("Failed to call the paid service");
+        if payment < api_fee {
+            assert_eq!(
+                response,
+                Err(PaymentError::InsufficientFunds {
+                    needed: api_fee as u64,    // TODO: Change up to 128
+                    available: payment as u64, // TODO: Change up to 128
+                }),
+                "Should have failed with only {} cycles attached",
+                payment
+            );
+        } else {
+            assert_eq!(
+                response,
+                Ok("Yes, you paid 1000 cycles!".to_string()),
+                "Should have succeeded with {} cycles attached",
+                payment
+            );
+        }
+    }
 }

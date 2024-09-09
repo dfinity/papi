@@ -28,9 +28,9 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
     Ok("Yes, you paid 1000 cycles!".to_string())
 }
 
-/// An API method that requires cycles to be provided by the user using an ICRC-2 approve.
+/// An API method that requires 1 billion cycles to be provided by the user using an ICRC-2 approve.
 #[update()]
-async fn cost_1000_icrc2_from_caller() -> Result<String, PaymentError> {
+async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
     let guard = Icrc2FromCaller {
         own_canister_id: own_canister_id(),
         payer: Account {
@@ -39,7 +39,7 @@ async fn cost_1000_icrc2_from_caller() -> Result<String, PaymentError> {
         },
         ledger_canister_id: payment_ledger(),
     };
-    guard.deduct(1000).await?;
+    guard.deduct(1_000_000_000).await?;
     Ok("Yes, you paid 1000 cycles!".to_string())
 }
 

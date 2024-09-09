@@ -7,7 +7,7 @@ use ic_papi_api::{Account, PaymentError};
 use ic_papi_guard::guards::attached_cycles::AttachedCyclesPayment;
 use ic_papi_guard::guards::icrc2_from_caller::Icrc2FromCaller;
 use ic_papi_guard::guards::PaymentGuard;
-use state::{payment_ledger, set_init_args};
+use state::{own_canister_id, payment_ledger, set_init_args};
 
 #[init]
 fn init(init_args: Option<InitArgs>) {
@@ -32,6 +32,7 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
 #[update()]
 async fn cost_1000_icrc2_from_caller() -> Result<String, PaymentError> {
     let guard = Icrc2FromCaller {
+        own_canister_id: own_canister_id(),
         payer: Account {
             owner: ic_cdk::caller(),
             subaccount: None,

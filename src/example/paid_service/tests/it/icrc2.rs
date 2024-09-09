@@ -43,10 +43,13 @@ impl Default for CallerPaysWithIcRc2TestSetup {
         let paid_service = PicCanisterBuilder::default()
             .with_wasm(&PicCanister::cargo_wasm_path("example_paid_service"))
             .with_canister(paid_service.clone())
-            .with_arg(encode_one(Some(InitArgs{
-                ledger: Some(ledger.canister_id()),
-                own_canister_id: paid_service,
-            })).unwrap())
+            .with_arg(
+                encode_one(Some(InitArgs {
+                    ledger: Some(ledger.canister_id()),
+                    own_canister_id: paid_service,
+                }))
+                .unwrap(),
+            )
             .deploy_to(pic.clone());
         let user =
             Principal::from_text("xzg7k-thc6c-idntg-knmtz-2fbhh-utt3e-snqw6-5xph3-54pbp-7axl5-tae")

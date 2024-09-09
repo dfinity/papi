@@ -8,13 +8,15 @@ pub struct Icrc2FromCaller {
     pub payer: cycles_ledger_client::Account,
     /// The ledger to deduct the charge from.
     pub ledger_canister_id: Principal,
+    /// Own canister ID
+    pub own_canister_id: Principal,
 }
 
 impl PaymentGuard for Icrc2FromCaller {
     async fn deduct(&self, fee: u64) -> Result<(), PaymentError> {
         cycles_ledger_client::Service(self.ledger_canister_id)
             .withdraw_from(&WithdrawFromArgs {
-                to: Principal::anonymous(), // TODO: Should presumably be the canister ID of the service
+                to: self.own_canister_id.clone(),
                 from: self.payer.clone(),
                 amount: Nat::from(fee),
                 spender_subaccount: None,

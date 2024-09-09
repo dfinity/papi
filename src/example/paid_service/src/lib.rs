@@ -1,6 +1,5 @@
 mod state;
 
-use candid::Principal;
 use ic_cdk::init;
 use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::{Account, PaymentError};

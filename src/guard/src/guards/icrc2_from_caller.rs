@@ -1,6 +1,6 @@
 use super::{PaymentError, PaymentGuard};
 use candid::{Nat, Principal};
-use cycles_ledger_client::{WithdrawFromArgs, WithdrawFromError};
+use cycles_ledger_client::WithdrawFromArgs;
 
 /// The information required to deduct an ICRC-2 payment from the caller.
 pub struct Icrc2FromCaller {

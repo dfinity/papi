@@ -1,4 +1,4 @@
-mod stable_memory;
+mod state;
 
 use candid::Principal;
 use ic_cdk::init;
@@ -7,7 +7,7 @@ use ic_papi_api::{Account, PaymentError};
 use ic_papi_guard::guards::attached_cycles::AttachedCyclesPayment;
 use ic_papi_guard::guards::icrc2_from_caller::Icrc2FromCaller;
 use ic_papi_guard::guards::PaymentGuard;
-use stable_memory::{payment_ledger, set_payment_ledger};
+use state::{payment_ledger, set_payment_ledger};
 
 #[init]
 fn init(ledger: Option<Principal>) {

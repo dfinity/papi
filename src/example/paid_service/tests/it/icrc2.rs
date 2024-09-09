@@ -198,7 +198,7 @@ fn icrc2_payment_works() {
         } else {
             assert_eq!(
                 response,
-                Ok("Yes, you paid 1000 cycles!".to_string()),
+                Ok("Yes, you paid 1 billion cycles!".to_string()),
                 "Should have succeeded with {} cycles attached",
                 payment
             );

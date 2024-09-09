@@ -293,6 +293,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
+name = "example-paid-service-api"
+version = "0.1.0"
+dependencies = [
+ "candid",
+ "serde",
+ "serde_bytes",
+]
+
+[[package]]
 name = "example_app_backend"
 version = "0.1.0"
 dependencies = [
@@ -309,6 +318,7 @@ version = "0.1.0"
 dependencies = [
  "candid",
  "cycles-ledger-client",
+ "example-paid-service-api",
  "ic-cdk 0.15.1",
  "ic-cdk-macros 0.15.0",
  "ic-papi-api",

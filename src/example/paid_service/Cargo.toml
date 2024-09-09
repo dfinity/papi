@@ -15,6 +15,7 @@ ic-papi-guard = { workspace = true }
 ic-stable-structures = { workspace = true }
 serde = { workspace = true }
 serde_bytes = { workspace = true }
+example-paid-service-api = { workspace = true }
 
 [dev-dependencies]
 pocket-ic = { workspace = true }

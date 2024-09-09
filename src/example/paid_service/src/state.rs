@@ -1,22 +1,17 @@
 use std::cell::RefCell;
 
-use candid::{CandidType, Deserialize, Principal};
+use candid::Principal;
+use example_paid_service_api::InitArgs;
 
 thread_local! {
     pub static INIT_ARGS: RefCell<Option<InitArgs>> = RefCell::new(None);
-}
-
-#[derive(Clone, CandidType, Deserialize, Debug)]
-pub struct InitArgs {
-    pub own_canister_id: Principal,
-    pub ledger: Option<Principal>,
 }
 
 pub fn init_element<F, T>(f: F) -> T
 where
     F: FnOnce(&InitArgs) -> T,
 {
-    INIT_ARGS.with(|init_args| f(init_args.borrow().as_ref().expect("foomsg")))
+    INIT_ARGS.with(|init_args| f(init_args.borrow().as_ref().expect("No init args provided")))
 }
 
 /// Provides the canister_id of the ledger used for payments.

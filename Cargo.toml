@@ -1,5 +1,5 @@
 [workspace]
-members = ["src/api", "src/example/app_backend", "src/example/paid_service", "src/guard", "src/declarations/cycles_ledger"]
+members = ["src/api", "src/example/app_backend", "src/example/paid_service", "src/example/paid_service_api", "src/guard", "src/declarations/cycles_ledger"]
 resolver = "2"
 
 [workspace.dependencies]
@@ -13,6 +13,7 @@ ic-papi-api = { path = "src/api" }
 ic-papi-guard = { path = "src/guard" }
 ic-stable-structures = "0.6.5"
 cycles-ledger-client = { path = "src/declarations/cycles_ledger" }
+example-paid-service-api = { path = "src/example/paid_service_api" }
 
 [profile.release]
 lto = true

@@ -5,7 +5,7 @@ use crate::util::cycles_ledger::{
 };
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{de, encode_one, Nat, Principal};
-use example_paid_service::InitArgs;
+use example_paid_service_api::InitArgs;
 use ic_papi_api::PaymentError;
 use pocket_ic::PocketIc;
 use std::sync::Arc;
@@ -39,9 +39,14 @@ impl Default for CallerPaysWithIcRc2TestSetup {
                 )
                 .deploy_to(pic.clone()),
         );
+        let paid_service = pic.create_canister();
         let paid_service = PicCanisterBuilder::default()
             .with_wasm(&PicCanister::cargo_wasm_path("example_paid_service"))
-            .with_arg(encode_one(Some(InitArgs)).unwrap())
+            .with_canister(paid_service.clone())
+            .with_arg(encode_one(Some(InitArgs{
+                ledger: Some(ledger.canister_id()),
+                own_canister_id: paid_service,
+            })).unwrap())
             .deploy_to(pic.clone());
         let user =
             Principal::from_text("xzg7k-thc6c-idntg-knmtz-2fbhh-utt3e-snqw6-5xph3-54pbp-7axl5-tae")

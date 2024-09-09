@@ -28,7 +28,9 @@ pub enum PaymentType {
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub struct Icrc2Payment {
     /// The user's principal and (optionally) subaccount.
-    pub payer: Account,
+    ///
+    /// By default, the caller's main account is used.
+    pub payer: Option<Account>,
     /// The ledger canister ID.
     ///
     /// By default, the cycles ledger is used.  A given canister MAY accept other currencies.

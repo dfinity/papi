@@ -3,8 +3,7 @@ mod state;
 use example_paid_service_api::InitArgs;
 use ic_cdk::init;
 use ic_cdk_macros::{export_candid, update};
-use ic_papi_api::{Account, PaymentError};
-use ic_papi_guard::guards::icrc2_from_caller::Icrc2FromCaller;
+use ic_papi_api::PaymentError;
 use ic_papi_guard::guards::PaymentGuard;
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,

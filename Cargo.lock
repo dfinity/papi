@@ -644,6 +644,7 @@ dependencies = [
  "cycles-ledger-client",
  "ic-cdk 0.15.1",
  "ic-papi-api",
+ "serde_bytes",
 ]
 
 [[package]]

@@ -46,11 +46,12 @@ async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
         PaymentType::AttachedCycles => {
             AttachedCyclesPayment::default().deduct(fee).await?;
         }
-        PaymentType::Icrc2 => {
+        PaymentType::Icrc2Cycles(_payer) => {
             let mut guard = Icrc2CyclesPaymentGuard::new(own_canister_id());
             guard.ledger_canister_id = payment_ledger();
             guard.deduct(fee).await?;
         }
+        _ => return Err(PaymentError::UnsupportedPaymentType),
     };
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }

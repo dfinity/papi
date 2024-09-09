@@ -5,6 +5,7 @@ use cycles_ledger_client::WithdrawFromError;
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum PaymentError {
+    UnsupportedPaymentType,
     LedgerUnreachable {
         ledger: Principal,
     },
@@ -18,6 +19,7 @@ pub enum PaymentError {
     },
 }
 
+#[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum PaymentType {
     AttachedCycles,

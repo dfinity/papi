@@ -83,7 +83,7 @@ pub enum CreateCanisterError {
         balance: candid::Nat,
     },
 }
-#[derive(CandidType, Deserialize, Debug, Clone)]
+#[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct Account {
     pub owner: Principal,
     pub subaccount: Option<serde_bytes::ByteBuf>,

@@ -14,11 +14,6 @@ where
     INIT_ARGS.with(|init_args| f(init_args.borrow().as_ref().expect("No init args provided")))
 }
 
-/// Provides own canister ID
-pub fn own_canister_id() -> Principal {
-    init_element(|init_args| init_args.own_canister_id.clone())
-}
-
 /// Provides the canister_id of the ledger used for payments.
 pub fn payment_ledger() -> Principal {
     init_element(|init_args| {

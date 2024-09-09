@@ -28,11 +28,11 @@ impl Icrc2CyclesPaymentGuard {
         )
         .expect("Failed to parse cycles ledger canister ID")
     }
-    pub fn new(own_canister_id: Principal) -> Self {
+    pub fn new() -> Self {
         Self {
             payer_account: Self::default_account(),
             ledger_canister_id: Self::default_cycles_ledger(),
-            own_canister_id,
+            own_canister_id: ic_cdk::api::id(),
             created_at_time: None,
             spender_subaccount: None,
         }

@@ -8,7 +8,7 @@ use ic_papi_guard::guards::PaymentGuard;
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
 };
-use state::{own_canister_id, payment_ledger, set_init_args};
+use state::{payment_ledger, set_init_args};
 
 #[init]
 fn init(init_args: Option<InitArgs>) {
@@ -32,7 +32,7 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
 /// An API method that requires 1 billion cycles using an ICRC-2 approve with default parameters.
 #[update()]
 async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
-    let mut guard = Icrc2CyclesPaymentGuard::new(own_canister_id());
+    let mut guard = Icrc2CyclesPaymentGuard::new();
     guard.ledger_canister_id = payment_ledger();
     guard.deduct(1_000_000_000).await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
@@ -47,7 +47,7 @@ async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
             AttachedCyclesPayment::default().deduct(fee).await?;
         }
         PaymentType::Icrc2Cycles(_payer) => {
-            let mut guard = Icrc2CyclesPaymentGuard::new(own_canister_id());
+            let mut guard = Icrc2CyclesPaymentGuard::new();
             guard.ledger_canister_id = payment_ledger();
             guard.deduct(fee).await?;
         }

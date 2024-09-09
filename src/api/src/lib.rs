@@ -5,6 +5,7 @@ pub use cycles_ledger_client::Account;
 #[non_exhaustive]
 pub enum PaymentError {
     LedgerUnreachable { ledger: Principal },
+    LedgerError { ledger: Principal },
     InsufficientFunds { needed: u64, available: u64 },
 }
 

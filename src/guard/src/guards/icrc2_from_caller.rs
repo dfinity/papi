@@ -29,7 +29,19 @@ impl PaymentGuard for Icrc2FromCaller {
                 PaymentError::LedgerUnreachable {
                     ledger: self.ledger_canister_id,
                 }
-            })?;
-        unimplemented!()
+            })?.0.map_err(
+                |e| {
+                    // TODO: Improve error handling
+                    eprintln!(
+                        "Failed to withdraw from ledger canister at {}: {e:?}",
+                        self.ledger_canister_id
+                    );
+                    match e {
+                        _ => PaymentError::LedgerError {
+                            ledger: self.ledger_canister_id,
+                        }
+                    }
+                }
+            ).map(|_| ())
     }
 }

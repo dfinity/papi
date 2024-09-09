@@ -7,7 +7,6 @@ use candid::{de, encode_one, Nat, Principal};
 use ic_papi_api::PaymentError;
 use pocket_ic::PocketIc;
 use std::sync::Arc;
-use std::u128::MAX;
 
 pub struct CallerPaysWithIcRc2TestSetup {
     /// The PocketIC instance.

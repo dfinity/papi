@@ -198,6 +198,8 @@ fn icrc2_payment_works() {
                 "The service canister needs to charge more to cover its cycle cost!  Loss: {}",
                 service_canister_cycles_before - service_canister_cycles_after
             );
+            expected_user_balance -= api_fee + LEDGER_FEE;
+            setup.assert_user_balance_eq(expected_balance, "Expected the user balance to be the initial balance minus the fee".to_string());
         }
     }
 }

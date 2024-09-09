@@ -17,8 +17,8 @@ impl PaymentGuard for Icrc2FromCaller {
         cycles_ledger_client::Service(self.ledger_canister_id)
             .withdraw_from(&WithdrawFromArgs {
                 to: self.own_canister_id.clone(),
-                from: self.payer.clone(),
                 amount: Nat::from(fee),
+                from: self.payer.clone(),
                 spender_subaccount: None,
                 created_at_time: None,
             })

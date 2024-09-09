@@ -28,7 +28,7 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
     Ok("Yes, you paid 1000 cycles!".to_string())
 }
 
-/// An API method that requires 1 billion cycles to be provided by the user using an ICRC-2 approve.
+/// An API method that requires 1 billion cycles using an ICRC-2 approve with default parameters.
 #[update()]
 async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
     let guard = Icrc2FromCaller {

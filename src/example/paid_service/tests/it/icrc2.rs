@@ -22,6 +22,8 @@ pub struct CallerPaysWithIcRc2TestSetup {
     user: Principal,
     /// Another user
     user2: Principal,
+    /// Unauthorized user
+    unauthorized_user: Principal,
     /// User's wallet.  We use the cycles wallet so that we can top it up easily, but any source of funds will do, with any ICRC-2 token.
     wallet: CyclesDepositorPic,
 }
@@ -55,6 +57,9 @@ impl Default for CallerPaysWithIcRc2TestSetup {
         let user2 =
             Principal::from_text("jwhyn-xieqy-drmun-h7uci-jzycw-vnqhj-s62vl-4upsg-cmub3-vakaq-rqe")
                 .unwrap();
+        let unauthorized_user =
+            Principal::from_text("rg3gz-22tjp-jh7hl-migkq-vb7in-i2ylc-6umlc-dtbug-v6jgc-uo24d-nqe")
+                .unwrap();
         let wallet = PicCanisterBuilder::default()
             .with_wasm(&PicCanister::dfx_wasm_path("cycles_wallet"))
             .with_controllers(vec![user])
@@ -72,6 +77,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             ledger,
             user,
             user2,
+            unauthorized_user,
             wallet,
         }
     }
@@ -377,5 +383,39 @@ fn caller_pays_by_named_icrc2() {
             "Expected the user balance to be the initial balance minus the ledger and API fees"
                 .to_string(),
         );
+        // But an unauthorized user should not be able to make the same call.
+        {
+            let response: Result<String, PaymentError> = setup
+                .paid_service
+                .update(
+                    setup.unauthorized_user,
+                    api_method,
+                    (PaymentType::Icrc2Cycles(Icrc2Payer {
+                        account: Some(ic_papi_api::Account {
+                            owner: setup.user,
+                            subaccount: None,
+                        }),
+                        spender_subaccount: None,
+                        ledger_canister_id: None,
+                        created_at_time: None,
+                    })),
+                )
+                .expect("Failed to call the paid service");
+            assert_eq!(
+                response,
+                Err(PaymentError::LedgerError {
+                    ledger: setup.ledger.canister_id(),
+                    error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
+                        allowance: Nat::from(0u32),
+                    }
+                }),
+                "Should have succeeded with a generous prepayment",
+            );
+            setup.assert_user_balance_eq(
+                expected_user_balance,
+                "The user should not have been charged for unauthorized spending attempts"
+                    .to_string(),
+            );
+        }
     }
 }

@@ -438,6 +438,7 @@ fn patron_pays_by_named_icrc2() {
     // In this test, we will exercise the ICRC-2 approve.
     let api_method = "cost_1b";
     let api_fee = 1_000_000_000u128;
+    let repetitions = 3;
     // Pre-approve payment
     for caller in setup.users[2..].iter() {
         setup
@@ -449,7 +450,7 @@ fn patron_pays_by_named_icrc2() {
                         owner: setup.paid_service.canister_id(),
                         subaccount: Some(principal2account(caller)),
                     },
-                    amount: Nat::from(expected_user_balance),
+                    amount: Nat::from((api_fee + LEDGER_FEE) * repetitions),
                     ..ApproveArgs::default()
                 },
             )
@@ -463,7 +464,7 @@ fn patron_pays_by_named_icrc2() {
         );
     }
     // Now make several identical API calls
-    for _repetition in 0..5 {
+    for repetition in 0..repetitions {
         // Check the balance beforehand
         let service_canister_cycles_before =
             setup.pic.cycle_balance(setup.paid_service.canister_id);
@@ -477,7 +478,8 @@ fn patron_pays_by_named_icrc2() {
             assert_eq!(
                 response,
                 Ok("Yes, you paid 1 billion cycles!".to_string()),
-                "Should have succeeded with a generous prepayment",
+                "Should have succeeded for user {} on repetition {repetition}",
+                caller.to_string(),
             );
             let service_canister_cycles_after =
                 setup.pic.cycle_balance(setup.paid_service.canister_id);

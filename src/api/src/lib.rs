@@ -22,6 +22,11 @@ pub enum PaymentError {
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum PaymentType {
+    /// The caller is paying with cycles attached to the call.
+    ///
+    /// Note: This is not available for ingress messages.
+    ///
+    /// Note: The API does not require additional arguments to support this payment type.
     AttachedCycles,
     Icrc2Cycles(Icrc2Payer),
 }

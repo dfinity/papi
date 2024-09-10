@@ -23,6 +23,8 @@ pub struct CallerPaysWithIcRc2TestSetup {
     user: Principal,
     /// Another user
     user2: Principal,
+    /// We should really put these in an array
+    users: [Principal; 5],
     /// Unauthorized user
     unauthorized_user: Principal,
     /// User's wallet.  We use the cycles wallet so that we can top it up easily, but any source of funds will do, with any ICRC-2 token.
@@ -58,6 +60,18 @@ impl Default for CallerPaysWithIcRc2TestSetup {
         let user2 =
             Principal::from_text("jwhyn-xieqy-drmun-h7uci-jzycw-vnqhj-s62vl-4upsg-cmub3-vakaq-rqe")
                 .unwrap();
+        let users = [
+            Principal::from_text("s2xin-cwqnw-sjvht-gp553-an54g-2rhlc-z4c5d-xz5iq-irnbi-sadik-qae")
+                .unwrap(),
+            Principal::from_text("dmvof-2tilt-3xmvh-c7tbj-n3whk-k2i6b-2s2ge-xoo3d-wjuw3-ijpuw-eae")
+                .unwrap(),
+            Principal::from_text("kjerd-nj73t-u3hhp-jcj4d-g7w56-qlrvb-gguta-45yve-336zs-sunxa-zqe")
+                .unwrap(),
+            Principal::from_text("zxhav-yshtx-vhzs2-nvuu3-jrq66-bidn2-put3y-ulwcf-2gb2o-ykfco-sae")
+                .unwrap(),
+            Principal::from_text("nggqm-p5ozz-i5hfv-bejmq-2gtow-4dtqw-vjatn-4b4yw-s5mzs-i46su-6ae")
+                .unwrap(),
+        ];
         let unauthorized_user =
             Principal::from_text("rg3gz-22tjp-jh7hl-migkq-vb7in-i2ylc-6umlc-dtbug-v6jgc-uo24d-nqe")
                 .unwrap();
@@ -78,6 +92,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             ledger,
             user,
             user2,
+            users,
             unauthorized_user,
             wallet,
         }
@@ -424,27 +439,29 @@ fn patron_pays_by_named_icrc2() {
     let api_method = "cost_1b";
     let api_fee = 1_000_000_000u128;
     // Pre-approve payment
-    setup
-        .ledger
-        .icrc_2_approve(
-            setup.user,
-            &ApproveArgs {
-                spender: Account {
-                    owner: setup.paid_service.canister_id(),
-                    subaccount: Some(principal2account(&setup.user2)),
+    for caller in setup.users[2..].iter() {
+        setup
+            .ledger
+            .icrc_2_approve(
+                setup.user,
+                &ApproveArgs {
+                    spender: Account {
+                        owner: setup.paid_service.canister_id(),
+                        subaccount: Some(principal2account(caller)),
+                    },
+                    amount: Nat::from(expected_user_balance),
+                    ..ApproveArgs::default()
                 },
-                amount: Nat::from(expected_user_balance),
-                ..ApproveArgs::default()
-            },
-        )
-        .expect("Failed to call the ledger to approve")
-        .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
-    // Check that the user has been charged for the approve.
-    expected_user_balance -= LEDGER_FEE;
-    setup.assert_user_balance_eq(
-        expected_user_balance,
-        "Expected the user balance to be charged for the ICRC2 approve".to_string(),
-    );
+            )
+            .expect("Failed to call the ledger to approve")
+            .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
+        // Check that the user has been charged for the approve.
+        expected_user_balance -= LEDGER_FEE;
+        setup.assert_user_balance_eq(
+            expected_user_balance,
+            "Expected the user balance to be charged for the ICRC2 approve".to_string(),
+        );
+    }
     // Now make several identical API calls
     for _repetition in 0..5 {
         // Check the balance beforehand
@@ -452,27 +469,30 @@ fn patron_pays_by_named_icrc2() {
             setup.pic.cycle_balance(setup.paid_service.canister_id);
         // Call the API
         let payment_arg = PaymentType::PatronIcrc2(setup.user);
-        let response: Result<String, PaymentError> = setup
-            .paid_service
-            .update(setup.user2, api_method, payment_arg)
-            .expect("Failed to call the paid service");
-        assert_eq!(
-            response,
-            Ok("Yes, you paid 1 billion cycles!".to_string()),
-            "Should have succeeded with a generous prepayment",
-        );
-        let service_canister_cycles_after = setup.pic.cycle_balance(setup.paid_service.canister_id);
-        assert!(
-            service_canister_cycles_after > service_canister_cycles_before,
-            "The service canister needs to charge more to cover its cycle cost!  Loss: {}",
-            service_canister_cycles_before - service_canister_cycles_after
-        );
-        expected_user_balance -= api_fee + LEDGER_FEE;
-        setup.assert_user_balance_eq(
-            expected_user_balance,
-            "Expected the user balance to be the initial balance minus the ledger and API fees"
-                .to_string(),
-        );
+        for caller in setup.users[2..].iter() {
+            let response: Result<String, PaymentError> = setup
+                .paid_service
+                .update(*caller, api_method, payment_arg)
+                .expect("Failed to call the paid service");
+            assert_eq!(
+                response,
+                Ok("Yes, you paid 1 billion cycles!".to_string()),
+                "Should have succeeded with a generous prepayment",
+            );
+            let service_canister_cycles_after =
+                setup.pic.cycle_balance(setup.paid_service.canister_id);
+            assert!(
+                service_canister_cycles_after > service_canister_cycles_before,
+                "The service canister needs to charge more to cover its cycle cost!  Loss: {}",
+                service_canister_cycles_before - service_canister_cycles_after
+            );
+            expected_user_balance -= api_fee + LEDGER_FEE;
+            setup.assert_user_balance_eq(
+                expected_user_balance,
+                "Expected the user balance to be the initial balance minus the ledger and API fees"
+                    .to_string(),
+            );
+        }
         // But an unauthorized user should not be able to make the same call.
         {
             let response: Result<String, PaymentError> = setup

@@ -3,11 +3,12 @@ mod state;
 use example_paid_service_api::InitArgs;
 use ic_cdk::init;
 use ic_cdk_macros::{export_candid, update};
-use ic_papi_api::{PaymentError, PaymentType};
+use ic_papi_api::{principal2account, PaymentError, PaymentType};
 use ic_papi_guard::guards::PaymentGuard;
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
 };
+use serde_bytes::ByteBuf;
 use state::{payment_ledger, set_init_args};
 
 #[init]
@@ -46,9 +47,16 @@ async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
         PaymentType::AttachedCycles => {
             AttachedCyclesPayment::default().deduct(fee).await?;
         }
-        PaymentType::Icrc2Cycles(_payer) => {
+        PaymentType::CallerIcrc2 => {
             let mut guard = Icrc2CyclesPaymentGuard::new();
             guard.ledger_canister_id = payment_ledger();
+            guard.deduct(fee).await?;
+        }
+        PaymentType::PatronIcrc2(patron) => {
+            let mut guard = Icrc2CyclesPaymentGuard::new();
+            guard.ledger_canister_id = payment_ledger();
+            guard.payer_account.owner = patron;
+            guard.spender_subaccount = Some(principal2account(&ic_cdk::caller()));
             guard.deduct(fee).await?;
         }
         _ => return Err(PaymentError::UnsupportedPaymentType),

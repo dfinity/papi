@@ -1,6 +1,7 @@
 use candid::{CandidType, Deserialize, Principal};
 pub use cycles_ledger_client::Account;
 use cycles_ledger_client::WithdrawFromError;
+use serde_bytes::ByteBuf;
 
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 #[non_exhaustive]
@@ -19,7 +20,7 @@ pub enum PaymentError {
     },
 }
 
-#[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum PaymentType {
     /// The caller is paying with cycles attached to the call.
@@ -28,7 +29,19 @@ pub enum PaymentType {
     ///
     /// Note: The API does not require additional arguments to support this payment type.
     AttachedCycles,
-    Icrc2Cycles(Icrc2Payer),
+    /// The caller is paying with cycles from their main account on the (by default cycles) ledger.
+    CallerIcrc2,
+    /// A patron is paying, on behalf of the caller, from their main account on the (by default cycles) ledger.
+    PatronIcrc2(Principal),
+}
+
+pub fn principal2account(principal: &Principal) -> ByteBuf {
+    // TODO: This is NOT the right way.
+    let mut ans = principal.as_slice().to_vec();
+    while ans.len() < 32 {
+        ans.push(0);
+    }
+    ByteBuf::from(ans)
 }
 
 /// User's payment details for an ICRC2 payment.

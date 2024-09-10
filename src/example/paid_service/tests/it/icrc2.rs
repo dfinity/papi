@@ -5,7 +5,7 @@ use crate::util::cycles_ledger::{
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Nat, Principal};
 use example_paid_service_api::InitArgs;
-use ic_papi_api::PaymentError;
+use ic_papi_api::{Icrc2Payer, PaymentError, PaymentType};
 use pocket_ic::PocketIc;
 use std::sync::Arc;
 
@@ -20,6 +20,8 @@ pub struct CallerPaysWithIcRc2TestSetup {
     ledger: CyclesLedgerPic,
     /// User
     user: Principal,
+    /// Another user
+    user2: Principal,
     /// User's wallet.  We use the cycles wallet so that we can top it up easily, but any source of funds will do, with any ICRC-2 token.
     wallet: CyclesDepositorPic,
 }
@@ -50,6 +52,9 @@ impl Default for CallerPaysWithIcRc2TestSetup {
         let user =
             Principal::from_text("xzg7k-thc6c-idntg-knmtz-2fbhh-utt3e-snqw6-5xph3-54pbp-7axl5-tae")
                 .unwrap();
+        let user2 =
+            Principal::from_text("jwhyn-xieqy-drmun-h7uci-jzycw-vnqhj-s62vl-4upsg-cmub3-vakaq-rqe")
+                .unwrap();
         let wallet = PicCanisterBuilder::default()
             .with_wasm(&PicCanister::dfx_wasm_path("cycles_wallet"))
             .with_controllers(vec![user])
@@ -66,6 +71,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             paid_service,
             ledger,
             user,
+            user2,
             wallet,
         }
     }
@@ -268,6 +274,91 @@ fn caller_pays_by_icrc2_prepayment() {
         let response: Result<String, PaymentError> = setup
             .paid_service
             .update(setup.user, api_method, ())
+            .expect("Failed to call the paid service");
+        assert_eq!(
+            response,
+            Ok("Yes, you paid 1 billion cycles!".to_string()),
+            "Should have succeeded with a generous prepayment",
+        );
+        let service_canister_cycles_after = setup.pic.cycle_balance(setup.paid_service.canister_id);
+        assert!(
+            service_canister_cycles_after > service_canister_cycles_before,
+            "The service canister needs to charge more to cover its cycle cost!  Loss: {}",
+            service_canister_cycles_before - service_canister_cycles_after
+        );
+        expected_user_balance -= api_fee + LEDGER_FEE;
+        setup.assert_user_balance_eq(
+            expected_user_balance,
+            "Expected the user balance to be the initial balance minus the ledger and API fees"
+                .to_string(),
+        );
+    }
+}
+
+#[test]
+fn caller_pays_by_named_icrc2() {
+    let setup = CallerPaysWithIcRc2TestSetup::default();
+    // Add cycles to the wallet
+    // .. At first the balance should be zero.
+    setup.assert_user_balance_eq(
+        0u32,
+        "Initially the user balance in the ledger should be zero".to_string(),
+    );
+    // .. Get enough to play with lots of transactions.
+    const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
+    let mut expected_user_balance = 100_000_000_000; // Lots of funds to play with.
+    setup.fund_user(expected_user_balance);
+    setup.assert_user_balance_eq(
+        expected_user_balance,
+        "Test setup failed when providing the user with funds".to_string(),
+    );
+    // Ok, now we should be able to make an API call with EITHER an ICRC-2 approve or attached cycles, by declaring the payment type.
+    // In this test, we will exercise the ICRC-2 approve.
+    let api_method = "cost_1b";
+    let api_fee = 1_000_000_000u128;
+    // Pre-approve payment
+    setup
+        .ledger
+        .icrc_2_approve(
+            setup.user,
+            &ApproveArgs {
+                spender: Account {
+                    owner: setup.paid_service.canister_id(),
+                    subaccount: None,
+                },
+                amount: Nat::from(expected_user_balance),
+                ..ApproveArgs::default()
+            },
+        )
+        .expect("Failed to call the ledger to approve")
+        .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
+    // Check that the user has been charged for the approve.
+    expected_user_balance -= LEDGER_FEE;
+    setup.assert_user_balance_eq(
+        expected_user_balance,
+        "Expected the user balance to be charged for the ICRC2 approve".to_string(),
+    );
+    // Now make several identical API calls
+    for _repetition in 0..5 {
+        // Check the balance beforehand
+        let service_canister_cycles_before =
+            setup.pic.cycle_balance(setup.paid_service.canister_id);
+        // Call the API
+        let response: Result<String, PaymentError> = setup
+            .paid_service
+            .update(
+                setup.user,
+                api_method,
+                (PaymentType::Icrc2Cycles(Icrc2Payer {
+                    account: Some(ic_papi_api::Account {
+                        owner: setup.user,
+                        subaccount: None,
+                    }),
+                    spender_subaccount: None,
+                    ledger_canister_id: None,
+                    created_at_time: None,
+                })),
+            )
             .expect("Failed to call the paid service");
         assert_eq!(
             response,

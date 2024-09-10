@@ -416,7 +416,9 @@ fn caller_pays_by_named_icrc2() {
     }
 }
 
-/// Here `user`` is a patron, and pays on behalf of `user2`.
+/// Here `user` is a patron, and pays on behalf of `users[2..5]`.
+///
+/// Only funded users should be able to make calls, and they should be able to make only as many calls as personally approved for them.
 #[test]
 fn patron_pays_by_named_icrc2() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
@@ -437,10 +439,11 @@ fn patron_pays_by_named_icrc2() {
     // Ok, now we should be able to make an API call with EITHER an ICRC-2 approve or attached cycles, by declaring the payment type.
     // In this test, we will exercise the ICRC-2 approve.
     let api_method = "cost_1b";
+    let payment_arg = PaymentType::PatronIcrc2(setup.user);
     let api_fee = 1_000_000_000u128;
     let repetitions = 3;
-    // Pre-approve payment
-    for caller in setup.users[2..].iter() {
+    // Pre-approve payments
+    for caller in setup.users.iter() {
         setup
             .ledger
             .icrc_2_approve(
@@ -463,14 +466,35 @@ fn patron_pays_by_named_icrc2() {
             "Expected the user balance to be charged for the ICRC2 approve".to_string(),
         );
     }
-    // Now make several identical API calls
+    // An unauthorized user should not be able to make a call.
+    {
+        let response: Result<String, PaymentError> = setup
+            .paid_service
+            .update(setup.unauthorized_user, api_method, payment_arg)
+            .expect("Failed to call the paid service");
+        assert_eq!(
+            response,
+            Err(PaymentError::LedgerError {
+                ledger: setup.ledger.canister_id(),
+                error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
+                    allowance: Nat::from(0u32),
+                }
+            }),
+            "Unapproved users should not be able to make calls",
+        );
+        setup.assert_user_balance_eq(
+            expected_user_balance,
+            "The user should not have been charged for unauthorized spending attempts".to_string(),
+        );
+    }
+    // Approved users should be able to make several API calls, up to the budget.
+    let active_users = &setup.users[2..5];
     for repetition in 0..repetitions {
         // Check the balance beforehand
         let service_canister_cycles_before =
             setup.pic.cycle_balance(setup.paid_service.canister_id);
         // Call the API
-        let payment_arg = PaymentType::PatronIcrc2(setup.user);
-        for caller in setup.users[2..].iter() {
+        for caller in active_users.iter() {
             let response: Result<String, PaymentError> = setup
                 .paid_service
                 .update(*caller, api_method, payment_arg)
@@ -495,27 +519,26 @@ fn patron_pays_by_named_icrc2() {
                     .to_string(),
             );
         }
-        // But an unauthorized user should not be able to make the same call.
-        {
-            let response: Result<String, PaymentError> = setup
-                .paid_service
-                .update(setup.unauthorized_user, api_method, payment_arg)
-                .expect("Failed to call the paid service");
-            assert_eq!(
-                response,
-                Err(PaymentError::LedgerError {
-                    ledger: setup.ledger.canister_id(),
-                    error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
-                        allowance: Nat::from(0u32),
-                    }
-                }),
-                "Should have succeeded with a generous prepayment",
-            );
-            setup.assert_user_balance_eq(
-                expected_user_balance,
-                "The user should not have been charged for unauthorized spending attempts"
-                    .to_string(),
-            );
-        }
+    }
+    // Also, additional calls by approved users, beyond the funded amount, should fail, even though there are funds left from inactive users.
+    for caller in active_users.iter() {
+        let response: Result<String, PaymentError> = setup
+            .paid_service
+            .update(*caller, api_method, payment_arg)
+            .expect("Failed to call the paid service");
+        assert_eq!(
+            response,
+            Err(PaymentError::LedgerError {
+                ledger: setup.ledger.canister_id(),
+                error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
+                    allowance: Nat::from(0u32),
+                }
+            }),
+            "Should not be able to exceed the budget",
+        );
+        setup.assert_user_balance_eq(
+            expected_user_balance,
+            "The user should not have been charged for additional spending attempts".to_string(),
+        );
     }
 }

@@ -7,7 +7,13 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(cargo deps): "
+      prefix-development: "chore(cargo deps-dev): "
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(npm deps): "
+      prefix-development: "chore(npm deps-dev): "

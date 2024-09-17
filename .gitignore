@@ -8,3 +8,5 @@ pocket-ic
 .env
 # Local branches
 branches
+# Build artefacts
+out

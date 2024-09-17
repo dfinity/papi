@@ -244,7 +244,7 @@ name = "cycles-ledger-client"
 version = "0.1.0"
 dependencies = [
  "candid",
- "ic-cdk 0.15.1",
+ "ic-cdk 0.16.0",
  "serde",
  "serde_bytes",
 ]
@@ -306,7 +306,7 @@ name = "example_app_backend"
 version = "0.1.0"
 dependencies = [
  "candid",
- "ic-cdk 0.15.1",
+ "ic-cdk 0.16.0",
  "ic-cdk-macros 0.15.0",
  "ic-papi-api",
  "pocket-ic",
@@ -319,7 +319,7 @@ dependencies = [
  "candid",
  "cycles-ledger-client",
  "example-paid-service-api",
- "ic-cdk 0.15.1",
+ "ic-cdk 0.16.0",
  "ic-cdk-macros 0.15.0",
  "ic-papi-api",
  "ic-papi-guard",
@@ -587,12 +587,12 @@ dependencies = [
 
 [[package]]
 name = "ic-cdk"
-version = "0.15.1"
+version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "038ff230bf0fc8630943e3c52e989d248a7c89834ccb65da408fabc5817a475b"
+checksum = "dd8ecacd682fa05a985253592963306cb9799622d7b1cce4b1edb89c6ec85be1"
 dependencies = [
  "candid",
- "ic-cdk-macros 0.15.0",
+ "ic-cdk-macros 0.16.0",
  "ic0 0.23.0",
  "serde",
  "serde_bytes",
@@ -627,6 +627,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-cdk-macros"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d4d857135deef20cc7ea8f3869a30cd9cfeb1392b3a81043790b2cd82adc3e0"
+dependencies = [
+ "candid",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_tokenstream 0.2.1",
+ "syn 2.0.58",
+]
+
+[[package]]
 name = "ic-papi-api"
 version = "0.1.0"
 dependencies = [
@@ -642,7 +656,7 @@ version = "0.1.0"
 dependencies = [
  "candid",
  "cycles-ledger-client",
- "ic-cdk 0.15.1",
+ "ic-cdk 0.16.0",
  "ic-papi-api",
  "serde_bytes",
 ]

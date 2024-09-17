@@ -19,4 +19,6 @@ jobs:
         uses: dfinity/setup-dfx@main
       - name: Start dfx
         run: dfx start --clean --background
+      - name: Deploy canisters
+        run: dfx deploy
       - run: ./scripts/test.integration.sh

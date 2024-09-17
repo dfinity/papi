@@ -8,7 +8,6 @@ use ic_papi_guard::guards::PaymentGuard;
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
 };
-use serde_bytes::ByteBuf;
 use state::{payment_ledger, set_init_args};
 
 #[init]

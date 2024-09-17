@@ -63,16 +63,14 @@ impl PaymentGuard for Icrc2CyclesPaymentGuard {
                 }
             })?
             .0
-            .map_err(|e| {
+            .map_err(|error| {
                 eprintln!(
-                    "Failed to withdraw from ledger canister at {}: {e:?}",
+                    "Failed to withdraw from ledger canister at {}: {error:?}",
                     self.ledger_canister_id
                 );
-                match e {
-                    error => PaymentError::LedgerError {
-                        ledger: self.ledger_canister_id,
-                        error,
-                    },
+                PaymentError::LedgerError {
+                    ledger: self.ledger_canister_id,
+                    error,
                 }
             })
             .map(|_| ())

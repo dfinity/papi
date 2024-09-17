@@ -1,5 +1,5 @@
 {
-	"dfx": "0.20.0",
+	"dfx": "0.23.0",
 	"canisters": {
 		"example_paid_service": {
 			"candid": "src/example/paid_service/example-paid-service.did",
@@ -26,9 +26,12 @@
 			}
 		},
 		"cycles_depositor": {
+			"dependencies": ["cycles_ledger"],
 			"type": "custom",
-			"candid": "https://github.com/dfinity/cycles-ledger/releases/download/cycles-ledger-v1.0.1/depositor.did",
-			"wasm": "https://github.com/dfinity/cycles-ledger/releases/download/cycles-ledger-v1.0.1/depositor.wasm.gz"
+			"build": "scripts/build.cycles_depositor.sh",
+			"init_arg_file": "out/cycles_depositor.args.did",
+			"wasm": "out/cycles_depositor.wasm.gz",
+			"candid": "out/cycles_depositor.did"
 		}
 	},
 	"defaults": {

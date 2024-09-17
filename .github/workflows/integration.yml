@@ -15,4 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install dfx
+        uses: dfinity/setup-dfx@main
       - run: ./scripts/test.integration.sh

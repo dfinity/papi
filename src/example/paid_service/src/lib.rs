@@ -32,7 +32,7 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
 /// An API method that requires 1 billion cycles using an ICRC-2 approve with default parameters.
 #[update()]
 async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
-    let mut guard = Icrc2CyclesPaymentGuard::new();
+    let mut guard = Icrc2CyclesPaymentGuard::default();
     guard.ledger_canister_id = payment_ledger();
     guard.deduct(1_000_000_000).await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
@@ -47,12 +47,12 @@ async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
             AttachedCyclesPayment::default().deduct(fee).await?;
         }
         PaymentType::CallerIcrc2Cycles => {
-            let mut guard = Icrc2CyclesPaymentGuard::new();
+            let mut guard = Icrc2CyclesPaymentGuard::default();
             guard.ledger_canister_id = payment_ledger();
             guard.deduct(fee).await?;
         }
         PaymentType::PatronIcrc2Cycles(patron) => {
-            let mut guard = Icrc2CyclesPaymentGuard::new();
+            let mut guard = Icrc2CyclesPaymentGuard::default();
             guard.ledger_canister_id = payment_ledger();
             guard.payer_account.owner = patron;
             guard.spender_subaccount = Some(principal2account(&ic_cdk::caller()));

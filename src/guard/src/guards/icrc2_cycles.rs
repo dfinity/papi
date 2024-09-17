@@ -28,8 +28,10 @@ impl Icrc2CyclesPaymentGuard {
         )
         .expect("Failed to parse cycles ledger canister ID")
     }
-    /// A default payment guard for ICRC-2 cycles.
-    pub fn new() -> Self {
+}
+
+impl Default for Icrc2CyclesPaymentGuard {
+    fn default() -> Self {
         Self {
             payer_account: Self::default_account(),
             ledger_canister_id: Self::default_cycles_ledger(),

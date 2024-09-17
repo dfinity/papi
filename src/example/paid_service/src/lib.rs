@@ -32,8 +32,10 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
 /// An API method that requires 1 billion cycles using an ICRC-2 approve with default parameters.
 #[update()]
 async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
-    let mut guard = Icrc2CyclesPaymentGuard::new();
-    guard.ledger_canister_id = payment_ledger();
+    let guard = Icrc2CyclesPaymentGuard {
+        ledger_canister_id: payment_ledger(),
+        ..Icrc2CyclesPaymentGuard::default()
+    };
     guard.deduct(1_000_000_000).await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }
@@ -46,16 +48,23 @@ async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
         PaymentType::AttachedCycles => {
             AttachedCyclesPayment::default().deduct(fee).await?;
         }
-        PaymentType::CallerIcrc2 => {
-            let mut guard = Icrc2CyclesPaymentGuard::new();
-            guard.ledger_canister_id = payment_ledger();
+        PaymentType::CallerIcrc2Cycles => {
+            let guard = Icrc2CyclesPaymentGuard {
+                ledger_canister_id: payment_ledger(),
+                ..Icrc2CyclesPaymentGuard::default()
+            };
             guard.deduct(fee).await?;
         }
-        PaymentType::PatronIcrc2(patron) => {
-            let mut guard = Icrc2CyclesPaymentGuard::new();
-            guard.ledger_canister_id = payment_ledger();
-            guard.payer_account.owner = patron;
-            guard.spender_subaccount = Some(principal2account(&ic_cdk::caller()));
+        PaymentType::PatronIcrc2Cycles(patron) => {
+            let guard = Icrc2CyclesPaymentGuard {
+                ledger_canister_id: payment_ledger(),
+                payer_account: ic_papi_api::Account {
+                    owner: patron,
+                    subaccount: None,
+                },
+                spender_subaccount: Some(principal2account(&ic_cdk::caller())),
+                ..Icrc2CyclesPaymentGuard::default()
+            };
             guard.deduct(fee).await?;
         }
         _ => return Err(PaymentError::UnsupportedPaymentType),

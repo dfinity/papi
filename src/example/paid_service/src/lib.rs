@@ -46,12 +46,12 @@ async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
         PaymentType::AttachedCycles => {
             AttachedCyclesPayment::default().deduct(fee).await?;
         }
-        PaymentType::CallerIcrc2 => {
+        PaymentType::CallerIcrc2Cycles => {
             let mut guard = Icrc2CyclesPaymentGuard::new();
             guard.ledger_canister_id = payment_ledger();
             guard.deduct(fee).await?;
         }
-        PaymentType::PatronIcrc2(patron) => {
+        PaymentType::PatronIcrc2Cycles(patron) => {
             let mut guard = Icrc2CyclesPaymentGuard::new();
             guard.ledger_canister_id = payment_ledger();
             guard.payer_account.owner = patron;

@@ -5,6 +5,7 @@ use serde_bytes::ByteBuf;
 
 pub mod error;
 
+/// How a caller states that they will pay.
 #[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum PaymentType {
@@ -14,10 +15,10 @@ pub enum PaymentType {
     ///
     /// Note: The API does not require additional arguments to support this payment type.
     AttachedCycles,
-    /// The caller is paying with cycles from their main account on the (by default cycles) ledger.
-    CallerIcrc2,
-    /// A patron is paying, on behalf of the caller, from their main account on the (by default cycles) ledger.
-    PatronIcrc2(Principal),
+    /// The caller is paying with cycles from their main account on the cycles ledger.
+    CallerIcrc2Cycles,
+    /// A patron is paying, on behalf of the caller, from their main account on the cycles ledger.
+    PatronIcrc2Cycles(Principal),
 }
 
 pub fn principal2account(principal: &Principal) -> ByteBuf {

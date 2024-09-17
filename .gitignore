@@ -2,6 +2,7 @@
 /target
 # Testing tool
 pocket-ic
+pocket-ic.gz
 # dfx working dir
 .dfx
 # dfx env file

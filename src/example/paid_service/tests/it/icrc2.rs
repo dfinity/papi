@@ -76,7 +76,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             Principal::from_text("rg3gz-22tjp-jh7hl-migkq-vb7in-i2ylc-6umlc-dtbug-v6jgc-uo24d-nqe")
                 .unwrap();
         let wallet = PicCanisterBuilder::default()
-            .with_wasm(&PicCanister::dfx_wasm_path("cycles_wallet"))
+            .with_wasm(&PicCanister::dfx_wasm_path("cycles_depositor"))
             .with_controllers(vec![user])
             .with_arg(
                 encode_one(cycles_depositor::InitArg {

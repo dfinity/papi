@@ -44,7 +44,7 @@ impl PaymentGuard for Icrc2CyclesPaymentGuard {
     async fn deduct(&self, fee: u64) -> Result<(), PaymentError> {
         cycles_ledger_client::Service(self.ledger_canister_id)
             .withdraw_from(&WithdrawFromArgs {
-                to: self.own_canister_id.clone(),
+                to: self.own_canister_id,
                 amount: Nat::from(fee),
                 from: self.payer_account.clone(),
                 spender_subaccount: self.spender_subaccount.clone(),

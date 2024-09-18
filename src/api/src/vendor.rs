@@ -18,7 +18,6 @@ pub enum PaymentConfig {
     PatronPaysIcrc2Cycles,
 }
 
-
 /// User's payment details for an ICRC2 payment.
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub struct Icrc2Payer {

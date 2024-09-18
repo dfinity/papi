@@ -2,6 +2,14 @@
 use candid::{CandidType, Deserialize, Principal};
 pub use cycles_ledger_client::Account;
 
+const COMPILE_TIME_LEDGER_CANISTER_ID: Option<&str> = option_env!("CANISTER_ID_LEDGER_CANISTER");
+const MAINNET_LEDGER_CANISTER_ID: &str = "um5iw-rqaaa-aaaaq-qaaba-cai";
+const DEFAULT_LEDGER_CANISTER_ID: &str = if let Some(id) = COMPILE_TIME_LEDGER_CANISTER_ID {
+    id
+} else {
+    MAINNET_LEDGER_CANISTER_ID
+};
+
 /// How a caller states that they will pay.
 #[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
 #[non_exhaustive]
@@ -15,6 +23,22 @@ pub enum PaymentType {
     /// The caller is paying with cycles from their main account on the cycles ledger.
     CallerPaysIcrc2Cycles,
     /// A patron is paying, on behalf of the caller, from their main account on the cycles ledger.
-    PatronPaysIcrc2Cycles(Principal),
+    PatronPaysIcrc2Cycles(PatronPaysIcrc2Cycles),
+    /// The caller is paying with tokens from their main account on the specified ledger.
+    CallerPaysIcrc2Token(CallerPaysIcrc2Token),
+    /// A patron is paying, on behalf of the caller, from their main account on the specified ledger.
+    PatronPaysIcrc2Token(PatronPaysIcrc2Token),
 }
 
+pub type PatronPaysIcrc2Cycles = Principal;
+
+#[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
+pub struct CallerPaysIcrc2Token {
+    pub ledger: Principal,
+}
+
+#[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
+pub struct PatronPaysIcrc2Token {
+    pub ledger: Principal,
+    pub patron: Principal,
+}

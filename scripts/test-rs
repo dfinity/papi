@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+print_help() {
+  echo "Runs rust unit tests."
+}
+
+[[ "${1:-}" != "--help" ]] || print_help
+
+cargo test --lib --bins "${@}"

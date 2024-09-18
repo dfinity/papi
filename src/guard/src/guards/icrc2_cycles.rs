@@ -16,17 +16,28 @@ pub struct Icrc2CyclesPaymentGuard {
     pub own_canister_id: Principal,
 }
 impl Icrc2CyclesPaymentGuard {
+    #[must_use]
     pub fn default_account() -> Account {
         Account {
             owner: ic_cdk::caller(),
             subaccount: None,
         }
     }
+    /// The normal cycles ledger canister ID.
+    ///
+    /// - If the cycles ledger is listed in `dfx.json`, a normal `dfx build` will set the
+    ///   environment variable `CANISTER_ID_CYCLES_LEDGER` and we use this to obtain the canister ID.
+    /// - Otherwise, we use the mainnet cycled ledger canister ID, which is `um5iw-rqaaa-aaaaq-qaaba-cai`.
+    ///
+    /// # Panics
+    /// - If the `CANISTER_ID_CYCLES_LEDGER` environment variable is not a valid canister ID at
+    ///   build time.
+    #[must_use]
     pub fn default_cycles_ledger() -> Principal {
         Principal::from_text(
-            option_env!("DFX_CYCLES_LEDGER_CANISTER_ID").unwrap_or("um5iw-rqaaa-aaaaq-qaaba-cai"),
+            option_env!("CANISTER_ID_CYCLES_LEDGER").unwrap_or("um5iw-rqaaa-aaaaq-qaaba-cai"),
         )
-        .expect("Failed to parse cycles ledger canister ID")
+        .expect("Compile error: Failed to parse build env var 'CANISTER_ID_CYCLES_LEDGER' as a canister ID.")
     }
 }
 

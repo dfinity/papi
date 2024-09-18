@@ -13,7 +13,8 @@ pub enum PaymentType {
     /// Note: The API does not require additional arguments to support this payment type.
     AttachedCycles,
     /// The caller is paying with cycles from their main account on the cycles ledger.
-    CallerIcrc2Cycles,
+    CallerPaysIcrc2Cycles,
     /// A patron is paying, on behalf of the caller, from their main account on the cycles ledger.
-    PatronIcrc2Cycles(Principal),
+    PatronPaysIcrc2Cycles(Principal),
 }
+

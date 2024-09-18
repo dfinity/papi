@@ -48,14 +48,14 @@ async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
         PaymentType::AttachedCycles => {
             AttachedCyclesPayment::default().deduct(fee).await?;
         }
-        PaymentType::CallerIcrc2Cycles => {
+        PaymentType::CallerPaysIcrc2Cycles => {
             let guard = Icrc2CyclesPaymentGuard {
                 ledger_canister_id: payment_ledger(),
                 ..Icrc2CyclesPaymentGuard::default()
             };
             guard.deduct(fee).await?;
         }
-        PaymentType::PatronIcrc2Cycles(patron) => {
+        PaymentType::PatronPaysIcrc2Cycles(patron) => {
             let guard = Icrc2CyclesPaymentGuard {
                 ledger_canister_id: payment_ledger(),
                 payer_account: ic_papi_api::Account {

@@ -368,7 +368,7 @@ fn caller_pays_by_named_icrc2() {
         // Call the API
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(setup.user, api_method, PaymentType::CallerIcrc2Cycles)
+            .update(setup.user, api_method, PaymentType::CallerPaysIcrc2Cycles)
             .expect("Failed to call the paid service");
         assert_eq!(
             response,
@@ -394,7 +394,7 @@ fn caller_pays_by_named_icrc2() {
                 .update(
                     setup.unauthorized_user,
                     api_method,
-                    PaymentType::CallerIcrc2Cycles,
+                    PaymentType::CallerPaysIcrc2Cycles,
                 )
                 .expect("Failed to call the paid service");
             assert_eq!(
@@ -439,7 +439,7 @@ fn patron_pays_by_named_icrc2() {
     // Ok, now we should be able to make an API call with EITHER an ICRC-2 approve or attached cycles, by declaring the payment type.
     // In this test, we will exercise the ICRC-2 approve.
     let api_method = "cost_1b";
-    let payment_arg = PaymentType::PatronIcrc2Cycles(setup.user);
+    let payment_arg = PaymentType::PatronPaysIcrc2Cycles(setup.user);
     let api_fee = 1_000_000_000u128;
     let repetitions = 3;
     // Pre-approve payments

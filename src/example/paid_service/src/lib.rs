@@ -3,6 +3,7 @@ mod state;
 use example_paid_service_api::InitArgs;
 use ic_cdk::init;
 use ic_cdk_macros::{export_candid, update};
+use ic_papi_api::vendor::PaymentOption;
 use ic_papi_api::{principal2account, PaymentError, PaymentType};
 use ic_papi_guard::guards::PaymentGuard;
 use ic_papi_guard::guards::{
@@ -67,7 +68,7 @@ async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
             };
             guard.deduct(fee).await?;
         }
-        _ => return Err(PaymentError::UnsupportedPaymentType),
+        _ => return Err(PaymentError::UnsupportedPaymentType{supported: vec![PaymentOption::AttachedCycles, PaymentOption::CallerPaysIcrc2Cycles, PaymentOption::PatronPaysIcrc2Cycles]}),
     };
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }

@@ -2,14 +2,6 @@
 use candid::{CandidType, Deserialize, Principal};
 pub use cycles_ledger_client::Account;
 
-const COMPILE_TIME_LEDGER_CANISTER_ID: Option<&str> = option_env!("CANISTER_ID_LEDGER_CANISTER");
-const MAINNET_LEDGER_CANISTER_ID: &str = "um5iw-rqaaa-aaaaq-qaaba-cai";
-const DEFAULT_LEDGER_CANISTER_ID: &str = if let Some(id) = COMPILE_TIME_LEDGER_CANISTER_ID {
-    id
-} else {
-    MAINNET_LEDGER_CANISTER_ID
-};
-
 /// How a caller states that they will pay.
 #[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
 #[non_exhaustive]

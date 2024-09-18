@@ -3,6 +3,7 @@ pub use cycles_ledger_client::Account;
 use serde_bytes::ByteBuf;
 
 pub mod caller;
+pub mod cycles;
 pub mod error;
 pub mod vendor;
 pub use caller::PaymentType;

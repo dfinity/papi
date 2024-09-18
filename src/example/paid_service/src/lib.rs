@@ -12,9 +12,9 @@ use ic_papi_guard::guards::{
 use state::{payment_ledger, set_init_args};
 
 const SUPPORTED_PAYMENT_OPTIONS: [PaymentOption; 3] = [
-    PaymentOption::AttachedCycles,
-    PaymentOption::CallerPaysIcrc2Cycles,
-    PaymentOption::PatronPaysIcrc2Cycles,
+    PaymentOption::AttachedCycles { fee: None },
+    PaymentOption::CallerPaysIcrc2Cycles { fee: None },
+    PaymentOption::PatronPaysIcrc2Cycles { fee: None },
 ];
 
 #[init]

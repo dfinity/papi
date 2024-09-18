@@ -2,7 +2,7 @@
 use candid::{CandidType, Deserialize, Principal};
 pub use cycles_ledger_client::Account;
 
-/// Payment types accepted by a vendor.
+/// Billing options.
 #[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum PaymentOption {
@@ -11,11 +11,11 @@ pub enum PaymentOption {
     /// Note: This is available to inter-canister aclls only; not to ingress messages.
     ///
     /// Note: The API does not require additional arguments to support this payment type.
-    AttachedCycles,
+    AttachedCycles { fee: Option<u64> },
     /// The caller is paying with cycles from their main account on the cycles ledger.
-    CallerPaysIcrc2Cycles,
+    CallerPaysIcrc2Cycles { fee: Option<u64> },
     /// A patron is paying, on behalf of the caller, from their main account on the cycles ledger.
-    PatronPaysIcrc2Cycles,
+    PatronPaysIcrc2Cycles { fee: Option<u64> },
 }
 
 /// User's payment details for an ICRC2 payment.

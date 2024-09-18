@@ -2,7 +2,7 @@
 use candid::{CandidType, Deserialize, Principal};
 pub use cycles_ledger_client::Account;
 
-/// How a vendor can handle a payment.
+/// Payment types accepted by a vendor.
 #[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum PaymentConfig {

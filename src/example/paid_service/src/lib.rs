@@ -11,6 +11,12 @@ use ic_papi_guard::guards::{
 };
 use state::{payment_ledger, set_init_args};
 
+const SUPPORTED_PAYMENT_OPTIONS: [PaymentOption; 3] = [
+    PaymentOption::AttachedCycles,
+    PaymentOption::CallerPaysIcrc2Cycles,
+    PaymentOption::PatronPaysIcrc2Cycles,
+];
+
 #[init]
 fn init(init_args: Option<InitArgs>) {
     if let Some(init_args) = init_args {
@@ -68,7 +74,11 @@ async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
             };
             guard.deduct(fee).await?;
         }
-        _ => return Err(PaymentError::UnsupportedPaymentType{supported: vec![PaymentOption::AttachedCycles, PaymentOption::CallerPaysIcrc2Cycles, PaymentOption::PatronPaysIcrc2Cycles]}),
+        _ => {
+            return Err(PaymentError::UnsupportedPaymentType {
+                supported: SUPPORTED_PAYMENT_OPTIONS.to_vec(),
+            })
+        }
     };
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }

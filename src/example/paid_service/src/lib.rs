@@ -1,10 +1,13 @@
 mod state;
 
+use std::any::Any;
+
 use example_paid_service_api::InitArgs;
 use ic_cdk::init;
 use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::vendor::PaymentOption;
 use ic_papi_api::{principal2account, PaymentError, PaymentType};
+use ic_papi_guard::guards::any::AnyPaymentGuard;
 use ic_papi_guard::guards::PaymentGuard;
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
@@ -16,6 +19,10 @@ const SUPPORTED_PAYMENT_OPTIONS: [PaymentOption; 3] = [
     PaymentOption::CallerPaysIcrc2Cycles { fee: None },
     PaymentOption::PatronPaysIcrc2Cycles { fee: None },
 ];
+
+const PAYMENT_GUARD: AnyPaymentGuard<3> = AnyPaymentGuard {
+    supported: SUPPORTED_PAYMENT_OPTIONS,
+};
 
 #[init]
 fn init(init_args: Option<InitArgs>) {

@@ -8,7 +8,7 @@ pub use cycles_ledger_client::Account;
 pub enum PaymentType {
     /// The caller is paying with cycles attached to the call.
     ///
-    /// Note: This is not available for ingress messages.
+    /// Note: This is available to inter-canister aclls only; not to ingress messages.
     ///
     /// Note: The API does not require additional arguments to support this payment type.
     AttachedCycles,
@@ -17,4 +17,3 @@ pub enum PaymentType {
     /// A patron is paying, on behalf of the caller, from their main account on the cycles ledger.
     PatronPaysIcrc2Cycles(Principal),
 }
-

@@ -18,6 +18,17 @@ pub enum PaymentOption {
     PatronPaysIcrc2Cycles { fee: Option<u64> },
 }
 
+/// Vendor payment configuration, including details that may not necessarily be shared with the customer.
+#[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
+pub enum VendorPaymentConfig {
+    /// Cycles are received by the vendor canister.
+    AttachedCycles,
+    /// Cycles are received by the vendor canister.
+    CallerPaysIcrc2Cycles,
+    /// Cycles are received by the vendor canister.
+    PatronPaysIcrc2Cycles,
+}
+
 /// User's payment details for an ICRC2 payment.
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub struct Icrc2Payer {

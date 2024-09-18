@@ -14,4 +14,5 @@ impl<const CAP: usize> AnyPaymentGuard<CAP> {
     pub fn deduct(_fee: u64, _payment: PaymentType) {
         unimplemented!()
     }
+    pub fn 
 }

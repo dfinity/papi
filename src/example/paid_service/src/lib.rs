@@ -18,7 +18,7 @@ fn init(init_args: Option<InitArgs>) {
 }
 
 #[update()]
-async fn free() -> String {
+fn free() -> String {
     "Yes, I am free!".to_string()
 }
 

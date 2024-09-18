@@ -17,3 +17,4 @@ pub enum PaymentType {
     /// A patron is paying, on behalf of the caller, from their main account on the cycles ledger.
     PatronPaysIcrc2Cycles(Principal),
 }
+

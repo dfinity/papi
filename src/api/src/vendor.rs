@@ -2,6 +2,23 @@
 use candid::{CandidType, Deserialize, Principal};
 pub use cycles_ledger_client::Account;
 
+/// How a vendor can handle a payment.
+#[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
+#[non_exhaustive]
+pub enum PaymentConfig {
+    /// The caller is paying with cycles attached to the call.
+    ///
+    /// Note: This is available to inter-canister aclls only; not to ingress messages.
+    ///
+    /// Note: The API does not require additional arguments to support this payment type.
+    AttachedCycles,
+    /// The caller is paying with cycles from their main account on the cycles ledger.
+    CallerPaysIcrc2Cycles,
+    /// A patron is paying, on behalf of the caller, from their main account on the cycles ledger.
+    PatronPaysIcrc2Cycles,
+}
+
+
 /// User's payment details for an ICRC2 payment.
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub struct Icrc2Payer {

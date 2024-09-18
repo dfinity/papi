@@ -5,7 +5,7 @@ pub use cycles_ledger_client::Account;
 /// Payment types accepted by a vendor.
 #[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
 #[non_exhaustive]
-pub enum PaymentConfig {
+pub enum PaymentOption {
     /// The caller is paying with cycles attached to the call.
     ///
     /// Note: This is available to inter-canister aclls only; not to ingress messages.

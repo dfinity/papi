@@ -3,6 +3,8 @@ use candid::{CandidType, Deserialize, Principal};
 pub use cycles_ledger_client::Account;
 use cycles_ledger_client::WithdrawFromError;
 
+use crate::caller::TokenAmount;
+
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum PaymentError {
@@ -15,7 +17,7 @@ pub enum PaymentError {
         error: WithdrawFromError,
     },
     InsufficientFunds {
-        needed: u64,
-        available: u64,
+        needed: TokenAmount,
+        available: TokenAmount,
     },
 }

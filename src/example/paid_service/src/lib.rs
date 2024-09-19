@@ -3,12 +3,12 @@ mod state;
 use example_paid_service_api::InitArgs;
 use ic_cdk::init;
 use ic_cdk_macros::{export_candid, update};
-use ic_papi_api::{principal2account, PaymentError, PaymentType};
-use ic_papi_guard::guards::PaymentGuard;
+use ic_papi_api::{PaymentError, PaymentType};
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
 };
-use state::{payment_ledger, set_init_args};
+use ic_papi_guard::guards::{PaymentContext, PaymentGuard, PaymentGuard2};
+use state::{payment_ledger, set_init_args, PAYMENT_GUARD};
 
 #[init]
 fn init(init_args: Option<InitArgs>) {
@@ -40,35 +40,13 @@ async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }
 
-/// An API method that requires 1 billion cycles using an ICRC-2 approve with default parameters.
+/// An API method that requires 1 billion cycles.
 #[update()]
 async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
     let fee = 1_000_000_000;
-    match payment {
-        PaymentType::AttachedCycles => {
-            AttachedCyclesPayment::default().deduct(fee).await?;
-        }
-        PaymentType::CallerIcrc2Cycles => {
-            let guard = Icrc2CyclesPaymentGuard {
-                ledger_canister_id: payment_ledger(),
-                ..Icrc2CyclesPaymentGuard::default()
-            };
-            guard.deduct(fee).await?;
-        }
-        PaymentType::PatronIcrc2Cycles(patron) => {
-            let guard = Icrc2CyclesPaymentGuard {
-                ledger_canister_id: payment_ledger(),
-                payer_account: ic_papi_api::Account {
-                    owner: patron,
-                    subaccount: None,
-                },
-                spender_subaccount: Some(principal2account(&ic_cdk::caller())),
-                ..Icrc2CyclesPaymentGuard::default()
-            };
-            guard.deduct(fee).await?;
-        }
-        _ => return Err(PaymentError::UnsupportedPaymentType),
-    };
+    PAYMENT_GUARD
+        .deduct(PaymentContext::default(), payment, fee)
+        .await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }
 

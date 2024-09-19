@@ -324,6 +324,7 @@ dependencies = [
  "ic-papi-api",
  "ic-papi-guard",
  "ic-stable-structures",
+ "lazy_static",
  "pocket-ic",
  "serde",
  "serde_bytes",
@@ -641,11 +642,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-ledger-types"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a144b5b4c9e4b164b338440cfbdcf9f30ff45e3d48a3be62d2424996dc93d6f"
+dependencies = [
+ "candid",
+ "crc32fast",
+ "hex",
+ "ic-cdk 0.16.0",
+ "serde",
+ "serde_bytes",
+ "sha2",
+]
+
+[[package]]
 name = "ic-papi-api"
 version = "0.1.0"
 dependencies = [
  "candid",
  "cycles-ledger-client",
+ "hex",
+ "ic-ledger-types",
  "serde",
  "serde_bytes",
 ]
@@ -738,9 +756,9 @@ dependencies = [
 
 [[package]]
 name = "lazy_static"
-version = "1.4.0"
+version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
 name = "leb128"

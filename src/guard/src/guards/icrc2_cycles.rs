@@ -1,7 +1,7 @@
 use super::{PaymentError, PaymentGuard};
 use candid::{Nat, Principal};
 use cycles_ledger_client::WithdrawFromArgs;
-use ic_papi_api::Account;
+use ic_papi_api::{caller::TokenAmount, Account};
 
 pub struct Icrc2CyclesPaymentGuard {
     /// The payer
@@ -54,7 +54,7 @@ impl Default for Icrc2CyclesPaymentGuard {
 }
 
 impl PaymentGuard for Icrc2CyclesPaymentGuard {
-    async fn deduct(&self, fee: u64) -> Result<(), PaymentError> {
+    async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError> {
         cycles_ledger_client::Service(self.ledger_canister_id)
             .withdraw_from(&WithdrawFromArgs {
                 to: self.own_canister_id,

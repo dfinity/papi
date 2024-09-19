@@ -5,9 +5,9 @@ use crate::util::cycles_ledger::{
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Nat, Principal};
 use example_paid_service_api::InitArgs;
-use ic_papi_api::{principal2account, Icrc2Payer, PaymentError, PaymentType};
-use pocket_ic::PocketIc;
-use serde_bytes::ByteBuf;
+use ic_papi_api::caller::{CallerPaysIcrc2Tokens, PatronPaysIcrc2Tokens};
+use ic_papi_api::{principal2account, PaymentError, PaymentType};
+use pocket_ic::{PocketIc, PocketIcBuilder};
 use std::sync::Arc;
 
 pub struct CallerPaysWithIcRc2TestSetup {
@@ -32,7 +32,13 @@ pub struct CallerPaysWithIcRc2TestSetup {
 }
 impl Default for CallerPaysWithIcRc2TestSetup {
     fn default() -> Self {
-        let pic = Arc::new(PocketIc::new());
+        let pic = Arc::new(
+            PocketIcBuilder::new()
+                .with_fiduciary_subnet()
+                .with_system_subnet()
+                .build(),
+        );
+        // WOuld like to create this with the cycles ledger canister ID but currently this yields an error.
         let ledger = CyclesLedgerPic::from(
             PicCanisterBuilder::default()
                 .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
@@ -49,7 +55,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             .with_wasm(&PicCanister::cargo_wasm_path("example_paid_service"))
             .with_arg(
                 encode_one(Some(InitArgs {
-                    ledger: Some(ledger.canister_id()),
+                    ledger: ledger.canister_id(),
                 }))
                 .unwrap(),
             )
@@ -86,6 +92,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             )
             .deploy_to(pic.clone())
             .into();
+
         Self {
             pic,
             paid_service,
@@ -151,8 +158,9 @@ fn icrc2_test_setup_works() {
     let _setup = CallerPaysWithIcRc2TestSetup::default();
 }
 
+/// Verifies that the `PaymentType::CallerPaysIcrc2Tokens` payment type works as expected.
 #[test]
-fn caller_pays_by_icrc2() {
+fn caller_pays_icrc2_tokens() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.
@@ -368,7 +376,13 @@ fn caller_pays_by_named_icrc2() {
         // Call the API
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(setup.user, api_method, PaymentType::CallerIcrc2Cycles)
+            .update(
+                setup.user,
+                api_method,
+                PaymentType::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens {
+                    ledger: setup.ledger.canister_id(),
+                }),
+            )
             .expect("Failed to call the paid service");
         assert_eq!(
             response,
@@ -394,7 +408,9 @@ fn caller_pays_by_named_icrc2() {
                 .update(
                     setup.unauthorized_user,
                     api_method,
-                    PaymentType::CallerIcrc2Cycles,
+                    PaymentType::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens {
+                        ledger: setup.ledger.canister_id(),
+                    }),
                 )
                 .expect("Failed to call the paid service");
             assert_eq!(
@@ -416,6 +432,8 @@ fn caller_pays_by_named_icrc2() {
     }
 }
 
+/// Verifies that the `PaymentType::PatronPaysIcrc2Tokens` payment type works as expected.
+///
 /// Here `user` is a patron, and pays on behalf of `users[2..5]`.
 ///
 /// Only funded users should be able to make calls, and they should be able to make only as many calls as personally approved for them.
@@ -439,7 +457,13 @@ fn patron_pays_by_named_icrc2() {
     // Ok, now we should be able to make an API call with EITHER an ICRC-2 approve or attached cycles, by declaring the payment type.
     // In this test, we will exercise the ICRC-2 approve.
     let api_method = "cost_1b";
-    let payment_arg = PaymentType::PatronIcrc2Cycles(setup.user);
+    let payment_arg = PaymentType::PatronPaysIcrc2Tokens(PatronPaysIcrc2Tokens {
+        ledger: setup.ledger.canister_id(),
+        patron: ic_papi_api::Account {
+            owner: setup.user,
+            subaccount: None,
+        },
+    });
     let api_fee = 1_000_000_000u128;
     let repetitions = 3;
     // Pre-approve payments
@@ -470,7 +494,7 @@ fn patron_pays_by_named_icrc2() {
     {
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(setup.unauthorized_user, api_method, payment_arg)
+            .update(setup.unauthorized_user, api_method, &payment_arg)
             .expect("Failed to call the paid service");
         assert_eq!(
             response,
@@ -497,7 +521,7 @@ fn patron_pays_by_named_icrc2() {
         for caller in active_users.iter() {
             let response: Result<String, PaymentError> = setup
                 .paid_service
-                .update(*caller, api_method, payment_arg)
+                .update(*caller, api_method, &payment_arg)
                 .expect("Failed to call the paid service");
             assert_eq!(
                 response,
@@ -524,7 +548,7 @@ fn patron_pays_by_named_icrc2() {
     for caller in active_users.iter() {
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(*caller, api_method, payment_arg)
+            .update(*caller, api_method, &payment_arg)
             .expect("Failed to call the paid service");
         assert_eq!(
             response,

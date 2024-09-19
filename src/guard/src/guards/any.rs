@@ -1,6 +1,5 @@
 //! Accepts any payment that the vendor accepts.
 
-use candid::{CandidType, Deserialize};
 use ic_papi_api::{caller::TokenAmount, PaymentError, PaymentType};
 
 use super::{attached_cycles::AttachedCyclesPayment, PaymentContext, PaymentGuard, PaymentGuard2};

@@ -34,3 +34,5 @@ pub struct PatronPaysIcrc2Token {
     pub ledger: Principal,
     pub patron: Principal,
 }
+
+pub type TokenAmount = u64;

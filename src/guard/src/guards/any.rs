@@ -128,7 +128,7 @@ impl<const CAP: usize> AnyPaymentGuard<CAP> {
                 .iter()
                 .find(|&x| *x == VendorPaymentConfig::PatronPaysIcrc2Cycles)
                 .map(|_| PaymentWithConfig::PatronPaysIcrc2Cycles(patron)),
-            PaymentType::CallerPaysIcrc2Token(args) => self
+            PaymentType::CallerPaysIcrc2Tokens(args) => self
                 .supported
                 .iter()
                 .find(|&x| {
@@ -139,7 +139,7 @@ impl<const CAP: usize> AnyPaymentGuard<CAP> {
                     }
                 })
                 .map(|_| PaymentWithConfig::CallerPaysIcrc2Tokens(args)),
-            PaymentType::PatronPaysIcrc2Token(args) => self
+            PaymentType::PatronPaysIcrc2Tokens(args) => self
                 .supported
                 .iter()
                 .find(|&x| {

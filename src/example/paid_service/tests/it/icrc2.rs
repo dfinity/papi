@@ -5,6 +5,7 @@ use crate::util::cycles_ledger::{
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Nat, Principal};
 use example_paid_service_api::InitArgs;
+use ic_papi_api::caller::PatronPaysIcrc2Token;
 use ic_papi_api::cycles::cycles_ledger_canister_id;
 use ic_papi_api::{principal2account, Icrc2Payer, PaymentError, PaymentType};
 use pocket_ic::{PocketIc, PocketIcBuilder};
@@ -450,10 +451,14 @@ fn patron_pays_by_named_icrc2() {
     // Ok, now we should be able to make an API call with EITHER an ICRC-2 approve or attached cycles, by declaring the payment type.
     // In this test, we will exercise the ICRC-2 approve.
     let api_method = "cost_1b";
-    let payment_arg = PaymentType::PatronPaysIcrc2Cycles(ic_papi_api::Account {
-        owner: setup.user,
-        subaccount: None,
-    });
+    let payment_arg = PaymentType::PatronPaysIcrc2Tokens(
+        PatronPaysIcrc2Tokens {
+            ledger: setup.ledger.canister_id(),
+            patron: Account {
+                owner: setup.user,
+                subaccount: None,
+            },
+        });
     let api_fee = 1_000_000_000u128;
     let repetitions = 3;
     // Pre-approve payments

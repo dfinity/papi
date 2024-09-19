@@ -30,7 +30,7 @@ pub fn set_init_args(init_args: InitArgs) {
             VendorPaymentConfig::CallerPaysIcrc2Cycles,
             VendorPaymentConfig::PatronPaysIcrc2Cycles,
             VendorPaymentConfig::CallerPaysIcrc2Tokens {
-                ledger: init_args.ledger.clone(),
+                ledger: init_args.ledger,
             },
             VendorPaymentConfig::PatronPaysIcrc2Tokens {
                 ledger: init_args.ledger,

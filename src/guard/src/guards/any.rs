@@ -1,5 +1,6 @@
 //! Accepts any payment that the vendor accepts.
 
+use candid::Principal;
 use ic_papi_api::{
     caller::{PatronPaysIcrc2Cycles, TokenAmount},
     cycles::cycles_ledger_canister_id,
@@ -25,6 +26,10 @@ pub enum VendorPaymentConfig {
     CallerPaysIcrc2Cycles,
     /// Cycles are received by the vendor canister.
     PatronPaysIcrc2Cycles,
+    /// Cycles are received by the vendor canister.
+    CallerPaysIcrc2Tokens{ledger: Principal},
+    /// Cycles are received by the vendor canister.
+    PatronPaysIcrc2Tokens{ledger: Principal},
 }
 
 /// A user's requested payment type paired with a vendor's configuration.

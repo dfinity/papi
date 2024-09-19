@@ -37,5 +37,5 @@ pub fn payment_ledger() -> Principal {
 
 /// Sets the payment ledger canister ID.
 pub fn set_init_args(init_args: InitArgs) {
-    INIT_ARGS.set(Some(init_args.clone()));
+    INIT_ARGS.set(Some(init_args));
 }

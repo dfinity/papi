@@ -15,7 +15,7 @@ const CYCLES_LEDGER_CANISTER_ID: &str = if let Some(id) = option_env!("CANISTER_
 };
 
 /// The `CYCLES_LEDGER_CANISTER_ID` as a `Principal`.
-/// 
+///
 /// # Panics
 /// - If the `CYCLES_LEDGER_CANISTER_ID` is not a valid `Principal`.
 #[must_use]

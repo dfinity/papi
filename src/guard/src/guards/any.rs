@@ -1,7 +1,6 @@
 //! Accepts any payment that the vendor accepts.
 
-use candid::Principal;
-use ic_papi_api::{caller::{CallerPaysIcrc2Token, PatronPaysIcrc2Cycles, TokenAmount}, cycles::cycles_ledger_canister_id, principal2account, PaymentError, PaymentType};
+use ic_papi_api::{caller::{PatronPaysIcrc2Cycles, TokenAmount}, cycles::cycles_ledger_canister_id, principal2account, PaymentError, PaymentType};
 
 use super::{attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard, PaymentContext, PaymentGuard, PaymentGuard2};
 

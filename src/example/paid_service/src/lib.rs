@@ -12,12 +12,6 @@ use ic_papi_guard::guards::{
 use ic_papi_guard::guards::{PaymentContext, PaymentGuard, PaymentGuard2};
 use state::{payment_ledger, set_init_args};
 
-const _SUPPORTED_PAYMENT_OPTIONS: [PaymentOption; 3] = [
-    PaymentOption::AttachedCycles { fee: None },
-    PaymentOption::CallerPaysIcrc2Cycles { fee: None },
-    PaymentOption::PatronPaysIcrc2Cycles { fee: None },
-];
-
 const PAYMENT_GUARD: AnyPaymentGuard<3> = AnyPaymentGuard {
     supported: [
         VendorPaymentConfig::AttachedCycles,

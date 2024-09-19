@@ -642,11 +642,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-ledger-types"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a144b5b4c9e4b164b338440cfbdcf9f30ff45e3d48a3be62d2424996dc93d6f"
+dependencies = [
+ "candid",
+ "crc32fast",
+ "hex",
+ "ic-cdk 0.16.0",
+ "serde",
+ "serde_bytes",
+ "sha2",
+]
+
+[[package]]
 name = "ic-papi-api"
 version = "0.1.0"
 dependencies = [
  "candid",
  "cycles-ledger-client",
+ "hex",
+ "ic-ledger-types",
  "serde",
  "serde_bytes",
 ]

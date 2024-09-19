@@ -44,11 +44,9 @@ async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
 #[update()]
 async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
     let fee = 1_000_000_000;
-    PAYMENT_GUARD.deduct(
-        PaymentContext::default(),
-        payment,
-        fee,
-    ).await?;
+    PAYMENT_GUARD
+        .deduct(PaymentContext::default(), payment, fee)
+        .await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }
 

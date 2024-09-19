@@ -8,3 +8,5 @@ candid = { workspace = true }
 serde = { workspace = true }
 serde_bytes = { workspace = true }
 cycles-ledger-client = { workspace = true }
+ic-ledger-types = { workspace = true }
+hex = { workspace = true }

@@ -376,7 +376,13 @@ fn caller_pays_by_named_icrc2() {
         // Call the API
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(setup.user, api_method, PaymentType::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens{ledger: setup.ledger.canister_id()}))
+            .update(
+                setup.user,
+                api_method,
+                PaymentType::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens {
+                    ledger: setup.ledger.canister_id(),
+                }),
+            )
             .expect("Failed to call the paid service");
         assert_eq!(
             response,
@@ -402,7 +408,9 @@ fn caller_pays_by_named_icrc2() {
                 .update(
                     setup.unauthorized_user,
                     api_method,
-                    PaymentType::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens{ledger: setup.ledger.canister_id()}),
+                    PaymentType::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens {
+                        ledger: setup.ledger.canister_id(),
+                    }),
                 )
                 .expect("Failed to call the paid service");
             assert_eq!(
@@ -425,7 +433,7 @@ fn caller_pays_by_named_icrc2() {
 }
 
 /// Verifies that the `PaymentType::PatronPaysIcrc2Tokens` payment type works as expected.
-/// 
+///
 /// Here `user` is a patron, and pays on behalf of `users[2..5]`.
 ///
 /// Only funded users should be able to make calls, and they should be able to make only as many calls as personally approved for them.
@@ -449,14 +457,13 @@ fn patron_pays_by_named_icrc2() {
     // Ok, now we should be able to make an API call with EITHER an ICRC-2 approve or attached cycles, by declaring the payment type.
     // In this test, we will exercise the ICRC-2 approve.
     let api_method = "cost_1b";
-    let payment_arg = PaymentType::PatronPaysIcrc2Tokens(
-        PatronPaysIcrc2Tokens {
-            ledger: setup.ledger.canister_id(),
-            patron: ic_papi_api::Account {
-                owner: setup.user,
-                subaccount: None,
-            },
-        });
+    let payment_arg = PaymentType::PatronPaysIcrc2Tokens(PatronPaysIcrc2Tokens {
+        ledger: setup.ledger.canister_id(),
+        patron: ic_papi_api::Account {
+            owner: setup.user,
+            subaccount: None,
+        },
+    });
     let api_fee = 1_000_000_000u128;
     let repetitions = 3;
     // Pre-approve payments

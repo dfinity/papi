@@ -1,8 +1,8 @@
-use std::cell::RefCell;
-use lazy_static::lazy_static;
 use candid::Principal;
 use example_paid_service_api::InitArgs;
 use ic_papi_guard::guards::any::{AnyPaymentGuard, VendorPaymentConfig};
+use lazy_static::lazy_static;
+use std::cell::RefCell;
 
 thread_local! {
     pub static INIT_ARGS: RefCell<Option<InitArgs>> = const {RefCell::new(None)};

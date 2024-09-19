@@ -12,9 +12,11 @@ serde_bytes = "0.11"
 ic-papi-api = { path = "src/api" }
 ic-papi-guard = { path = "src/guard" }
 ic-stable-structures = "0.6.5"
+ic-ledger-types = "0.13.0"
 cycles-ledger-client = { path = "src/declarations/cycles_ledger" }
 example-paid-service-api = { path = "src/example/paid_service_api" }
 lazy_static = { version = "1.5.0" }
+hex = { version = "0.4.3" }
 
 [profile.release]
 lto = true

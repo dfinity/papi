@@ -1,12 +1,13 @@
 use crate::util::cycles_depositor::{self, CyclesDepositorPic};
 use crate::util::cycles_ledger::{
-    ApproveArgs, CyclesLedgerPic, InitArgs as LedgerInitArgs, LedgerArgs,Account
+    Account, ApproveArgs, CyclesLedgerPic, InitArgs as LedgerInitArgs, LedgerArgs,
 };
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Nat, Principal};
 use example_paid_service_api::InitArgs;
+use ic_papi_api::cycles::cycles_ledger_canister_id;
 use ic_papi_api::{principal2account, Icrc2Payer, PaymentError, PaymentType};
-use pocket_ic::PocketIc;
+use pocket_ic::{PocketIc, PocketIcBuilder};
 use serde_bytes::ByteBuf;
 use std::sync::Arc;
 
@@ -32,9 +33,18 @@ pub struct CallerPaysWithIcRc2TestSetup {
 }
 impl Default for CallerPaysWithIcRc2TestSetup {
     fn default() -> Self {
-        let pic = Arc::new(PocketIc::new());
+        let pic = Arc::new(
+            PocketIcBuilder::new()
+                .with_fiduciary_subnet()
+                .with_system_subnet()
+                .build(),
+        );
+        let ledger = pic
+            .create_canister_with_id(None, None, cycles_ledger_canister_id())
+            .expect("Test setup error: COuld not create cycles ledger");
         let ledger = CyclesLedgerPic::from(
             PicCanisterBuilder::default()
+                .with_canister(ledger)
                 .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
                 .with_arg(
                     encode_one(LedgerArgs::Init(LedgerInitArgs {
@@ -86,6 +96,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             )
             .deploy_to(pic.clone())
             .into();
+
         Self {
             pic,
             paid_service,
@@ -439,7 +450,10 @@ fn patron_pays_by_named_icrc2() {
     // Ok, now we should be able to make an API call with EITHER an ICRC-2 approve or attached cycles, by declaring the payment type.
     // In this test, we will exercise the ICRC-2 approve.
     let api_method = "cost_1b";
-    let payment_arg = PaymentType::PatronPaysIcrc2Cycles(ic_papi_api::Account {owner: setup.user, subaccount: None});
+    let payment_arg = PaymentType::PatronPaysIcrc2Cycles(ic_papi_api::Account {
+        owner: setup.user,
+        subaccount: None,
+    });
     let api_fee = 1_000_000_000u128;
     let repetitions = 3;
     // Pre-approve payments

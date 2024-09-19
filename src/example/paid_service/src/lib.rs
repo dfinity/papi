@@ -6,10 +6,10 @@ use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::vendor::PaymentOption;
 use ic_papi_api::{PaymentError, PaymentType};
 use ic_papi_guard::guards::any::{AnyPaymentGuard, VendorPaymentConfig};
-use ic_papi_guard::guards::{PaymentContext, PaymentGuard, PaymentGuard2};
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
 };
+use ic_papi_guard::guards::{PaymentContext, PaymentGuard, PaymentGuard2};
 use state::{payment_ledger, set_init_args};
 
 const _SUPPORTED_PAYMENT_OPTIONS: [PaymentOption; 3] = [
@@ -60,7 +60,9 @@ async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
 #[update()]
 async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
     let fee = 1_000_000_000;
-    PAYMENT_GUARD.deduct(PaymentContext::default(), payment, fee).await?;
+    PAYMENT_GUARD
+        .deduct(PaymentContext::default(), payment, fee)
+        .await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }
 

@@ -158,8 +158,9 @@ fn icrc2_test_setup_works() {
     let _setup = CallerPaysWithIcRc2TestSetup::default();
 }
 
+/// Verifies that the `PaymentType::CallerPaysIcrc2Tokens` payment type works as expected.
 #[test]
-fn caller_pays_by_icrc2() {
+fn caller_pays_icrc2_tokens() {
     let setup = CallerPaysWithIcRc2TestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.
@@ -423,6 +424,8 @@ fn caller_pays_by_named_icrc2() {
     }
 }
 
+/// Verifies that the `PaymentType::PatronPaysIcrc2Tokens` payment type works as expected.
+/// 
 /// Here `user` is a patron, and pays on behalf of `users[2..5]`.
 ///
 /// Only funded users should be able to make calls, and they should be able to make only as many calls as personally approved for them.

@@ -657,6 +657,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-papi"
+version = "0.1.0"
+dependencies = [
+ "ic-papi-api",
+ "ic-papi-guard",
+]
+
+[[package]]
 name = "ic-papi-api"
 version = "0.1.0"
 dependencies = [

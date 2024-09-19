@@ -1,0 +1,9 @@
+[package]
+name = "ic-papi"
+version = "0.1.0"
+edition = "2021"
+description = "Library for implementing Paid APIs on the Internet Computer"
+
+[dependencies]
+ic-papi-api = { workspace = true }
+ic-papi-guard = { workspace = true }

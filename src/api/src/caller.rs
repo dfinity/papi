@@ -3,7 +3,7 @@ use candid::{CandidType, Deserialize, Principal};
 pub use cycles_ledger_client::Account;
 
 /// How a caller states that they will pay.
-#[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum PaymentType {
     /// The caller is paying with cycles attached to the call.
@@ -14,7 +14,7 @@ pub enum PaymentType {
     AttachedCycles,
     /// The caller is paying with cycles from their main account on the cycles ledger.
     CallerPaysIcrc2Cycles,
-    /// A patron is paying, on behalf of the caller, from their main account on the cycles ledger.
+    /// A patron is paying with cycles on behalf of the caller.
     PatronPaysIcrc2Cycles(PatronPaysIcrc2Cycles),
     /// The caller is paying with tokens from their main account on the specified ledger.
     CallerPaysIcrc2Token(CallerPaysIcrc2Token),
@@ -22,7 +22,7 @@ pub enum PaymentType {
     PatronPaysIcrc2Token(PatronPaysIcrc2Token),
 }
 
-pub type PatronPaysIcrc2Cycles = Principal;
+pub type PatronPaysIcrc2Cycles = Account;
 
 #[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
 pub struct CallerPaysIcrc2Token {

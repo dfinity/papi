@@ -74,10 +74,7 @@ async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
         PaymentType::PatronPaysIcrc2Cycles(patron) => {
             let guard = Icrc2CyclesPaymentGuard {
                 ledger_canister_id: payment_ledger(),
-                payer_account: ic_papi_api::Account {
-                    owner: patron,
-                    subaccount: None,
-                },
+                payer_account: patron,
                 spender_subaccount: Some(principal2account(&ic_cdk::caller())),
                 ..Icrc2CyclesPaymentGuard::default()
             };

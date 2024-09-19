@@ -4,7 +4,6 @@ use example_paid_service_api::InitArgs;
 use ic_cdk::init;
 use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::{PaymentError, PaymentType};
-use ic_papi_guard::guards::any::{AnyPaymentGuard, VendorPaymentConfig};
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
 };

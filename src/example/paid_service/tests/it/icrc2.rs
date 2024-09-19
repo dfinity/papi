@@ -6,7 +6,6 @@ use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrai
 use candid::{encode_one, Nat, Principal};
 use example_paid_service_api::InitArgs;
 use ic_papi_api::caller::{CallerPaysIcrc2Tokens, PatronPaysIcrc2Tokens};
-use ic_papi_api::cycles::cycles_ledger_canister_id;
 use ic_papi_api::{principal2account, PaymentError, PaymentType};
 use pocket_ic::{PocketIc, PocketIcBuilder};
 use std::sync::Arc;

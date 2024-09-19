@@ -1,6 +1,6 @@
 //! Accepts any payment that the vendor accepts.
 
-use ic_papi_api::{caller::{PatronPaysIcrc2Cycles, TokenAmount}, cycles::cycles_ledger_canister_id, principal2account, PaymentError, PaymentType};
+use ic_papi_api::{caller::{PatronPaysIcrc2Cycles, TokenAmount}, cycles::cycles_ledger_canister_id, principal2account, Account, PaymentError, PaymentType};
 
 use super::{attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard, PaymentContext, PaymentGuard, PaymentGuard2};
 
@@ -32,11 +32,11 @@ pub enum PaymentWithConfig {
 impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
     async fn deduct(
         &self,
-        _context: PaymentContext,
+        context: PaymentContext,
         payment: PaymentType,
         fee: TokenAmount,
     ) -> Result<(), PaymentError> {
-
+        let PaymentContext{caller, own_canister_id} = context;
         let payment_config = self
             .config(payment)
             .ok_or(PaymentError::UnsupportedPaymentType)?;
@@ -44,12 +44,15 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
             PaymentWithConfig::AttachedCycles => AttachedCyclesPayment {}.deduct(fee).await,
             PaymentWithConfig::CallerPaysIcrc2Cycles => Icrc2CyclesPaymentGuard {
                 ledger_canister_id: cycles_ledger_canister_id(),
-                ..Icrc2CyclesPaymentGuard::default()
+                payer_account: Account{owner: caller, subaccount: None},
+                spender_subaccount: None,
+                created_at_time: None,
+                own_canister_id,
             }.deduct(fee).await,
             PaymentWithConfig::PatronPaysIcrc2Cycles(patron) => Icrc2CyclesPaymentGuard {
                 ledger_canister_id: cycles_ledger_canister_id(),
                 payer_account: patron,
-                spender_subaccount: Some(principal2account(&ic_cdk::caller())),
+                spender_subaccount: Some(principal2account(&caller)),
                 ..Icrc2CyclesPaymentGuard::default()
             }.deduct(fee).await,
         }

@@ -7,17 +7,17 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-ic-cdk-macros = { workspace = true }
-ic-cdk = { workspace = true }
 candid = { workspace = true }
+example-paid-service-api = { workspace = true }
+ic-cdk = { workspace = true }
+ic-cdk-macros = { workspace = true }
 ic-papi-api = { workspace = true }
 ic-papi-guard = { workspace = true }
 ic-stable-structures = { workspace = true }
+lazy_static = { workspace = true }
 serde = { workspace = true }
 serde_bytes = { workspace = true }
-example-paid-service-api = { workspace = true }
-lazy_static = { workspace = true }
 
 [dev-dependencies]
-pocket-ic = { workspace = true }
 cycles-ledger-client = { workspace = true }
+pocket-ic = { workspace = true }

@@ -7,11 +7,10 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-ic-cdk-macros = { workspace = true }
-ic-cdk = { workspace = true }
 candid = { workspace = true }
+ic-cdk = { workspace = true }
+ic-cdk-macros = { workspace = true }
 ic-papi-api = { workspace = true }
-
 
 [dev-dependencies]
 pocket-ic = { workspace = true }

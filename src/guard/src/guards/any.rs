@@ -2,7 +2,7 @@
 
 use candid::Principal;
 use ic_papi_api::{
-    caller::{PatronPaysIcrc2Cycles, TokenAmount},
+    caller::{CallerPaysIcrc2Token, PatronPaysIcrc2Cycles, PatronPaysIcrc2Token, TokenAmount},
     cycles::cycles_ledger_canister_id,
     principal2account, Account, PaymentError, PaymentType,
 };
@@ -27,9 +27,9 @@ pub enum VendorPaymentConfig {
     /// Cycles are received by the vendor canister.
     PatronPaysIcrc2Cycles,
     /// Cycles are received by the vendor canister.
-    CallerPaysIcrc2Tokens{ledger: Principal},
+    CallerPaysIcrc2Tokens { ledger: Principal },
     /// Cycles are received by the vendor canister.
-    PatronPaysIcrc2Tokens{ledger: Principal},
+    PatronPaysIcrc2Tokens { ledger: Principal },
 }
 
 /// A user's requested payment type paired with a vendor's configuration.
@@ -38,6 +38,8 @@ pub enum PaymentWithConfig {
     AttachedCycles,
     CallerPaysIcrc2Cycles,
     PatronPaysIcrc2Cycles(PatronPaysIcrc2Cycles),
+    CallerPaysIcrc2Tokens(CallerPaysIcrc2Token),
+    PatronPaysIcrc2Tokens(PatronPaysIcrc2Token),
 }
 
 impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
@@ -80,6 +82,30 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
                 .deduct(fee)
                 .await
             }
+            PaymentWithConfig::CallerPaysIcrc2Tokens(args) => {
+                Icrc2CyclesPaymentGuard {
+                    ledger_canister_id: args.ledger,
+                    payer_account: Account {
+                        owner: caller,
+                        subaccount: None,
+                    },
+                    spender_subaccount: None,
+                    created_at_time: None,
+                    own_canister_id,
+                }
+                .deduct(fee)
+                .await
+            }
+            PaymentWithConfig::PatronPaysIcrc2Tokens(args) => {
+                Icrc2CyclesPaymentGuard {
+                    ledger_canister_id: args.ledger,
+                    payer_account: args.patron,
+                    spender_subaccount: Some(principal2account(&caller)),
+                    ..Icrc2CyclesPaymentGuard::default()
+                }
+                .deduct(fee)
+                .await
+            }
         }
     }
 }
@@ -102,6 +128,28 @@ impl<const CAP: usize> AnyPaymentGuard<CAP> {
                 .iter()
                 .find(|&x| *x == VendorPaymentConfig::PatronPaysIcrc2Cycles)
                 .map(|_| PaymentWithConfig::PatronPaysIcrc2Cycles(patron)),
+            PaymentType::CallerPaysIcrc2Token(args) => self
+                .supported
+                .iter()
+                .find(|&x| {
+                    if let VendorPaymentConfig::CallerPaysIcrc2Tokens { ledger } = x {
+                        *ledger == args.ledger
+                    } else {
+                        false
+                    }
+                })
+                .map(|_| PaymentWithConfig::CallerPaysIcrc2Tokens(args)),
+            PaymentType::PatronPaysIcrc2Token(args) => self
+                .supported
+                .iter()
+                .find(|&x| {
+                    if let VendorPaymentConfig::PatronPaysIcrc2Tokens { ledger } = x {
+                        *ledger == args.ledger
+                    } else {
+                        false
+                    }
+                })
+                .map(|_| PaymentWithConfig::PatronPaysIcrc2Tokens(args)),
             _ => None,
         }
     }

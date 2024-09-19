@@ -29,10 +29,10 @@ pub struct CallerPaysIcrc2Token {
     pub ledger: Principal,
 }
 
-#[derive(Debug, CandidType, Deserialize, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub struct PatronPaysIcrc2Token {
     pub ledger: Principal,
-    pub patron: Principal,
+    pub patron: Account,
 }
 
 pub type TokenAmount = u64;

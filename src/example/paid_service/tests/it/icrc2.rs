@@ -454,7 +454,7 @@ fn patron_pays_by_named_icrc2() {
     let payment_arg = PaymentType::PatronPaysIcrc2Tokens(
         PatronPaysIcrc2Tokens {
             ledger: setup.ledger.canister_id(),
-            patron: Account {
+            patron: ic_papi_api::Account {
                 owner: setup.user,
                 subaccount: None,
             },

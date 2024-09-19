@@ -15,7 +15,8 @@ const SUB_ACCOUNT_ZERO: Subaccount = Subaccount([0; 32]);
 #[must_use]
 pub fn principal2account(principal: &Principal) -> ByteBuf {
     // Note: The AccountIdentifier type contains bytes but has no API to access them.
-    // Ther is a ticket to address this here: https://github.com/dfinity/cdk-rs/issues/519
+    // There is a ticket to address this here: https://github.com/dfinity/cdk-rs/issues/519
+    // TODO: Simplify this when an API that provides bytes is available.
     let hex_str = ic_ledger_types::AccountIdentifier::new(principal, &SUB_ACCOUNT_ZERO).to_hex();
     hex::decode(&hex_str)
         .unwrap_or_else(|_| {

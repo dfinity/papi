@@ -5,6 +5,7 @@ use ic_papi_api::{caller::TokenAmount, PaymentError, PaymentType};
 
 use super::{attached_cycles::AttachedCyclesPayment, PaymentContext, PaymentGuard, PaymentGuard2};
 
+/// A guard that accepts a user-specified payment type, providing the vendor supports it.
 pub struct AnyPaymentGuard<const CAP: usize> {
     pub supported: [VendorPaymentConfig; CAP],
 }

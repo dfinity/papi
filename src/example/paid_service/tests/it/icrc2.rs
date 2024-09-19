@@ -59,7 +59,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
             .with_wasm(&PicCanister::cargo_wasm_path("example_paid_service"))
             .with_arg(
                 encode_one(Some(InitArgs {
-                    ledger: Some(ledger.canister_id()),
+                    ledger: ledger.canister_id(),
                 }))
                 .unwrap(),
             )

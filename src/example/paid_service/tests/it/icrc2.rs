@@ -1,6 +1,6 @@
 use crate::util::cycles_depositor::{self, CyclesDepositorPic};
 use crate::util::cycles_ledger::{
-    Account, ApproveArgs, CyclesLedgerPic, InitArgs as LedgerInitArgs, LedgerArgs,
+    ApproveArgs, CyclesLedgerPic, InitArgs as LedgerInitArgs, LedgerArgs,Account
 };
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Nat, Principal};
@@ -439,7 +439,7 @@ fn patron_pays_by_named_icrc2() {
     // Ok, now we should be able to make an API call with EITHER an ICRC-2 approve or attached cycles, by declaring the payment type.
     // In this test, we will exercise the ICRC-2 approve.
     let api_method = "cost_1b";
-    let payment_arg = PaymentType::PatronPaysIcrc2Cycles(setup.user);
+    let payment_arg = PaymentType::PatronPaysIcrc2Cycles(ic_papi_api::Account {owner: setup.user, subaccount: None});
     let api_fee = 1_000_000_000u128;
     let repetitions = 3;
     // Pre-approve payments
@@ -470,7 +470,7 @@ fn patron_pays_by_named_icrc2() {
     {
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(setup.unauthorized_user, api_method, payment_arg)
+            .update(setup.unauthorized_user, api_method, &payment_arg)
             .expect("Failed to call the paid service");
         assert_eq!(
             response,
@@ -497,7 +497,7 @@ fn patron_pays_by_named_icrc2() {
         for caller in active_users.iter() {
             let response: Result<String, PaymentError> = setup
                 .paid_service
-                .update(*caller, api_method, payment_arg)
+                .update(*caller, api_method, &payment_arg)
                 .expect("Failed to call the paid service");
             assert_eq!(
                 response,
@@ -524,7 +524,7 @@ fn patron_pays_by_named_icrc2() {
     for caller in active_users.iter() {
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(*caller, api_method, payment_arg)
+            .update(*caller, api_method, &payment_arg)
             .expect("Failed to call the paid service");
         assert_eq!(
             response,

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 
 # Needs env vars:
 POCKET_IC_SERVER_VERSION="${POCKET_IC_SERVER_VERSION:-5.0.0}"
@@ -13,7 +14,7 @@ else
   exit 1
 fi
 
-if "$POCKET_IC_SERVER_PATH" --version &>/dev/null | grep -wq "$POCKET_IC_SERVER_VERSION"; then
+if "$POCKET_IC_SERVER_PATH" --version 2>/dev/null | grep -wq "$POCKET_IC_SERVER_VERSION"; then
   echo "PocketIC server already exists at: $POCKET_IC_SERVER_PATH"
   echo "Skipping download."
 else

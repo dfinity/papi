@@ -4,7 +4,7 @@ use example_paid_service_api::InitArgs;
 use ic_cdk::init;
 use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::vendor::PaymentOption;
-use ic_papi_api::{principal2account, PaymentError, PaymentType};
+use ic_papi_api::{PaymentError, PaymentType};
 use ic_papi_guard::guards::any::{AnyPaymentGuard, VendorPaymentConfig};
 use ic_papi_guard::guards::{PaymentContext, PaymentGuard, PaymentGuard2};
 use ic_papi_guard::guards::{

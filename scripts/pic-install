@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 
 # Needs env vars:
 POCKET_IC_SERVER_VERSION="${POCKET_IC_SERVER_VERSION:-5.0.0}"

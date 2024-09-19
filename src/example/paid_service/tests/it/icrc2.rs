@@ -5,11 +5,10 @@ use crate::util::cycles_ledger::{
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Nat, Principal};
 use example_paid_service_api::InitArgs;
-use ic_papi_api::caller::PatronPaysIcrc2Tokens;
+use ic_papi_api::caller::{CallerPaysIcrc2Tokens, PatronPaysIcrc2Tokens};
 use ic_papi_api::cycles::cycles_ledger_canister_id;
-use ic_papi_api::{principal2account, Icrc2Payer, PaymentError, PaymentType};
+use ic_papi_api::{principal2account, PaymentError, PaymentType};
 use pocket_ic::{PocketIc, PocketIcBuilder};
-use serde_bytes::ByteBuf;
 use std::sync::Arc;
 
 pub struct CallerPaysWithIcRc2TestSetup {
@@ -40,12 +39,9 @@ impl Default for CallerPaysWithIcRc2TestSetup {
                 .with_system_subnet()
                 .build(),
         );
-        let ledger = pic
-            .create_canister_with_id(None, None, cycles_ledger_canister_id())
-            .expect("Test setup error: COuld not create cycles ledger");
+        // WOuld like to create this with the cycles ledger canister ID but currently this yields an error.
         let ledger = CyclesLedgerPic::from(
             PicCanisterBuilder::default()
-                .with_canister(ledger)
                 .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
                 .with_arg(
                     encode_one(LedgerArgs::Init(LedgerInitArgs {
@@ -380,7 +376,7 @@ fn caller_pays_by_named_icrc2() {
         // Call the API
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(setup.user, api_method, PaymentType::CallerPaysIcrc2Cycles)
+            .update(setup.user, api_method, PaymentType::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens{ledger: setup.ledger.canister_id()}))
             .expect("Failed to call the paid service");
         assert_eq!(
             response,
@@ -406,7 +402,7 @@ fn caller_pays_by_named_icrc2() {
                 .update(
                     setup.unauthorized_user,
                     api_method,
-                    PaymentType::CallerPaysIcrc2Cycles,
+                    PaymentType::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens{ledger: setup.ledger.canister_id()}),
                 )
                 .expect("Failed to call the paid service");
             assert_eq!(

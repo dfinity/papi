@@ -5,7 +5,7 @@ use crate::util::cycles_ledger::{
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Nat, Principal};
 use example_paid_service_api::InitArgs;
-use ic_papi_api::caller::PatronPaysIcrc2Token;
+use ic_papi_api::caller::PatronPaysIcrc2Tokens;
 use ic_papi_api::cycles::cycles_ledger_canister_id;
 use ic_papi_api::{principal2account, Icrc2Payer, PaymentError, PaymentType};
 use pocket_ic::{PocketIc, PocketIcBuilder};

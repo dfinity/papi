@@ -2,7 +2,7 @@
 
 use candid::Principal;
 use ic_papi_api::{
-    caller::{CallerPaysIcrc2Token, PatronPaysIcrc2Cycles, PatronPaysIcrc2Token, TokenAmount},
+    caller::{CallerPaysIcrc2Tokens, PatronPaysIcrc2Cycles, PatronPaysIcrc2Tokens, TokenAmount},
     cycles::cycles_ledger_canister_id,
     principal2account, Account, PaymentError, PaymentType,
 };
@@ -38,8 +38,8 @@ pub enum PaymentWithConfig {
     AttachedCycles,
     CallerPaysIcrc2Cycles,
     PatronPaysIcrc2Cycles(PatronPaysIcrc2Cycles),
-    CallerPaysIcrc2Tokens(CallerPaysIcrc2Token),
-    PatronPaysIcrc2Tokens(PatronPaysIcrc2Token),
+    CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens),
+    PatronPaysIcrc2Tokens(PatronPaysIcrc2Tokens),
 }
 
 impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {

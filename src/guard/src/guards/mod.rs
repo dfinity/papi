@@ -21,7 +21,7 @@ pub trait PaymentGuard2 {
     ) -> Result<(), PaymentError>;
 }
 
-struct PaymentContext {
+pub struct PaymentContext {
     own_canister_id: Principal,
     caller: Principal,
 }

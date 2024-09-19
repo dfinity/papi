@@ -6,7 +6,7 @@ dfx deploy
 
 export POCKET_IC_SERVER_VERSION=5.0.0
 export POCKET_IC_SERVER_PATH="target/pocket-ic"
-export POCKET_IC_BIN="../../../${POCKET_IC_SERVER_PATH}"
+export POCKET_IC_BIN="${PWD}/${POCKET_IC_SERVER_PATH}"
 export POCKET_IC_MUTE_SERVER=""
 scripts/pic-install
 

@@ -6,7 +6,7 @@ use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::vendor::PaymentOption;
 use ic_papi_api::{principal2account, PaymentError, PaymentType};
 use ic_papi_guard::guards::any::{AnyPaymentGuard, VendorPaymentConfig};
-use ic_papi_guard::guards::PaymentGuard;
+use ic_papi_guard::guards::{PaymentContext, PaymentGuard, PaymentGuard2};
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
 };
@@ -18,7 +18,7 @@ const _SUPPORTED_PAYMENT_OPTIONS: [PaymentOption; 3] = [
     PaymentOption::PatronPaysIcrc2Cycles { fee: None },
 ];
 
-const _PAYMENT_GUARD: AnyPaymentGuard<3> = AnyPaymentGuard {
+const PAYMENT_GUARD: AnyPaymentGuard<3> = AnyPaymentGuard {
     supported: [
         VendorPaymentConfig::AttachedCycles,
         VendorPaymentConfig::CallerPaysIcrc2Cycles,
@@ -60,28 +60,7 @@ async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
 #[update()]
 async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
     let fee = 1_000_000_000;
-    match payment {
-        PaymentType::AttachedCycles => {
-            AttachedCyclesPayment::default().deduct(fee).await?;
-        }
-        PaymentType::CallerPaysIcrc2Cycles => {
-            let guard = Icrc2CyclesPaymentGuard {
-                ledger_canister_id: payment_ledger(),
-                ..Icrc2CyclesPaymentGuard::default()
-            };
-            guard.deduct(fee).await?;
-        }
-        PaymentType::PatronPaysIcrc2Cycles(patron) => {
-            let guard = Icrc2CyclesPaymentGuard {
-                ledger_canister_id: payment_ledger(),
-                payer_account: patron,
-                spender_subaccount: Some(principal2account(&ic_cdk::caller())),
-                ..Icrc2CyclesPaymentGuard::default()
-            };
-            guard.deduct(fee).await?;
-        }
-        _ => return Err(PaymentError::UnsupportedPaymentType),
-    };
+    PAYMENT_GUARD.deduct(PaymentContext::default(), payment, fee).await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }
 

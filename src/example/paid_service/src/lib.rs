@@ -9,15 +9,7 @@ use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
 };
 use ic_papi_guard::guards::{PaymentContext, PaymentGuard, PaymentGuard2};
-use state::{payment_ledger, set_init_args};
-
-const PAYMENT_GUARD: AnyPaymentGuard<3> = AnyPaymentGuard {
-    supported: [
-        VendorPaymentConfig::AttachedCycles,
-        VendorPaymentConfig::CallerPaysIcrc2Cycles,
-        VendorPaymentConfig::PatronPaysIcrc2Cycles,
-    ],
-};
+use state::{payment_ledger, set_init_args, PAYMENT_GUARD};
 
 #[init]
 fn init(init_args: Option<InitArgs>) {
@@ -53,9 +45,11 @@ async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
 #[update()]
 async fn cost_1b(payment: PaymentType) -> Result<String, PaymentError> {
     let fee = 1_000_000_000;
-    PAYMENT_GUARD
-        .deduct(PaymentContext::default(), payment, fee)
-        .await?;
+    PAYMENT_GUARD.deduct(
+        PaymentContext::default(),
+        payment,
+        fee,
+    ).await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }
 

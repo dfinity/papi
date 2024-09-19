@@ -1,12 +1,26 @@
 use std::cell::RefCell;
-
+use lazy_static::lazy_static;
 use candid::Principal;
 use example_paid_service_api::InitArgs;
 use ic_papi_guard::guards::any::{AnyPaymentGuard, VendorPaymentConfig};
 
 thread_local! {
     pub static INIT_ARGS: RefCell<Option<InitArgs>> = const {RefCell::new(None)};
-    pub static PAYMENT_OPTIONS: RefCell<Option<AnyPaymentGuard<5>>> = const {RefCell::new(None)};
+}
+lazy_static! {
+    pub static ref PAYMENT_GUARD: AnyPaymentGuard<5> = AnyPaymentGuard {
+        supported: [
+            VendorPaymentConfig::AttachedCycles,
+            VendorPaymentConfig::CallerPaysIcrc2Cycles,
+            VendorPaymentConfig::PatronPaysIcrc2Cycles,
+            VendorPaymentConfig::CallerPaysIcrc2Tokens {
+                ledger: payment_ledger(),
+            },
+            VendorPaymentConfig::PatronPaysIcrc2Tokens {
+                ledger: payment_ledger(),
+            },
+        ],
+    };
 }
 
 pub fn init_element<F, T>(f: F) -> T
@@ -24,18 +38,4 @@ pub fn payment_ledger() -> Principal {
 /// Sets the payment ledger canister ID.
 pub fn set_init_args(init_args: InitArgs) {
     INIT_ARGS.set(Some(init_args.clone()));
-    let guard = AnyPaymentGuard {
-        supported: [
-            VendorPaymentConfig::AttachedCycles,
-            VendorPaymentConfig::CallerPaysIcrc2Cycles,
-            VendorPaymentConfig::PatronPaysIcrc2Cycles,
-            VendorPaymentConfig::CallerPaysIcrc2Tokens {
-                ledger: init_args.ledger,
-            },
-            VendorPaymentConfig::PatronPaysIcrc2Tokens {
-                ledger: init_args.ledger,
-            },
-        ],
-    };
-    PAYMENT_OPTIONS.set(Some(guard));
 }

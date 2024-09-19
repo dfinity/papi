@@ -14,6 +14,7 @@ ic-papi-guard = { path = "src/guard" }
 ic-stable-structures = "0.6.5"
 cycles-ledger-client = { path = "src/declarations/cycles_ledger" }
 example-paid-service-api = { path = "src/example/paid_service_api" }
+lazy_static = { version = "1.5.0" }
 
 [profile.release]
 lto = true

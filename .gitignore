@@ -1,5 +1,7 @@
 # Rust build artefacts
 /target
+# npm dependencies
+node_modules
 # Testing tool
 pocket-ic
 pocket-ic.gz
@@ -11,3 +13,5 @@ pocket-ic.gz
 branches
 # Build artefacts
 out
+# Temp files
+,*

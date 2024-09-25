@@ -1,3 +1,3 @@
 mod attached_cycles;
-mod icrc2;
+mod icrc2_cycles;
 mod util;

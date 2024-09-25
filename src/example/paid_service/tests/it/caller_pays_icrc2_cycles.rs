@@ -98,7 +98,6 @@ fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
         "Initially the user balance in the ledger should be zero".to_string(),
     );
     // .. Get enough to play with lots of transactions.
-    const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
     let mut expected_user_balance = 100_000_000_000; // Lots of funds to play with.
     setup.fund_user(expected_user_balance);
     setup.assert_user_balance_eq(
@@ -156,7 +155,6 @@ fn caller_pays_by_named_icrc2() {
         "Initially the user balance in the ledger should be zero".to_string(),
     );
     // .. Get enough to play with lots of transactions.
-    const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
     let mut expected_user_balance = 100_000_000_000; // Lots of funds to play with.
     setup.fund_user(expected_user_balance);
     setup.assert_user_balance_eq(

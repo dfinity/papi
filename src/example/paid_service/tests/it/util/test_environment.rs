@@ -44,8 +44,8 @@ pub struct CallerPaysWithIcrc2CyclesTestSetup {
     pub users: [Principal; 5],
     /// Unauthorized user
     pub unauthorized_user: Principal,
-    /// User's wallet.  We use the cycles wallet so that we can top it up easily, but any source of funds will do, with any ICRC-2 token.
-    pub wallet: CyclesDepositorPic,
+    /// A canister used to deposit cycles into the ledger.
+    pub cycles_depositor: CyclesDepositorPic,
 }
 impl Default for CallerPaysWithIcrc2CyclesTestSetup {
     fn default() -> Self {
@@ -110,7 +110,7 @@ impl Default for CallerPaysWithIcrc2CyclesTestSetup {
         let unauthorized_user =
             Principal::from_text("rg3gz-22tjp-jh7hl-migkq-vb7in-i2ylc-6umlc-dtbug-v6jgc-uo24d-nqe")
                 .unwrap();
-        let wallet = PicCanisterBuilder::default()
+        let cycles_depositor = PicCanisterBuilder::default()
             .with_wasm(&PicCanister::dfx_wasm_path("cycles_depositor"))
             .with_controllers(vec![user])
             .with_arg(
@@ -130,7 +130,7 @@ impl Default for CallerPaysWithIcrc2CyclesTestSetup {
             user2,
             users,
             unauthorized_user,
-            wallet,
+            cycles_depositor,
         }
     }
 }
@@ -140,9 +140,9 @@ impl CallerPaysWithIcrc2CyclesTestSetup {
         let initial_balance = self.user_balance();
         // .. Magic cycles into existence (test only - not IRL).
         let deposit = megasquigs + LEDGER_FEE;
-        self.pic.add_cycles(self.wallet.canister_id, deposit);
+        self.pic.add_cycles(self.cycles_depositor.canister_id, deposit);
         // .. Send cycles to the cycles ledger.
-        self.wallet
+        self.cycles_depositor
             .deposit(
                 self.user,
                 &cycles_depositor::DepositArg {

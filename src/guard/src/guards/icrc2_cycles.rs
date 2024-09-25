@@ -3,6 +3,8 @@ use candid::{Nat, Principal};
 use cycles_ledger_client::WithdrawFromArgs;
 use ic_papi_api::{caller::TokenAmount, Account};
 
+/// Accepts cycles using an ICRC-2 approve followed by withdrawing the cycles to the current canister.  Withdrawing
+/// cycles to the current canister is specific to the cycles ledger canister; it is not part of the ICRC-2 standard.
 pub struct Icrc2CyclesPaymentGuard {
     /// The payer
     pub payer_account: Account,

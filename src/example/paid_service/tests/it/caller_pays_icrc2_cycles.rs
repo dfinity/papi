@@ -8,6 +8,7 @@ use example_paid_service_api::InitArgs;
 use ic_papi_api::{PaymentError, PaymentType};
 use pocket_ic::{PocketIc, PocketIcBuilder};
 use std::sync::Arc;
+use ic_papi_api::cycles::CYCLES_LEDGER_CANISTER_ID;
 
 const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
 
@@ -37,11 +38,17 @@ impl Default for CallerPaysWithIcrc2CyclesTestSetup {
             PocketIcBuilder::new()
                 .with_fiduciary_subnet()
                 .with_system_subnet()
+                .with_application_subnet()
+                .with_ii_subnet()
+                .with_nns_subnet()
                 .build(),
         );
+        let cycles_ledger_canister_id = pic.create_canister_with_id(None, None, Principal::from_text(CYCLES_LEDGER_CANISTER_ID).unwrap()).unwrap();
+
         // Would like to create this with the cycles ledger canister ID but currently this yields an error.
         let ledger = CyclesLedgerPic::from(
             PicCanisterBuilder::default()
+            .with_canister(cycles_ledger_canister_id)
                 .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
                 .with_arg(
                     encode_one(LedgerArgs::Init(LedgerInitArgs {

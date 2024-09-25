@@ -1,14 +1,14 @@
 use candid::Principal;
 
 /// The cycles ledger canister ID on mainnet.
-const MAINNET_CYCLES_LEDGER_CANISTER_ID: &str = "um5iw-rqaaa-aaaaq-qaaba-cai";
+pub const MAINNET_CYCLES_LEDGER_CANISTER_ID: &str = "um5iw-rqaaa-aaaaq-qaaba-cai";
 
 /// The cycles ledger canister ID.
 ///
 /// - If a `cycles_ledger` canister is listed in `dfx.json`, the `dfx build` command will set the
 ///   environment variable `CANISTER_ID_CYCLES_LEDGER` and we use this to obtain the canister ID.
 /// - Otherwise, the mainnet cycles ledger canister ID is used.
-const CYCLES_LEDGER_CANISTER_ID: &str = if let Some(id) = option_env!("CANISTER_ID_CYCLES_LEDGER") {
+pub const CYCLES_LEDGER_CANISTER_ID: &str = if let Some(id) = option_env!("CANISTER_ID_CYCLES_LEDGER") {
     id
 } else {
     MAINNET_CYCLES_LEDGER_CANISTER_ID

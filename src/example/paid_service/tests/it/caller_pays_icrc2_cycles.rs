@@ -209,21 +209,7 @@ fn caller_pays_icrc2_cycles() {
     for payment in (api_fee - 5)..(api_fee + 5) {
         for _repetition in 0..2 {
             // Pre-approve payment
-            setup
-                .ledger
-                .icrc_2_approve(
-                    setup.user,
-                    &ApproveArgs {
-                        spender: Account {
-                            owner: setup.paid_service.canister_id(),
-                            subaccount: None,
-                        },
-                        amount: Nat::from(payment + LEDGER_FEE),
-                        ..ApproveArgs::default()
-                    },
-                )
-                .expect("Failed to call the ledger to approve")
-                .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
+            setup.user_approves_payment_for_paid_service(payment + LEDGER_FEE);
             // Check that the user has been charged for the approve.
             expected_user_balance -= LEDGER_FEE;
             setup.assert_user_balance_eq(
@@ -306,21 +292,7 @@ fn caller_pays_by_icrc2_prepayment() {
     let api_method = "cost_1b_icrc2_from_caller";
     let api_fee = 1_000_000_000u128;
     // Pre-approve payment
-    setup
-        .ledger
-        .icrc_2_approve(
-            setup.user,
-            &ApproveArgs {
-                spender: Account {
-                    owner: setup.paid_service.canister_id(),
-                    subaccount: None,
-                },
-                amount: Nat::from(expected_user_balance),
-                ..ApproveArgs::default()
-            },
-        )
-        .expect("Failed to call the ledger to approve")
-        .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
+    setup.user_approves_payment_for_paid_service(expected_user_balance);
     // Check that the user has been charged for the approve.
     expected_user_balance -= LEDGER_FEE;
     setup.assert_user_balance_eq(
@@ -383,21 +355,7 @@ fn caller_pays_by_named_icrc2() {
     let api_method = "cost_1b";
     let api_fee = 1_000_000_000u128;
     // Pre-approve payment
-    setup
-        .ledger
-        .icrc_2_approve(
-            setup.user,
-            &ApproveArgs {
-                spender: Account {
-                    owner: setup.paid_service.canister_id(),
-                    subaccount: None,
-                },
-                amount: Nat::from(expected_user_balance),
-                ..ApproveArgs::default()
-            },
-        )
-        .expect("Failed to call the ledger to approve")
-        .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
+    setup.user_approves_payment_for_paid_service(expected_user_balance);
     // Check that the user has been charged for the approve.
     expected_user_balance -= LEDGER_FEE;
     setup.assert_user_balance_eq(

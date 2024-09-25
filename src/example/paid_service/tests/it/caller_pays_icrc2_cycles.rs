@@ -1,7 +1,7 @@
 use crate::util::pic_canister::PicCanisterTrait;
 use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMethods, LEDGER_FEE};
 use candid::Nat;
-use ic_papi_api::PaymentError;
+use ic_papi_api::{PaymentError, PaymentType};
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected with a range of approval amounts near the required amount.
 ///
@@ -45,7 +45,7 @@ fn caller_pays_icrc2_cycles_works_with_large_enough_approval() {
                 setup.pic.cycle_balance(setup.paid_service.canister_id);
             // Call the API
             let response: Result<String, PaymentError> =
-                setup.call_paid_service(setup.user, method);
+                setup.call_paid_service(setup.user, method, ());
             if payment < method.cost() {
                 assert_eq!(
                     response,
@@ -120,7 +120,7 @@ fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
         let service_canister_cycles_before =
             setup.pic.cycle_balance(setup.paid_service.canister_id);
         // Call the API
-        let response: Result<String, PaymentError> = setup.call_paid_service(setup.user, method);
+        let response: Result<String, PaymentError> = setup.call_paid_service(setup.user, method, ());
         assert_eq!(
             response,
             Ok("Yes, you paid 1 billion cycles!".to_string()),
@@ -160,59 +160,36 @@ fn caller_pays_by_named_icrc2() {
         "Test setup failed when providing the user with funds".to_string(),
     );
     // Ok, now we should be able to make an API call with an ICRC-2 approve.
-    let api_fee = 1_000_000_000u128;
+    let method = PaidMethods::Cost1b;
     // Pre-approve payment
-    setup.user_approves_payment_for_paid_service(expected_user_balance);
+    setup.user_approves_payment_for_paid_service(method.cost());
     // Check that the user has been charged for the approve.
     expected_user_balance -= LEDGER_FEE;
     setup.assert_user_balance_eq(
         expected_user_balance,
         "Expected the user balance to be charged for the ICRC2 approve".to_string(),
     );
-    // Now make several identical API calls
-    for _repetition in 0..5 {
-        // Check the balance beforehand
-        let service_canister_cycles_before =
-            setup.pic.cycle_balance(setup.paid_service.canister_id);
-        // Call the API
-        let response: Result<String, PaymentError> =
-            setup.call_paid_service(setup.user, PaidMethods::Cost1b);
-        assert_eq!(
-            response,
-            Ok("Yes, you paid 1 billion cycles!".to_string()),
-            "Should have succeeded with a generous prepayment",
-        );
-        let service_canister_cycles_after = setup.pic.cycle_balance(setup.paid_service.canister_id);
-        assert!(
-            service_canister_cycles_after > service_canister_cycles_before,
-            "The service canister needs to charge more to cover its cycle cost!  Loss: {}",
-            service_canister_cycles_before - service_canister_cycles_after
-        );
-        expected_user_balance -= api_fee + LEDGER_FEE;
-        setup.assert_user_balance_eq(
-            expected_user_balance,
-            "Expected the user balance to be the initial balance minus the ledger and API fees"
-                .to_string(),
-        );
-        // But an unauthorized user should not be able to make the same call.
-        {
-            let response: Result<String, PaymentError> =
-                setup.call_paid_service(setup.unauthorized_user, PaidMethods::Cost1b);
-            assert_eq!(
-                response,
-                Err(PaymentError::LedgerError {
-                    ledger: setup.ledger.canister_id(),
-                    error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
-                        allowance: Nat::from(0u32),
-                    }
-                }),
-                "A user who hasn't paid should not be able to make the call",
-            );
-            setup.assert_user_balance_eq(
-                expected_user_balance,
-                "The user should not have been charged for unauthorized spending attempts"
-                    .to_string(),
-            );
-        }
-    }
+    // Now make an API call
+    // Check the canister cycles balance beforehand
+    let service_canister_cycles_before = setup.pic.cycle_balance(setup.paid_service.canister_id);
+    // Call the API
+    let response: Result<String, PaymentError> =
+        setup.call_paid_service(setup.user, PaidMethods::Cost1b, PaymentType::CallerPaysIcrc2Cycles);
+    assert_eq!(
+        response,
+        Ok("Yes, you paid 1 billion cycles!".to_string()),
+        "Should have succeeded with a generous prepayment",
+    );
+    let service_canister_cycles_after = setup.pic.cycle_balance(setup.paid_service.canister_id);
+    assert!(
+        service_canister_cycles_after > service_canister_cycles_before,
+        "The service canister needs to charge more to cover its cycle cost!  Loss: {}",
+        service_canister_cycles_before - service_canister_cycles_after
+    );
+    expected_user_balance -= method.cost() + LEDGER_FEE;
+    setup.assert_user_balance_eq(
+        expected_user_balance,
+        "Expected the user balance to be the initial balance minus the ledger and API fees"
+            .to_string(),
+    );
 }

@@ -3,10 +3,10 @@ use crate::util::cycles_ledger::{
     Account, ApproveArgs, CyclesLedgerPic, InitArgs as LedgerInitArgs, LedgerArgs,
 };
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
-use candid::{encode_one, Nat, Principal};
+use candid::{encode_one, CandidType, Nat, Principal};
 use example_paid_service_api::InitArgs;
 use ic_papi_api::cycles::CYCLES_LEDGER_CANISTER_ID;
-use ic_papi_api::{PaymentError, PaymentType};
+use ic_papi_api::PaymentError;
 use pocket_ic::{PocketIc, PocketIcBuilder};
 use std::sync::Arc;
 
@@ -19,6 +19,12 @@ pub enum PaidMethods {
     Cost1b,
 }
 impl PaidMethods {
+    pub fn name(&self) -> &str {
+        match self {
+            Self::Cost1bIcrc2Cycles => "cost_1b_icrc2_from_caller",
+            Self::Cost1b => "cost_1b",
+        }
+    }
     pub fn cost(&self) -> u128 {
         match self {
             Self::Cost1bIcrc2Cycles => 1_000_000_000,
@@ -204,17 +210,12 @@ impl CallerPaysWithIcrc2CyclesTestSetup {
         &self,
         caller: Principal,
         method: PaidMethods,
+        arg: impl CandidType,
     ) -> Result<String, PaymentError> {
-        match method {
-            PaidMethods::Cost1bIcrc2Cycles => self
+            self
                 .paid_service
-                .update(caller, "cost_1b_icrc2_from_caller", ())
-                .expect("Failed to call the paid service"),
-            PaidMethods::Cost1b => self
-                .paid_service
-                .update(caller, "cost_1b", PaymentType::CallerPaysIcrc2Cycles)
-                .expect("Failed to call the paid service"),
-        }
+                .update(caller, method.name(), arg)
+                .expect("Failed to call the paid service")
     }
 }
 

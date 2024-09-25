@@ -143,8 +143,6 @@ fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected
 /// on an API method that takes a payment argument.
-///
-/// Note: The method used is: `cost_1b``
 #[test]
 fn caller_pays_by_named_icrc2() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();

@@ -1,16 +1,7 @@
-use crate::util::cycles_depositor::{self, CyclesDepositorPic};
-use crate::util::cycles_ledger::{
-    Account, ApproveArgs, CyclesLedgerPic, InitArgs as LedgerInitArgs, LedgerArgs,
-};
+use crate::util::pic_canister::PicCanisterTrait;
 use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMethods, LEDGER_FEE};
-use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
-use candid::{encode_one, Nat, Principal};
-use example_paid_service_api::InitArgs;
-use ic_papi_api::cycles::CYCLES_LEDGER_CANISTER_ID;
-use ic_papi_api::{PaymentError, PaymentType};
-use pocket_ic::{PocketIc, PocketIcBuilder};
-use std::sync::Arc;
-
+use candid::Nat;
+use ic_papi_api::PaymentError;
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works providing that the
 /// ICRC2 approval is sufficient.

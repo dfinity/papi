@@ -3,7 +3,7 @@ use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMeth
 use candid::Nat;
 use ic_papi_api::PaymentError;
 
-/// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected with a range of approval amounts.
+/// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected with a range of approval amounts near the required amount.
 /// 
 /// - The call should succeed if the ICRC2 approval is greater than or equal to the cost of the method.
 /// - The user's main cycles account has cycles deducted when a call succeeds.
@@ -87,16 +87,9 @@ fn caller_pays_icrc2_cycles_works_with_large_enough_approval() {
     }
 }
 
-/// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected:
-///
-/// - The user's main cycles account has cycles deducted.
-/// - The cycle balance of the canister providing the paid service increases.
-///   - Note: Given that the canister consumes cycles as part of the operation, we check that the balance increases but do not check an exact amount.
-///
-/// Note: The method used is: cost_1b_icrc2_from_caller
-
+/// Verifies that a user can pay for multiple API calls with a single approval.
 #[test]
-fn caller_pays_icrc2_cycles_with_payment_arg_works() {
+fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.
@@ -113,8 +106,7 @@ fn caller_pays_icrc2_cycles_with_payment_arg_works() {
         "Test setup failed when providing the user with funds".to_string(),
     );
     // Exercise the protocol...
-    let api_fee = 1_000_000_000u128;
-    // Pre-approve payment
+    // Pre-approve a large sum.
     setup.user_approves_payment_for_paid_service(expected_user_balance);
     // Check that the user has been charged for the approve.
     expected_user_balance -= LEDGER_FEE;
@@ -122,7 +114,7 @@ fn caller_pays_icrc2_cycles_with_payment_arg_works() {
         expected_user_balance,
         "Expected the user balance to be charged for the ICRC2 approve".to_string(),
     );
-    // Now make several identical API calls
+    // Now make several API calls
     for _repetition in 0..5 {
         // Check the balance beforehand
         let service_canister_cycles_before =

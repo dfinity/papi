@@ -6,7 +6,7 @@ use ic_papi_api::PaymentError;
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works providing that the
 /// ICRC2 approval is sufficient.
 #[test]
-fn caller_pays_icrc2_cycles() {
+fn caller_pays_icrc2_cycles_works_with_large_enough_approval() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
     // Add cycles to the user's cycles ledger account.
     // .. At first the balance should be zero.
@@ -21,7 +21,9 @@ fn caller_pays_icrc2_cycles() {
         expected_user_balance,
         "Test setup failed when providing the user with funds".to_string(),
     );
-    // Exercise the protocol...
+
+    // Try calling a method with a range of approval amounts.  The call should succeed if the
+    // ICRC2 approval is greater than or equal to the cost of the method.
     let method = PaidMethods::Cost1bIcrc2Cycles;
     for payment in (method.cost() - 5)..(method.cost() + 5) {
         for _repetition in 0..2 {

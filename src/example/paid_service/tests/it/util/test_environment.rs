@@ -140,7 +140,8 @@ impl CallerPaysWithIcrc2CyclesTestSetup {
         let initial_balance = self.user_balance();
         // .. Magic cycles into existence (test only - not IRL).
         let deposit = megasquigs + LEDGER_FEE;
-        self.pic.add_cycles(self.cycles_depositor.canister_id, deposit);
+        self.pic
+            .add_cycles(self.cycles_depositor.canister_id, deposit);
         // .. Send cycles to the cycles ledger.
         self.cycles_depositor
             .deposit(

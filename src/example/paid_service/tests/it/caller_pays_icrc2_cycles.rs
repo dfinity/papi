@@ -115,13 +115,14 @@ fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
         "Expected the user balance to be charged for the ICRC2 approve".to_string(),
     );
     // Now make several API calls
+    let method = PaidMethods::Cost1bIcrc2Cycles;
     for _repetition in 0..5 {
         // Check the balance beforehand
         let service_canister_cycles_before =
             setup.pic.cycle_balance(setup.paid_service.canister_id);
         // Call the API
         let response: Result<String, PaymentError> =
-            setup.call_paid_service(setup.user, PaidMethods::Cost1bIcrc2Cycles);
+            setup.call_paid_service(setup.user, method);
         assert_eq!(
             response,
             Ok("Yes, you paid 1 billion cycles!".to_string()),
@@ -133,7 +134,7 @@ fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
             "The service canister needs to charge more to cover its cycle cost!  Loss: {}",
             service_canister_cycles_before - service_canister_cycles_after
         );
-        expected_user_balance -= api_fee + LEDGER_FEE;
+        expected_user_balance -= method.cost() + LEDGER_FEE;
         setup.assert_user_balance_eq(
             expected_user_balance,
             "Expected the user balance to be the initial balance minus the ledger and API fees"

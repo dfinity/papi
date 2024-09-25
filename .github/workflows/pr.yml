@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Conventional commits
         run: |
-          if [[ "$TITLE" =~ ^(feat|fix|chore|build|ci|docs|style|refactor|perf|test)( ?\([-a-zA-Z0-9,]+\))\!?\: ]]; then
+          if [[ "$TITLE" =~ ^(feat|fix|chore|build|ci|docs|style|refactor|perf|test)( ?\([-a-zA-Z0-9, ]+\))\!?\: ]]; then
               echo "PR Title passes"
           else
               echo "PR Title does not match conventions: $TITLE"

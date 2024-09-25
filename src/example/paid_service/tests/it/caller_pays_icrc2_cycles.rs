@@ -3,8 +3,12 @@ use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMeth
 use candid::Nat;
 use ic_papi_api::PaymentError;
 
-/// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works providing that the
-/// ICRC2 approval is sufficient.
+/// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected with a range of approval amounts.
+/// 
+/// - The call should succeed if the ICRC2 approval is greater than or equal to the cost of the method.
+/// - The user's main cycles account has cycles deducted when a call succeeds.
+/// - The cycle balance of the canister providing the paid service increases when a call succeeds.
+///  - Note: Given that the canister consumes cycles as part of the operation, we check that the balance increases but do not check an exact amount.
 #[test]
 fn caller_pays_icrc2_cycles_works_with_large_enough_approval() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();

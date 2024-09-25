@@ -4,7 +4,7 @@ use candid::Nat;
 use ic_papi_api::PaymentError;
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected with a range of approval amounts near the required amount.
-/// 
+///
 /// - The call should succeed if the ICRC2 approval is greater than or equal to the cost of the method.
 /// - The user's main cycles account has cycles deducted when a call succeeds.
 /// - The cycle balance of the canister providing the paid service increases when a call succeeds.
@@ -121,8 +121,7 @@ fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
         let service_canister_cycles_before =
             setup.pic.cycle_balance(setup.paid_service.canister_id);
         // Call the API
-        let response: Result<String, PaymentError> =
-            setup.call_paid_service(setup.user, method);
+        let response: Result<String, PaymentError> = setup.call_paid_service(setup.user, method);
         assert_eq!(
             response,
             Ok("Yes, you paid 1 billion cycles!".to_string()),

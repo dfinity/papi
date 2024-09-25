@@ -5,10 +5,10 @@ use crate::util::cycles_ledger::{
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, Nat, Principal};
 use example_paid_service_api::InitArgs;
+use ic_papi_api::cycles::CYCLES_LEDGER_CANISTER_ID;
 use ic_papi_api::{PaymentError, PaymentType};
 use pocket_ic::{PocketIc, PocketIcBuilder};
 use std::sync::Arc;
-use ic_papi_api::cycles::CYCLES_LEDGER_CANISTER_ID;
 
 const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
 
@@ -43,12 +43,18 @@ impl Default for CallerPaysWithIcrc2CyclesTestSetup {
                 .with_nns_subnet()
                 .build(),
         );
-        let cycles_ledger_canister_id = pic.create_canister_with_id(None, None, Principal::from_text(CYCLES_LEDGER_CANISTER_ID).unwrap()).unwrap();
+        let cycles_ledger_canister_id = pic
+            .create_canister_with_id(
+                None,
+                None,
+                Principal::from_text(CYCLES_LEDGER_CANISTER_ID).unwrap(),
+            )
+            .unwrap();
 
         // Would like to create this with the cycles ledger canister ID but currently this yields an error.
         let ledger = CyclesLedgerPic::from(
             PicCanisterBuilder::default()
-            .with_canister(cycles_ledger_canister_id)
+                .with_canister(cycles_ledger_canister_id)
                 .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
                 .with_arg(
                     encode_one(LedgerArgs::Init(LedgerInitArgs {
@@ -114,7 +120,6 @@ impl Default for CallerPaysWithIcrc2CyclesTestSetup {
     }
 }
 impl CallerPaysWithIcrc2CyclesTestSetup {
-
     /// Deposit 100 * the ledger fee in the user's ledger wallet. That should be enough to be getting on with.
     fn fund_user(&self, megasquigs: u128) {
         let initial_balance = self.user_balance();
@@ -159,22 +164,24 @@ impl CallerPaysWithIcrc2CyclesTestSetup {
         assert_eq!(self.user_balance(), expected_balance.into(), "{}", message);
     }
     /// User sends an ICRC2 approval with teh paid service as spender.
-    fn user_approves_payment_for_paid_service<T>(&self, amount: T) where T: Into<Nat> {
-                    self
-                    .ledger
-                    .icrc_2_approve(
-                        self.user,
-                        &ApproveArgs {
-                            spender: Account {
-                                owner: self.paid_service.canister_id(),
-                                subaccount: None,
-                            },
-                            amount: amount.into(),
-                            ..ApproveArgs::default()
-                        },
-                    )
-                    .expect("Failed to call the ledger to approve")
-                    .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
+    fn user_approves_payment_for_paid_service<T>(&self, amount: T)
+    where
+        T: Into<Nat>,
+    {
+        self.ledger
+            .icrc_2_approve(
+                self.user,
+                &ApproveArgs {
+                    spender: Account {
+                        owner: self.paid_service.canister_id(),
+                        subaccount: None,
+                    },
+                    amount: amount.into(),
+                    ..ApproveArgs::default()
+                },
+            )
+            .expect("Failed to call the ledger to approve")
+            .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
     }
 }
 
@@ -185,7 +192,7 @@ fn icrc2_test_setup_works() {
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected
 /// on an API method that uses the corresponding guard implicitly, with no payment aguments.
-/// 
+///
 /// Note: The method used is: cost_1b_icrc2_from_caller
 #[test]
 fn caller_pays_icrc2_cycles() {
@@ -266,13 +273,16 @@ fn caller_pays_icrc2_cycles() {
     }
 }
 
-/// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected
-/// on an API method that takes a payment argument.
+/// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected:
 /// 
+/// - The user's main cycles account has cycles deducted.
+/// - The cycle balance of the canister providing the paid service increases.
+///   - Note: Given that the canister consumes cycles as part of the operation, we check that the balance increases but do not check an exact amount. 
+///
 /// Note: The method used is: cost_1b_icrc2_from_caller
 
 #[test]
-fn caller_pays_by_icrc2_prepayment() {
+fn caller_pays_icrc2_cycles_with_payment_arg_works() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.
@@ -329,10 +339,9 @@ fn caller_pays_by_icrc2_prepayment() {
     }
 }
 
-
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected
 /// on an API method that takes a payment argument.
-/// 
+///
 /// Note: The method used is: `cost_1b``
 #[test]
 fn caller_pays_by_named_icrc2() {
@@ -370,11 +379,7 @@ fn caller_pays_by_named_icrc2() {
         // Call the API
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(
-                setup.user,
-                api_method,
-                PaymentType::CallerPaysIcrc2Cycles,
-            )
+            .update(setup.user, api_method, PaymentType::CallerPaysIcrc2Cycles)
             .expect("Failed to call the paid service");
         assert_eq!(
             response,

@@ -8,11 +8,12 @@ pub const MAINNET_CYCLES_LEDGER_CANISTER_ID: &str = "um5iw-rqaaa-aaaaq-qaaba-cai
 /// - If a `cycles_ledger` canister is listed in `dfx.json`, the `dfx build` command will set the
 ///   environment variable `CANISTER_ID_CYCLES_LEDGER` and we use this to obtain the canister ID.
 /// - Otherwise, the mainnet cycles ledger canister ID is used.
-pub const CYCLES_LEDGER_CANISTER_ID: &str = if let Some(id) = option_env!("CANISTER_ID_CYCLES_LEDGER") {
-    id
-} else {
-    MAINNET_CYCLES_LEDGER_CANISTER_ID
-};
+pub const CYCLES_LEDGER_CANISTER_ID: &str =
+    if let Some(id) = option_env!("CANISTER_ID_CYCLES_LEDGER") {
+        id
+    } else {
+        MAINNET_CYCLES_LEDGER_CANISTER_ID
+    };
 
 /// The `CYCLES_LEDGER_CANISTER_ID` as a `Principal`.
 ///

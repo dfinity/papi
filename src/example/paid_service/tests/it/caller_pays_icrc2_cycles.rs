@@ -8,7 +8,7 @@ use ic_papi_api::PaymentError;
 #[test]
 fn caller_pays_icrc2_cycles() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
-    // Add cycles to the wallet
+    // Add cycles to the user's cycles ledger account.
     // .. At first the balance should be zero.
     setup.assert_user_balance_eq(
         0u32,
@@ -22,8 +22,8 @@ fn caller_pays_icrc2_cycles() {
         "Test setup failed when providing the user with funds".to_string(),
     );
     // Exercise the protocol...
-    let api_fee = 1_000_000_000u128;
-    for payment in (api_fee - 5)..(api_fee + 5) {
+    let method = PaidMethods::Cost1bIcrc2Cycles;
+    for payment in (method.cost() - 5)..(method.cost() + 5) {
         for _repetition in 0..2 {
             // Pre-approve payment
             setup.user_approves_payment_for_paid_service(payment + LEDGER_FEE);
@@ -39,8 +39,8 @@ fn caller_pays_icrc2_cycles() {
                 setup.pic.cycle_balance(setup.paid_service.canister_id);
             // Call the API
             let response: Result<String, PaymentError> =
-                setup.call_paid_service(setup.user, PaidMethods::Cost1bIcrc2Cycles);
-            if payment < api_fee {
+                setup.call_paid_service(setup.user, method);
+            if payment < method.cost() {
                 assert_eq!(
                     response,
                     Err(PaymentError::LedgerError {
@@ -70,7 +70,7 @@ fn caller_pays_icrc2_cycles() {
                     "The service canister needs to charge more to cover its cycle cost!  Loss: {}",
                     service_canister_cycles_before - service_canister_cycles_after
                 );
-                expected_user_balance -= api_fee + LEDGER_FEE;
+                expected_user_balance -= method.cost() + LEDGER_FEE;
                 setup.assert_user_balance_eq(
                 expected_user_balance,
                 "Expected the user balance to be the initial balance minus the ledger and API fees"

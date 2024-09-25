@@ -13,9 +13,18 @@ use std::sync::Arc;
 pub const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
 
 /// Methods protected by PAPI.
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum PaidMethods {
     Cost1bIcrc2Cycles,
     Cost1b,
+}
+impl PaidMethods {
+    pub fn cost(&self) -> u128 {
+        match self {
+            Self::Cost1bIcrc2Cycles => 1_000_000_000,
+            Self::Cost1b => 1_000_000_000,
+        }
+    }
 }
 
 pub struct CallerPaysWithIcrc2CyclesTestSetup {

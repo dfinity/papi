@@ -9,7 +9,7 @@ use ic_papi_api::{principal2account, PaymentError, PaymentType};
 use pocket_ic::{PocketIc, PocketIcBuilder};
 use std::sync::Arc;
 
-pub struct CallerPaysWithIcRc2TestSetup {
+pub struct CallerPaysWithIcrc2TestSetup {
     /// The PocketIC instance.
     #[allow(dead_code)]
     // The Arc is used; this makes it accessible without having to refer to a specific canister.
@@ -29,7 +29,7 @@ pub struct CallerPaysWithIcRc2TestSetup {
     /// User's wallet.  We use the cycles wallet so that we can top it up easily, but any source of funds will do, with any ICRC-2 token.
     wallet: CyclesDepositorPic,
 }
-impl Default for CallerPaysWithIcRc2TestSetup {
+impl Default for CallerPaysWithIcrc2TestSetup {
     fn default() -> Self {
         let pic = Arc::new(
             PocketIcBuilder::new()
@@ -37,7 +37,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
                 .with_system_subnet()
                 .build(),
         );
-        // WOuld like to create this with the cycles ledger canister ID but currently this yields an error.
+        // Would like to create this with the cycles ledger canister ID but currently this yields an error.
         let ledger = CyclesLedgerPic::from(
             PicCanisterBuilder::default()
                 .with_wasm(&PicCanister::dfx_wasm_path("cycles_ledger"))
@@ -104,7 +104,7 @@ impl Default for CallerPaysWithIcRc2TestSetup {
         }
     }
 }
-impl CallerPaysWithIcRc2TestSetup {
+impl CallerPaysWithIcrc2TestSetup {
     const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://internetcomputer.org/docs/current/developer-docs/defi/cycles/cycles-ledger#fees
 
     /// Deposit 100 * the ledger fee in the user's ledger wallet. That should be enough to be getting on with.
@@ -154,13 +154,13 @@ impl CallerPaysWithIcRc2TestSetup {
 
 #[test]
 fn icrc2_test_setup_works() {
-    let _setup = CallerPaysWithIcRc2TestSetup::default();
+    let _setup = CallerPaysWithIcrc2TestSetup::default();
 }
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Tokens` payment type works as expected.
 #[test]
 fn caller_pays_icrc2_tokens() {
-    let setup = CallerPaysWithIcRc2TestSetup::default();
+    let setup = CallerPaysWithIcrc2TestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.
     setup.assert_user_balance_eq(
@@ -254,7 +254,7 @@ fn caller_pays_icrc2_tokens() {
 
 #[test]
 fn caller_pays_by_icrc2_prepayment() {
-    let setup = CallerPaysWithIcRc2TestSetup::default();
+    let setup = CallerPaysWithIcrc2TestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.
     setup.assert_user_balance_eq(
@@ -326,7 +326,7 @@ fn caller_pays_by_icrc2_prepayment() {
 
 #[test]
 fn caller_pays_by_named_icrc2() {
-    let setup = CallerPaysWithIcRc2TestSetup::default();
+    let setup = CallerPaysWithIcrc2TestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.
     setup.assert_user_balance_eq(
@@ -438,7 +438,7 @@ fn caller_pays_by_named_icrc2() {
 /// Only funded users should be able to make calls, and they should be able to make only as many calls as personally approved for them.
 #[test]
 fn patron_pays_by_named_icrc2() {
-    let setup = CallerPaysWithIcRc2TestSetup::default();
+    let setup = CallerPaysWithIcrc2TestSetup::default();
     // Add cycles to the wallet
     // .. At first the balance should be zero.
     setup.assert_user_balance_eq(

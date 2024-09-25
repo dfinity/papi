@@ -6,7 +6,7 @@ resolver = "2"
 pocket-ic = "4.0.0"
 candid = "0.10.10"
 ic-cdk = "0.16.0"
-ic-cdk-macros = "0.15.0"
+ic-cdk-macros = "0.16.0"
 serde = "1"
 serde_bytes = "0.11"
 ic-papi-api = { path = "src/api" }

@@ -67,7 +67,7 @@ fn caller_pays_icrc2_tokens_explicitly() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
     let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
     // Ok, now we should be able to make an API call with an ICRC-2 approve.
-    let method = PaidMethods::CallerPays1b;
+    let method = PaidMethods::Cost1b;
     // Pre-approve payment
     setup.user_approves_payment_for_paid_service(method.cost() + LEDGER_FEE);
     // Check that the user has been charged for the approve.

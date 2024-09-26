@@ -5,7 +5,11 @@ use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMeth
 use candid::Nat;
 use ic_papi_api::{principal2account, PaymentError, PaymentType};
 
-/// Verifies that `user` can pay cycles for `user2`.
+/// Verifies that `user` can pay cycles for `user2`:
+/// 
+/// - The patron needs to approve the API cost plus the ledger fee.
+/// - An unauthorized user should not be able to use that approval.
+/// - `user2` should be able to make the API call.
 #[test]
 fn user_pays_for_user2() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
@@ -74,7 +78,7 @@ fn user_pays_for_user2() {
             setup.call_paid_service(caller, method, &payment_arg);
         assert_eq!(
             response,
-            Ok("Yes, your patron paid 1 billion cycles!".to_string()),
+            Ok("Yes, you paid 1 billion cycles!".to_string()),
             "Should have succeeded for caller {} with patron {}.",
             caller.to_string(),
             patron.to_string(),

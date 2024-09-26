@@ -5,6 +5,7 @@ use ic_papi_api::{caller::TokenAmount, PaymentError, PaymentType};
 pub mod any;
 pub mod attached_cycles;
 pub mod icrc2_cycles;
+pub mod icrc2_tokens;
 
 #[allow(async_fn_in_trait)]
 pub trait PaymentGuard {

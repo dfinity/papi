@@ -52,7 +52,7 @@ fn user_pays_tokens_for_user2() {
             "Expected the user==patron balance to be charged for the ICRC2 approve".to_string(),
         );
     }
-    // An unauthorized user should not be able to make a call.
+    // `unauthorized_user` has not paid so should not be able to make a call.
     {
         let response: Result<String, PaymentError> =
             setup.call_paid_service(setup.unauthorized_user, method, &payment_arg);
@@ -72,7 +72,7 @@ fn user_pays_tokens_for_user2() {
                 .to_string(),
         );
     }
-    // user2 should be able to make the call.
+    // `user2` should be able to make the call.
     {
         // Call the API
         {

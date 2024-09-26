@@ -1,6 +1,4 @@
 //! Tests for the `PaymentType::PatronPaysIcrc2Tokens` payment type.
-
-//! Tests for the `PaymentType::PatronPaysIcrc2Cycles` payment type.
 use crate::util::cycles_ledger::{Account, ApproveArgs};
 use crate::util::pic_canister::PicCanisterTrait;
 use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMethods, LEDGER_FEE};

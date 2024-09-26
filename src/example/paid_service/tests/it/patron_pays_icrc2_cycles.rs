@@ -11,7 +11,7 @@ use ic_papi_api::{principal2account, PaymentError, PaymentType};
 /// - An unauthorized user should not be able to use that approval.
 /// - `user2` should be able to make the API call.
 #[test]
-fn user_pays_cycles_for_user2() {
+fn user_pays_tokens_for_user2() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
     let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
 

@@ -1,4 +1,5 @@
 //! Tests for the `PaymentType::CallerPaysIcrc2Tokens` payment type.
+use crate::util::cycles_ledger::Account;
 use crate::util::pic_canister::PicCanisterTrait;
 use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMethods, LEDGER_FEE};
 use candid::Nat;
@@ -28,8 +29,6 @@ fn caller_pays_icrc2_tokens() {
         "Expected the user balance to be charged for the ICRC2 approve".to_string(),
     );
     // Now make an API call
-    // Check the canister cycles balance beforehand
-    let service_canister_cycles_before = setup.pic.cycle_balance(setup.paid_service.canister_id);
     // Call the API
     let response: Result<String, PaymentError> = setup.call_paid_service(setup.user, method, ());
     assert_eq!(
@@ -44,4 +43,20 @@ fn caller_pays_icrc2_tokens() {
             .to_string(),
     );
     // TODO: Verify that the service account has been credited
+
+    let service_balance = setup
+        .ledger
+        .icrc_1_balance_of(
+            setup.paid_service.canister_id(),
+            &Account {
+                owner: setup.paid_service.canister_id(),
+                subaccount: None,
+            },
+        )
+        .expect("Could not get service balance");
+    assert_eq!(
+        service_balance,
+        Nat::from(method.cost()),
+        "Expected the service balance to be the cost of the API call"
+    );
 }

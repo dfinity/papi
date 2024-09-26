@@ -11,7 +11,7 @@ use ic_papi_api::{principal2account, PaymentError, PaymentType};
 /// - An unauthorized user should not be able to use that approval.
 /// - `user2` should be able to make the API call.
 #[test]
-fn user_pays_for_user2() {
+fn user_pays_cycles_for_user2() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
     let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
 
@@ -104,7 +104,7 @@ fn user_pays_for_user2() {
 ///
 /// Only funded users should be able to make calls, and they should be able to make only as many calls as personally approved for them.
 #[test]
-fn user_pays_for_other_users() {
+fn user_pays_cycles_for_other_users() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
     let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
 

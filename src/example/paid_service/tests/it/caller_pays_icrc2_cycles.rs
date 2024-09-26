@@ -4,26 +4,9 @@ use candid::{Nat, Principal};
 use ic_papi_api::{PaymentError, PaymentType};
 use ic_papi_guard::guards::any::PaymentWithConfig;
 
-/// Verifies that the paid API is using the expected config for the `PaymentType::CallerPaysIcrc2Cycles`.
-#[test]
-fn caller_pays_icrc2_cycles_payment_config() {
-    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
-    let response: Option<PaymentWithConfig> = setup.paid_service.update(
-        Principal::anonymous(),
-        "payment_config",
-        PaymentType::CallerPaysIcrc2Cycles,
-    ).unwrap();
-    assert_eq!(
-        response,
-        Some(PaymentWithConfig::CallerPaysIcrc2Cycles),
-        "The payment configuration for CallerPaysIcrc2Cycles should be set to the ledger with a fee of {}",
-        LEDGER_FEE
-    );
-}
-
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected
 /// on an API method that has only the corresponding guard.
-/// 
+///
 /// Notes:
 /// - The caller does not need to specify any payment arguments.  (See `call_paid_service(...)` in the test.)
 /// - The caller needs to pay the API cost plus one ledger fee, for the privilege of using this payment type. (See `user_approves_payment_for_paid_service(...)` in the test.)
@@ -45,8 +28,7 @@ fn caller_pays_by_icrc2() {
     // Check the canister cycles balance beforehand
     let service_canister_cycles_before = setup.pic.cycle_balance(setup.paid_service.canister_id);
     // Call the API
-    let response: Result<String, PaymentError> =
-        setup.call_paid_service(setup.user, method, ());
+    let response: Result<String, PaymentError> = setup.call_paid_service(setup.user, method, ());
     assert_eq!(
         response,
         Ok("Yes, you paid 1 billion cycles!".to_string()),
@@ -114,7 +96,6 @@ fn caller_pays_by_named_icrc2() {
             .to_string(),
     );
 }
-
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected with a range of approval amounts near the required amount.
 ///
@@ -210,7 +191,8 @@ fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
         let service_canister_cycles_before =
             setup.pic.cycle_balance(setup.paid_service.canister_id);
         // Call the API
-        let response: Result<String, PaymentError> = setup.call_paid_service(setup.user, method, ());
+        let response: Result<String, PaymentError> =
+            setup.call_paid_service(setup.user, method, ());
         assert_eq!(
             response,
             Ok("Yes, you paid 1 billion cycles!".to_string()),

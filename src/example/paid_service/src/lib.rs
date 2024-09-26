@@ -2,7 +2,7 @@ mod state;
 
 use example_paid_service_api::InitArgs;
 use ic_cdk::init;
-use ic_cdk_macros::{export_candid, update, query};
+use ic_cdk_macros::{export_candid, query, update};
 use ic_papi_api::{PaymentError, PaymentType};
 use ic_papi_guard::guards::any::PaymentWithConfig;
 use ic_papi_guard::guards::{
@@ -16,14 +16,6 @@ fn init(init_args: Option<InitArgs>) {
     if let Some(init_args) = init_args {
         set_init_args(init_args);
     }
-}
-
-/// An API method that returns the current payment configuration for a given payment type.
-/// 
-/// This is used in tests to verify that the payment configuration is set correctly.
-#[query()]
-fn payment_config() -> Option<PaymentWithConfig> {
-    PAYMENT_GUARD.config(PaymentType::CallerPaysIcrc2Cycles)
 }
 
 #[update()]
@@ -41,7 +33,9 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
 /// An API method that requires 1 billion cycles using an ICRC-2 approve with default parameters.
 #[update()]
 async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
-    Icrc2CyclesPaymentGuard::default().deduct(1_000_000_000).await?;
+    Icrc2CyclesPaymentGuard::default()
+        .deduct(1_000_000_000)
+        .await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }
 

@@ -65,11 +65,7 @@ impl Default for CallerPaysWithIcrc2CyclesTestSetup {
                 .build(),
         );
         let cycles_ledger_canister_id = pic
-            .create_canister_with_id(
-                None,
-                None,
-                cycles_ledger_canister_id(),
-            )
+            .create_canister_with_id(None, None, cycles_ledger_canister_id())
             .unwrap();
 
         // Would like to create this with the cycles ledger canister ID but currently this yields an error.
@@ -216,10 +212,9 @@ impl CallerPaysWithIcrc2CyclesTestSetup {
         method: PaidMethods,
         arg: impl CandidType,
     ) -> Result<String, PaymentError> {
-            self
-                .paid_service
-                .update(caller, method.name(), arg)
-                .expect("Failed to call the paid service")
+        self.paid_service
+            .update(caller, method.name(), arg)
+            .expect("Failed to call the paid service")
     }
 }
 

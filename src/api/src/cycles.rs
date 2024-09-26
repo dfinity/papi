@@ -1,7 +1,7 @@
 use candid::Principal;
 
 /// The cycles ledger canister ID on mainnet.
-/// 
+///
 /// Note: This canister ID should also be used in test environments.  The dfx.json
 /// can implement this with:
 /// ```

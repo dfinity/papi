@@ -60,3 +60,58 @@ fn caller_pays_icrc2_tokens() {
         "Expected the service balance to be the cost of the API call"
     );
 }
+
+/// Verifies that the caller can pay for an API call with ICRC-2 tokens explicitly.
+#[test]
+fn caller_pays_icrc2_tokens_explicitly() {
+    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
+    let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
+    // Ok, now we should be able to make an API call with an ICRC-2 approve.
+    let method = PaidMethods::CallerPays1b;
+    // Pre-approve payment
+    setup.user_approves_payment_for_paid_service(method.cost() + LEDGER_FEE);
+    // Check that the user has been charged for the approve.
+    expected_user_balance -= LEDGER_FEE;
+    setup.assert_user_balance_eq(
+        expected_user_balance,
+        "Expected the user balance to be charged for the ICRC2 approve".to_string(),
+    );
+    // Now make an API call
+    {
+        let response: Result<String, PaymentError> =
+            setup.call_paid_service(setup.user, method, ());
+        assert_eq!(
+            response,
+            Ok("Yes, you paid 1 billion tokens!".to_string()),
+            "Should have succeeded with an accurate prepayment",
+        );
+    }
+    // Verifies that the user account has been debited.
+    {
+        expected_user_balance -= method.cost() + LEDGER_FEE;
+        setup.assert_user_balance_eq(
+            expected_user_balance,
+            "Expected the user balance to be the initial balance minus the ledger and API fees"
+                .to_string(),
+        );
+    }
+
+    // Verifies that the canister ledger account has been credited with the payment.
+    {
+        let service_balance = setup
+            .ledger
+            .icrc_1_balance_of(
+                setup.paid_service.canister_id(),
+                &Account {
+                    owner: setup.paid_service.canister_id(),
+                    subaccount: None,
+                },
+            )
+            .expect("Could not get service balance");
+        assert_eq!(
+            service_balance,
+            Nat::from(method.cost()),
+            "Expected the service balance to be the cost of the API call"
+        );
+    }
+}

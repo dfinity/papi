@@ -6,7 +6,7 @@
 use super::{PaymentError, PaymentGuard};
 use candid::{Nat, Principal};
 use cycles_ledger_client::TransferFromArgs;
-use ic_papi_api::{caller::TokenAmount, cycles::cycles_ledger_canister_id, Account};
+use ic_papi_api::{caller::TokenAmount, Account};
 
 pub struct CallerPaysIcrc2TokensPaymentGuard {
     /// The ledger for that specific token

@@ -2,7 +2,6 @@ use crate::util::pic_canister::PicCanisterTrait;
 use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMethods, LEDGER_FEE};
 use candid::{Nat, Principal};
 use ic_papi_api::{PaymentError, PaymentType};
-use ic_papi_guard::guards::any::PaymentWithConfig;
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected
 /// on an API method that has only the corresponding guard.

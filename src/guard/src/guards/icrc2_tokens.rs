@@ -11,16 +11,15 @@ use ic_papi_api::{caller::TokenAmount, cycles::cycles_ledger_canister_id, Accoun
 pub struct CallerPaysIcrc2TokensPaymentGuard {
     /// The ledger for that specific token
     pub ledger: Principal,
-    /// The caller's principal
-    pub caller: Principal,
 }
 
 impl PaymentGuard for CallerPaysIcrc2TokensPaymentGuard {
     async fn deduct(&self, cost: TokenAmount) -> Result<(), PaymentError> {
+        let caller = ic_cdk::api::caller();
         cycles_ledger_client::Service(cycles_ledger_canister_id())
             .icrc_2_transfer_from(&TransferFromArgs {
                 from: Account {
-                    owner: self.caller,
+                    owner: caller,
                     subaccount: None,
                 },
                 to: Account {

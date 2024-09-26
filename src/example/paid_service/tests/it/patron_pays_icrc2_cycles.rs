@@ -110,12 +110,11 @@ fn user_pays_for_other_users() {
 
     // Ok, now we should be able to make an API call with EITHER an ICRC-2 approve or attached cycles, by declaring the payment type.
     // In this test, we will exercise the ICRC-2 approve.
-    let api_method = "cost_1b";
+    let method = PaidMethods::Cost1b;
     let payment_arg = PaymentType::PatronPaysIcrc2Cycles(ic_papi_api::Account {
         owner: setup.user,
         subaccount: None,
     });
-    let api_fee = 1_000_000_000u128;
     let repetitions = 3;
     // Pre-approve payments
     for caller in setup.users.iter() {
@@ -128,7 +127,7 @@ fn user_pays_for_other_users() {
                         owner: setup.paid_service.canister_id(),
                         subaccount: Some(principal2account(caller)),
                     },
-                    amount: Nat::from((api_fee + LEDGER_FEE) * repetitions),
+                    amount: Nat::from((method.cost() + LEDGER_FEE) * repetitions),
                     ..ApproveArgs::default()
                 },
             )
@@ -145,7 +144,7 @@ fn user_pays_for_other_users() {
     {
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(setup.unauthorized_user, api_method, &payment_arg)
+            .update(setup.unauthorized_user, method.name(), &payment_arg)
             .expect("Failed to call the paid service");
         assert_eq!(
             response,
@@ -172,7 +171,7 @@ fn user_pays_for_other_users() {
         for caller in active_users.iter() {
             let response: Result<String, PaymentError> = setup
                 .paid_service
-                .update(*caller, api_method, &payment_arg)
+                .update(*caller, method.name(), &payment_arg)
                 .expect("Failed to call the paid service");
             assert_eq!(
                 response,
@@ -187,7 +186,7 @@ fn user_pays_for_other_users() {
                 "The service canister needs to charge more to cover its cycle cost!  Loss: {}",
                 service_canister_cycles_before - service_canister_cycles_after
             );
-            expected_user_balance -= api_fee + LEDGER_FEE;
+            expected_user_balance -= method.cost() + LEDGER_FEE;
             setup.assert_user_balance_eq(
                 expected_user_balance,
                 "Expected the user balance to be the initial balance minus the ledger and API fees"
@@ -199,7 +198,7 @@ fn user_pays_for_other_users() {
     for caller in active_users.iter() {
         let response: Result<String, PaymentError> = setup
             .paid_service
-            .update(*caller, api_method, &payment_arg)
+            .update(*caller, method.name(), &payment_arg)
             .expect("Failed to call the paid service");
         assert_eq!(
             response,

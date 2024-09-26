@@ -16,18 +16,21 @@ pub const LEDGER_FEE: u128 = 100_000_000; // The documented fee: https://interne
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum PaidMethods {
     Cost1bIcrc2Cycles,
+    CallerPays1bIcrc2Tokens,
     Cost1b,
 }
 impl PaidMethods {
     pub fn name(&self) -> &str {
         match self {
             Self::Cost1bIcrc2Cycles => "cost_1b_icrc2_cycles_from_caller",
+            Self::CallerPays1bIcrc2Tokens => "caller_pays_1b_icrc2_tokens",
             Self::Cost1b => "cost_1b",
         }
     }
     pub fn cost(&self) -> u128 {
         match self {
             Self::Cost1bIcrc2Cycles => 1_000_000_000,
+            Self::CallerPays1bIcrc2Tokens => 1_000_000_000,
             Self::Cost1b => 1_000_000_000,
         }
     }

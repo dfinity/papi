@@ -2,13 +2,13 @@
 
 use candid::{CandidType, Deserialize, Principal};
 use ic_papi_api::{
-    caller::{PatronPaysIcrc2Cycles, TokenAmount},
+    caller::{CallerPaysIcrc2Tokens, PatronPaysIcrc2Cycles, TokenAmount},
     principal2account, Account, PaymentError, PaymentType,
 };
 
 use super::{
-    attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard, PaymentContext,
-    PaymentGuard, PaymentGuard2,
+    attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
+    icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard, PaymentContext, PaymentGuard, PaymentGuard2,
 };
 
 /// A guard that accepts a user-specified payment type, providing the vendor supports it.
@@ -38,6 +38,7 @@ pub enum PaymentWithConfig {
     AttachedCycles,
     CallerPaysIcrc2Cycles,
     PatronPaysIcrc2Cycles(PatronPaysIcrc2Cycles),
+    CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens),
 }
 
 impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
@@ -77,6 +78,11 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
                 .deduct(fee)
                 .await
             }
+            PaymentWithConfig::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens { ledger }) => {
+                CallerPaysIcrc2TokensPaymentGuard { ledger }
+                    .deduct(fee)
+                    .await
+            }
         }
     }
 }
@@ -100,6 +106,15 @@ impl<const CAP: usize> AnyPaymentGuard<CAP> {
                 .iter()
                 .find(|&x| *x == VendorPaymentConfig::PatronPaysIcrc2Cycles)
                 .map(|_| PaymentWithConfig::PatronPaysIcrc2Cycles(patron)),
+            PaymentType::CallerPaysIcrc2Tokens(payment_type) => self
+                .supported
+                .iter()
+                .find(|&x| {
+                    *x == VendorPaymentConfig::CallerPaysIcrc2Tokens {
+                        ledger: payment_type.ledger,
+                    }
+                })
+                .map(|_| PaymentWithConfig::CallerPaysIcrc2Tokens(payment_type)),
             _ => None,
         }
     }

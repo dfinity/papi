@@ -3,6 +3,8 @@ use crate::util::cycles_ledger::Account;
 use crate::util::pic_canister::PicCanisterTrait;
 use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMethods, LEDGER_FEE};
 use candid::Nat;
+use ic_papi_api::caller::CallerPaysIcrc2Tokens;
+use ic_papi_api::cycles::cycles_ledger_canister_id;
 use ic_papi_api::{PaymentError, PaymentType};
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected
@@ -78,11 +80,16 @@ fn caller_pays_icrc2_tokens_explicitly() {
     );
     // Now make an API call
     {
-        let response: Result<String, PaymentError> =
-            setup.call_paid_service(setup.user, method, ());
+        let response: Result<String, PaymentError> = setup.call_paid_service(
+            setup.user,
+            method,
+            PaymentType::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens {
+                ledger: cycles_ledger_canister_id(),
+            }),
+        );
         assert_eq!(
             response,
-            Ok("Yes, you paid 1 billion tokens!".to_string()),
+            Ok("Yes, you paid 1 billion cycles!".to_string()),
             "Should have succeeded with an accurate prepayment",
         );
     }

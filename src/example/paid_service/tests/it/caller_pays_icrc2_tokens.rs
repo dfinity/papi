@@ -44,23 +44,25 @@ fn caller_pays_icrc2_tokens() {
         "Expected the user balance to be the initial balance minus the ledger and API fees"
             .to_string(),
     );
-    // TODO: Verify that the service account has been credited
 
-    let service_balance = setup
-        .ledger
-        .icrc_1_balance_of(
-            setup.paid_service.canister_id(),
-            &Account {
-                owner: setup.paid_service.canister_id(),
-                subaccount: None,
-            },
-        )
-        .expect("Could not get service balance");
-    assert_eq!(
-        service_balance,
-        Nat::from(method.cost()),
-        "Expected the service balance to be the cost of the API call"
-    );
+    // The service ledger account should have been credited
+    {
+        let service_balance = setup
+            .ledger
+            .icrc_1_balance_of(
+                setup.paid_service.canister_id(),
+                &Account {
+                    owner: setup.paid_service.canister_id(),
+                    subaccount: None,
+                },
+            )
+            .expect("Could not get service balance");
+        assert_eq!(
+            service_balance,
+            Nat::from(method.cost()),
+            "Expected the service balance to be the cost of the API call"
+        );
+    }
 }
 
 /// Verifies that the caller can pay for an API call with ICRC-2 tokens explicitly.

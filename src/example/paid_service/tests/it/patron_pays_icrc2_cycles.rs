@@ -6,7 +6,7 @@ use candid::Nat;
 use ic_papi_api::{principal2account, PaymentError, PaymentType};
 
 /// Verifies that `user` can pay cycles for `user2`:
-/// 
+///
 /// - The patron needs to approve the API cost plus the ledger fee.
 /// - An unauthorized user should not be able to use that approval.
 /// - `user2` should be able to make the API call.

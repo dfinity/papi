@@ -1,6 +1,6 @@
 //! Accepts any payment that the vendor accepts.
 
-use candid::{CandidType, Deserialize};
+use candid::{CandidType, Deserialize, Principal};
 use ic_papi_api::{
     caller::{PatronPaysIcrc2Cycles, TokenAmount},
     principal2account, Account, PaymentError, PaymentType,
@@ -25,6 +25,11 @@ pub enum VendorPaymentConfig {
     CallerPaysIcrc2Cycles,
     /// Cycles are received by the vendor canister.
     PatronPaysIcrc2Cycles,
+    /// The caller pays tokens to the vendor's main account on the chosen ledger.
+    CallerPaysIcrc2Tokens { ledger: Principal },
+    /// A patron pays tokens to a subaccount belonging to the vendor on the chosen ledger.
+    /// - The vendor needs to move the tokens to their main account.
+    PatronPaysIcrc2Tokens { ledger: Principal },
 }
 
 /// A user's requested payment type paired with a vendor's configuration.

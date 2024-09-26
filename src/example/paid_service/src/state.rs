@@ -8,11 +8,17 @@ thread_local! {
     pub static INIT_ARGS: RefCell<Option<InitArgs>> = const {RefCell::new(None)};
 }
 lazy_static! {
-    pub static ref PAYMENT_GUARD: AnyPaymentGuard<3> = AnyPaymentGuard {
+    pub static ref PAYMENT_GUARD: AnyPaymentGuard<5> = AnyPaymentGuard {
         supported: [
             VendorPaymentConfig::AttachedCycles,
             VendorPaymentConfig::CallerPaysIcrc2Cycles,
             VendorPaymentConfig::PatronPaysIcrc2Cycles,
+            VendorPaymentConfig::CallerPaysIcrc2Tokens {
+                ledger: payment_ledger(), // TODO: Use say the ICP ledger instead.
+            },
+            VendorPaymentConfig::PatronPaysIcrc2Tokens {
+                ledger: payment_ledger(),
+            },
         ],
     };
 }

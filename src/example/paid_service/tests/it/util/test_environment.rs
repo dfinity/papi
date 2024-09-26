@@ -21,7 +21,7 @@ pub enum PaidMethods {
 impl PaidMethods {
     pub fn name(&self) -> &str {
         match self {
-            Self::Cost1bIcrc2Cycles => "cost_1b_icrc2_from_caller",
+            Self::Cost1bIcrc2Cycles => "cost_1b_icrc2_cycles_from_caller",
             Self::Cost1b => "cost_1b",
         }
     }

@@ -31,12 +31,14 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
 
 /// An API method that requires 1 billion cycles using an ICRC-2 approve with default parameters.
 #[update()]
-async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
+async fn cost_1b_icrc2_cycles_from_caller() -> Result<String, PaymentError> {
     Icrc2CyclesPaymentGuard::default()
         .deduct(1_000_000_000)
         .await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }
+
+/// An API method that requires 1 billion tokens (in this case cycles) using an ICRC-2 approve with default parameters.
 
 /// An API method that requires 1 billion cycles, paid in whatever way the client chooses.
 #[update()]

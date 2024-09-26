@@ -64,7 +64,7 @@ fn user_pays_tokens_for_user2() {
                     allowance: Nat::from(0u32),
                 }
             }),
-            "Unapproved users should not be able to make calls",
+            "Users sho have not paid should not be able to make calls",
         );
         setup.assert_user_balance_eq(
             expected_user_balance,

@@ -11,7 +11,7 @@ use ic_papi_api::{PaymentError, PaymentType};
 /// - The caller does not need to specify any payment arguments.  (See `call_paid_service(...)` in the test.)
 /// - The caller needs to pay the API cost plus one ledger fee, for the privilege of using this payment type. (See `user_approves_payment_for_paid_service(...)` in the test.)
 #[test]
-fn caller_pays_by_icrc2() {
+fn caller_pays_cycles_by_icrc2() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
     let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
     // Ok, now we should be able to make an API call with an ICRC-2 approve.
@@ -49,9 +49,9 @@ fn caller_pays_by_icrc2() {
 }
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected
-/// on an API method that specifies the payment argument explicitly.
+/// on an API method that requires the payment argument to be declared explicitly.
 #[test]
-fn caller_pays_by_named_icrc2() {
+fn caller_pays_cycles_by_named_icrc2() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
     let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
     // Ok, now we should be able to make an API call with an ICRC-2 approve.

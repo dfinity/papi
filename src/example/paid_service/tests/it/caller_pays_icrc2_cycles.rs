@@ -46,7 +46,7 @@ fn caller_pays_by_icrc2() {
     let service_canister_cycles_before = setup.pic.cycle_balance(setup.paid_service.canister_id);
     // Call the API
     let response: Result<String, PaymentError> =
-        setup.call_paid_service(setup.user, PaidMethods::Cost1b, ());
+        setup.call_paid_service(setup.user, method, ());
     assert_eq!(
         response,
         Ok("Yes, you paid 1 billion cycles!".to_string()),
@@ -91,7 +91,7 @@ fn caller_pays_by_named_icrc2() {
     let service_canister_cycles_before = setup.pic.cycle_balance(setup.paid_service.canister_id);
     // Call the API
     let response: Result<String, PaymentError> =
-        setup.call_paid_service(setup.user, PaidMethods::Cost1b, PaymentType::CallerPaysIcrc2Cycles);
+        setup.call_paid_service(setup.user, method, PaymentType::CallerPaysIcrc2Cycles);
     assert_eq!(
         response,
         Ok("Yes, you paid 1 billion cycles!".to_string()),

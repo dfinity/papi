@@ -180,7 +180,7 @@ fn caller_pays_by_named_icrc2() {
     // Ok, now we should be able to make an API call with an ICRC-2 approve.
     let method = PaidMethods::Cost1b;
     // Pre-approve payment
-    setup.user_approves_payment_for_paid_service(method.cost());
+    setup.user_approves_payment_for_paid_service(method.cost() + LEDGER_FEE);
     // Check that the user has been charged for the approve.
     expected_user_balance -= LEDGER_FEE;
     setup.assert_user_balance_eq(

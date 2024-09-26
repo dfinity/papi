@@ -128,7 +128,7 @@ impl Default for CallerPaysWithIcrc2CyclesTestSetup {
             .deploy_to(pic.clone())
             .into();
 
-        Self {
+        let ans = Self {
             pic,
             paid_service,
             ledger,
@@ -137,10 +137,14 @@ impl Default for CallerPaysWithIcrc2CyclesTestSetup {
             users,
             unauthorized_user,
             cycles_depositor,
-        }
+        };
+        ans.fund_user(Self::USER_INITIAL_BALANCE);
+        ans
     }
 }
 impl CallerPaysWithIcrc2CyclesTestSetup {
+    /// The user's initial balance.
+    pub const USER_INITIAL_BALANCE: u128 = 100_000_000_000;
     /// Deposit 100 * the ledger fee in the user's ledger wallet. That should be enough to be getting on with.
     pub fn fund_user(&self, megasquigs: u128) {
         let initial_balance = self.user_balance();

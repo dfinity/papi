@@ -9,7 +9,7 @@ use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
 };
 use ic_papi_guard::guards::{PaymentContext, PaymentGuard, PaymentGuard2};
-use state::{payment_ledger, set_init_args, PAYMENT_GUARD};
+use state::{set_init_args, PAYMENT_GUARD};
 
 #[init]
 fn init(init_args: Option<InitArgs>) {
@@ -41,11 +41,7 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
 /// An API method that requires 1 billion cycles using an ICRC-2 approve with default parameters.
 #[update()]
 async fn cost_1b_icrc2_from_caller() -> Result<String, PaymentError> {
-    let guard = Icrc2CyclesPaymentGuard {
-        ledger_canister_id: payment_ledger(),
-        ..Icrc2CyclesPaymentGuard::default()
-    };
-    guard.deduct(1_000_000_000).await?;
+    Icrc2CyclesPaymentGuard::default().deduct(1_000_000_000).await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())
 }
 

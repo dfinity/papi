@@ -54,13 +54,11 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
             PaymentWithConfig::AttachedCycles => AttachedCyclesPayment {}.deduct(fee).await,
             PaymentWithConfig::CallerPaysIcrc2Cycles => {
                 Icrc2CyclesPaymentGuard {
-                    ledger_canister_id: cycles_ledger_canister_id(),
                     payer_account: Account {
                         owner: caller,
                         subaccount: None,
                     },
                     spender_subaccount: None,
-                    created_at_time: None,
                     own_canister_id,
                 }
                 .deduct(fee)
@@ -68,7 +66,6 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
             }
             PaymentWithConfig::PatronPaysIcrc2Cycles(patron) => {
                 Icrc2CyclesPaymentGuard {
-                    ledger_canister_id: cycles_ledger_canister_id(),
                     payer_account: patron,
                     spender_subaccount: Some(principal2account(&caller)),
                     ..Icrc2CyclesPaymentGuard::default()

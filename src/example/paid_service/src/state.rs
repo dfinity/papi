@@ -14,7 +14,7 @@ lazy_static! {
             VendorPaymentConfig::CallerPaysIcrc2Cycles,
             VendorPaymentConfig::PatronPaysIcrc2Cycles,
             VendorPaymentConfig::CallerPaysIcrc2Tokens {
-                ledger: payment_ledger(), // TODO: Use say the ICP ledger instead.
+                ledger: payment_ledger(),
             },
             VendorPaymentConfig::PatronPaysIcrc2Tokens {
                 ledger: payment_ledger(),

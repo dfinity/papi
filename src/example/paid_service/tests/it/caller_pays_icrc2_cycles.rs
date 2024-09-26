@@ -31,11 +31,7 @@ fn caller_pays_by_icrc2() {
     assert_eq!(
         response,
         Ok("Yes, you paid 1 billion cycles!".to_string()),
-        // "Should have succeeded with a generous prepayment",
-        "\nsetup ledger:   {:?}\nmainnet ledger: {:?}\npapi ledger:    {:?}",
-        setup.ledger.canister_id(),
-        Principal::from_text(ic_papi_api::cycles::MAINNET_CYCLES_LEDGER_CANISTER_ID).unwrap(),
-        ic_papi_api::cycles::cycles_ledger_canister_id()
+        "Should have succeeded with an accurate prepayment",
     );
     let service_canister_cycles_after = setup.pic.cycle_balance(setup.paid_service.canister_id);
     assert!(
@@ -52,7 +48,7 @@ fn caller_pays_by_icrc2() {
 }
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected
-/// on an API method that takes a payment argument.
+/// on an API method that specifies the payment argument explicitly.
 #[test]
 fn caller_pays_by_named_icrc2() {
     let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
@@ -76,11 +72,7 @@ fn caller_pays_by_named_icrc2() {
     assert_eq!(
         response,
         Ok("Yes, you paid 1 billion cycles!".to_string()),
-        // "Should have succeeded with a generous prepayment",
-        "\nsetup ledger:   {:?}\nmainnet ledger: {:?}\npapi ledger:    {:?}",
-        setup.ledger.canister_id(),
-        Principal::from_text(ic_papi_api::cycles::MAINNET_CYCLES_LEDGER_CANISTER_ID).unwrap(),
-        ic_papi_api::cycles::cycles_ledger_canister_id()
+        "Should have succeeded with an accurate prepayment",
     );
     let service_canister_cycles_after = setup.pic.cycle_balance(setup.paid_service.canister_id);
     assert!(
@@ -210,4 +202,25 @@ fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
                 .to_string(),
         );
     }
+}
+
+/// Verifies that a user cannot pay without an ICRC2 approval.
+#[test]
+fn caller_needs_to_approve() {
+    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
+    // Ok, now we should be able to make an API call with an ICRC-2 approve.
+    let method = PaidMethods::Cost1b;
+    // Call the API
+    let response: Result<String, PaymentError> =
+        setup.call_paid_service(setup.user, method, PaymentType::CallerPaysIcrc2Cycles);
+    assert_eq!(
+        response,
+        Err(PaymentError::LedgerError {
+            ledger: setup.ledger.canister_id(),
+            error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
+                allowance: Nat::default(),
+            }
+        }),
+        "Should have failed without an ICRC2 approve"
+    );
 }

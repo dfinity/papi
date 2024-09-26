@@ -60,9 +60,9 @@ fn user_pays_cycles_for_user2() {
             setup.call_paid_service(setup.unauthorized_user, method, &payment_arg);
         assert_eq!(
             response,
-            Err(PaymentError::LedgerWithdrawFromError {
+            Err(PaymentError::LedgerTransferFromError {
                 ledger: setup.ledger.canister_id(),
-                error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
+                error: cycles_ledger_client::TransferFromError::InsufficientAllowance {
                     allowance: Nat::from(0u32),
                 }
             }),

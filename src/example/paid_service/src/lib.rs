@@ -2,8 +2,9 @@ mod state;
 
 use example_paid_service_api::InitArgs;
 use ic_cdk::init;
-use ic_cdk_macros::{export_candid, update};
+use ic_cdk_macros::{export_candid, update, query};
 use ic_papi_api::{PaymentError, PaymentType};
+use ic_papi_guard::guards::any::PaymentWithConfig;
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment, icrc2_cycles::Icrc2CyclesPaymentGuard,
 };
@@ -15,6 +16,14 @@ fn init(init_args: Option<InitArgs>) {
     if let Some(init_args) = init_args {
         set_init_args(init_args);
     }
+}
+
+/// An API method that returns the current payment configuration for a given payment type.
+/// 
+/// This is used in tests to verify that the payment configuration is set correctly.
+#[query()]
+fn payment_config() -> Option<PaymentWithConfig> {
+    PAYMENT_GUARD.config(PaymentType::CallerPaysIcrc2Cycles)
 }
 
 #[update()]

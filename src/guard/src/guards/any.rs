@@ -1,5 +1,6 @@
 //! Accepts any payment that the vendor accepts.
 
+use candid::{CandidType, Deserialize};
 use ic_papi_api::{
     caller::{PatronPaysIcrc2Cycles, TokenAmount},
     cycles::cycles_ledger_canister_id,
@@ -28,7 +29,7 @@ pub enum VendorPaymentConfig {
 }
 
 /// A user's requested payment type paired with a vendor's configuration.
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, CandidType, Deserialize)]
 pub enum PaymentWithConfig {
     AttachedCycles,
     CallerPaysIcrc2Cycles,
@@ -80,7 +81,7 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
 }
 impl<const CAP: usize> AnyPaymentGuard<CAP> {
     /// Find the vendor configuration for the offered payment type.
-    fn config(&self, payment: PaymentType) -> Option<PaymentWithConfig> {
+    pub fn config(&self, payment: PaymentType) -> Option<PaymentWithConfig> {
         match payment {
             PaymentType::AttachedCycles => self
                 .supported

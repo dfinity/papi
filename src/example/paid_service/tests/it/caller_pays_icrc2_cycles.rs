@@ -1,7 +1,25 @@
 use crate::util::pic_canister::PicCanisterTrait;
 use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMethods, LEDGER_FEE};
-use candid::Nat;
+use candid::{Nat, Principal};
 use ic_papi_api::{PaymentError, PaymentType};
+use ic_papi_guard::guards::any::PaymentWithConfig;
+
+/// Verifies that the paid API is using the expected config for the `PaymentType::CallerPaysIcrc2Cycles`.
+#[test]
+fn caller_pays_icrc2_cycles_payment_config() {
+    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
+    let response: Option<PaymentWithConfig> = setup.paid_service.update(
+        Principal::anonymous(),
+        "payment_config",
+        PaymentType::CallerPaysIcrc2Cycles,
+    ).unwrap();
+    assert_eq!(
+        response,
+        Some(PaymentWithConfig::CallerPaysIcrc2Cycles),
+        "The payment configuration for CallerPaysIcrc2Cycles should be set to the ledger with a fee of {}",
+        LEDGER_FEE
+    );
+}
 
 /// Verifies that the `PaymentType::CallerPaysIcrc2Cycles` payment type works as expected with a range of approval amounts near the required amount.
 ///
@@ -178,7 +196,11 @@ fn caller_pays_by_named_icrc2() {
     assert_eq!(
         response,
         Ok("Yes, you paid 1 billion cycles!".to_string()),
-        "Should have succeeded with a generous prepayment",
+        // "Should have succeeded with a generous prepayment",
+        "\nsetup ledger:   {:?}\nmainnet ledger: {:?}\npapi ledger:    {:?}",
+        setup.ledger.canister_id(),
+        Principal::from_text(ic_papi_api::cycles::MAINNET_CYCLES_LEDGER_CANISTER_ID).unwrap(),
+        ic_papi_api::cycles::cycles_ledger_canister_id()
     );
     let service_canister_cycles_after = setup.pic.cycle_balance(setup.paid_service.canister_id);
     assert!(

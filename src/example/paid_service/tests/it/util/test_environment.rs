@@ -5,7 +5,7 @@ use crate::util::cycles_ledger::{
 use crate::util::pic_canister::{PicCanister, PicCanisterBuilder, PicCanisterTrait};
 use candid::{encode_one, CandidType, Nat, Principal};
 use example_paid_service_api::InitArgs;
-use ic_papi_api::cycles::CYCLES_LEDGER_CANISTER_ID;
+use ic_papi_api::cycles::cycles_ledger_canister_id;
 use ic_papi_api::PaymentError;
 use pocket_ic::{PocketIc, PocketIcBuilder};
 use std::sync::Arc;
@@ -68,7 +68,7 @@ impl Default for CallerPaysWithIcrc2CyclesTestSetup {
             .create_canister_with_id(
                 None,
                 None,
-                Principal::from_text(CYCLES_LEDGER_CANISTER_ID).unwrap(),
+                cycles_ledger_canister_id(),
             )
             .unwrap();
 

@@ -8,4 +8,5 @@ candid = { workspace = true }
 cycles-ledger-client = { workspace = true }
 ic-cdk = "0.16.0"
 ic-papi-api = { workspace = true }
+serde = { workspace = true }
 serde_bytes = { workspace = true }

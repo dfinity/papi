@@ -670,6 +670,7 @@ dependencies = [
  "cycles-ledger-client",
  "ic-cdk 0.16.0",
  "ic-papi-api",
+ "serde",
  "serde_bytes",
 ]
 

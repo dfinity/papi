@@ -271,9 +271,4 @@ impl PicCanisterBuilder {
             canister_id,
         }
     }
-    /// Deploy to a new pic.
-    pub fn deploy(&mut self) -> PicCanister {
-        let pic = Arc::new(PocketIc::new());
-        self.deploy_to(pic.clone())
-    }
 }

@@ -54,7 +54,7 @@ fn user_pays_for_user2() {
             setup.call_paid_service(setup.unauthorized_user, method, &payment_arg);
         assert_eq!(
             response,
-            Err(PaymentError::LedgerError {
+            Err(PaymentError::LedgerWithdrawFromError {
                 ledger: setup.ledger.canister_id(),
                 error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
                     allowance: Nat::from(0u32),
@@ -149,7 +149,7 @@ fn user_pays_for_other_users() {
             .expect("Failed to call the paid service");
         assert_eq!(
             response,
-            Err(PaymentError::LedgerError {
+            Err(PaymentError::LedgerWithdrawFromError {
                 ledger: setup.ledger.canister_id(),
                 error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
                     allowance: Nat::from(0u32),
@@ -203,7 +203,7 @@ fn user_pays_for_other_users() {
             .expect("Failed to call the paid service");
         assert_eq!(
             response,
-            Err(PaymentError::LedgerError {
+            Err(PaymentError::LedgerWithdrawFromError {
                 ledger: setup.ledger.canister_id(),
                 error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
                     allowance: Nat::from(0u32),

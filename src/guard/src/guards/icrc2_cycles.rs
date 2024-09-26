@@ -1,3 +1,4 @@
+//! Code to receive cycles as payment, credited to the canister, using ICRC-2 and a cycles-ledger specific withdrawal method.
 use super::{PaymentError, PaymentGuard};
 use candid::{Nat, Principal};
 use cycles_ledger_client::WithdrawFromArgs;
@@ -75,7 +76,7 @@ impl PaymentGuard for Icrc2CyclesPaymentGuard {
                     "Failed to withdraw from ledger canister at {}: {error:?}",
                     cycles_ledger_canister_id()
                 );
-                PaymentError::LedgerError {
+                PaymentError::LedgerWithdrawFromError {
                     ledger: cycles_ledger_canister_id(),
                     error,
                 }

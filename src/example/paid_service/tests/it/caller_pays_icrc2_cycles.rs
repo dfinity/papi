@@ -123,7 +123,7 @@ fn caller_pays_icrc2_cycles_works_with_large_enough_approval() {
             if payment < method.cost() {
                 assert_eq!(
                     response,
-                    Err(PaymentError::LedgerError {
+                    Err(PaymentError::LedgerWithdrawFromError {
                         ledger: setup.ledger.canister_id(),
                         error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
                             allowance: Nat::from(payment + LEDGER_FEE),
@@ -216,7 +216,7 @@ fn caller_needs_to_approve() {
         setup.call_paid_service(setup.user, method, PaymentType::CallerPaysIcrc2Cycles);
     assert_eq!(
         response,
-        Err(PaymentError::LedgerError {
+        Err(PaymentError::LedgerWithdrawFromError {
             ledger: setup.ledger.canister_id(),
             error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
                 allowance: Nat::default(),
@@ -251,7 +251,7 @@ fn payment_cannot_be_used_by_another_caller() {
         );
         assert_eq!(
             response,
-            Err(PaymentError::LedgerError {
+            Err(PaymentError::LedgerWithdrawFromError {
                 ledger: setup.ledger.canister_id(),
                 error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
                     allowance: Nat::default(),

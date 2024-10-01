@@ -6,7 +6,7 @@ use ic_papi_api::{caller::TokenAmount, cycles::cycles_ledger_canister_id, Accoun
 
 /// Accepts cycles using an ICRC-2 approve followed by withdrawing the cycles to the current canister.  Withdrawing
 /// cycles to the current canister is specific to the cycles ledger canister; it is not part of the ICRC-2 standard.
-pub struct Icrc2CyclesPaymentGuard {
+pub struct CallerPaysIcrc2CyclesPaymentGuard {
     /// The payer
     pub payer_account: Account,
     /// The spender, if different from the payer.
@@ -14,7 +14,7 @@ pub struct Icrc2CyclesPaymentGuard {
     /// Own canister ID
     pub own_canister_id: Principal,
 }
-impl Icrc2CyclesPaymentGuard {
+impl CallerPaysIcrc2CyclesPaymentGuard {
     #[must_use]
     pub fn default_account() -> Account {
         Account {
@@ -40,7 +40,7 @@ impl Icrc2CyclesPaymentGuard {
     }
 }
 
-impl Default for Icrc2CyclesPaymentGuard {
+impl Default for CallerPaysIcrc2CyclesPaymentGuard {
     fn default() -> Self {
         Self {
             payer_account: Self::default_account(),
@@ -50,7 +50,7 @@ impl Default for Icrc2CyclesPaymentGuard {
     }
 }
 
-impl PaymentGuard for Icrc2CyclesPaymentGuard {
+impl PaymentGuard for CallerPaysIcrc2CyclesPaymentGuard {
     async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError> {
         // The patron must not be the vendor itself (this canister).
         if self.payer_account.owner == self.own_canister_id {

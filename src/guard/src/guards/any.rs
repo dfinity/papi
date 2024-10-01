@@ -11,7 +11,7 @@ use super::{
     caller_pays_icrc2_cycles::CallerPaysIcrc2CyclesPaymentGuard,
     caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard,
     patron_pays_icrc2_cycles::PatronPaysIcrc2CyclesPaymentGuard,
-    patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentGuard,
+    patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentGuardTrait,
 };
 
 /// A guard that accepts a user-specified payment type, providing the vendor supports it.

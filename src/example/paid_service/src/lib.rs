@@ -10,7 +10,7 @@ use ic_papi_guard::guards::{
     caller_pays_icrc2_cycles::CallerPaysIcrc2CyclesPaymentGuard,
     caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard,
 };
-use ic_papi_guard::guards::PaymentGuard;
+use ic_papi_guard::guards::PaymentGuardTrait;
 use state::{set_init_args, PAYMENT_GUARD};
 
 #[init]

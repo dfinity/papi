@@ -1,5 +1,5 @@
 //! Code to receive cycles as payment, credited to the canister, using ICRC-2 and a cycles-ledger specific withdrawal method.
-use super::{PaymentError, PaymentGuard};
+use super::{PaymentError, PaymentGuardTrait};
 use candid::Nat;
 use cycles_ledger_client::WithdrawFromArgs;
 use ic_papi_api::{
@@ -13,7 +13,7 @@ pub struct PatronPaysIcrc2CyclesPaymentGuard {
     pub patron: Account,
 }
 
-impl PaymentGuard for PatronPaysIcrc2CyclesPaymentGuard {
+impl PaymentGuardTrait for PatronPaysIcrc2CyclesPaymentGuard {
     async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError> {
         let own_canister_id = ic_cdk::api::id();
         let caller = ic_cdk::caller();

@@ -9,6 +9,6 @@ pub mod patron_pays_icrc2_cycles;
 pub mod patron_pays_icrc2_tokens;
 
 #[allow(async_fn_in_trait)]
-pub trait PaymentGuard {
+pub trait PaymentGuardTrait {
     async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError>;
 }

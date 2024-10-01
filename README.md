@@ -104,7 +104,16 @@ dfx canister call $CYCLES_LEDGER icrc2_approve '
 # Caller:
 ## The caller needs to specify the payment source explicitly:
 PAYER_ACCOUNT="$(dfx ledger account-id --of-principal "$PAYER")"
-dfx canister call "$MATH_CANISTER_ID" paid_is_prime '(record{account="'$PAYER_ACCOUNT'"}, 1234567)'
+dfx canister call "$MATH_CANISTER_ID" paid_is_prime '
+(
+  1234,
+  variant {
+    PatronPaysIcrc2Cycles = record {
+      owner = principal "PAYER_ACCOUNT";
+    }
+  },
+)
+'
 ```
 
 Your canister will retrieve the pre-approved payment before proceeding with the API call.

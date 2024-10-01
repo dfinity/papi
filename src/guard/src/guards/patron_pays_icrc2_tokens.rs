@@ -28,6 +28,10 @@ impl PatronPaysIcrc2TokensPaymentGuard {
 
 impl PaymentGuard for PatronPaysIcrc2TokensPaymentGuard {
     async fn deduct(&self, cost: TokenAmount) -> Result<(), PaymentError> {
+        // The patron must not be the vendor itself (this canister).
+        if self.payer_account.owner == self.own_canister_id {
+            return Err(PaymentError::InvalidPatron);
+        }
         // Note: The cycles ledger client is ICRC-2 compatible so can be used here.
         cycles_ledger_client::Service(self.ledger)
             .icrc_2_transfer_from(&TransferFromArgs {

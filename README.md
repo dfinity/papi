@@ -4,44 +4,55 @@
 # Get paid for your API.
 
 ## TLDR
-**`papi` adds a payment gateway to an API.  Choose which cryptocurrencies you would like to be paid in, and how much each API call should cost, and the `papi` integration will handle the rest.**
+
+**`papi` adds a payment gateway to an API. Choose which cryptocurrencies you would like to be paid in, and how much each API call should cost, and the `papi` integration will handle the rest.**
 
 ## Details
 
 ### Choice of cryptocurrency
+
 The following cryptocurrencies are supported:
 
-| Name | Token | Comment |
-| ---- | ----- | ------- |
-| Bitcoin | ckBTC | High speed, low transaction costs are enabled via decentralized chain keys. |
-| Ethereum | ckETH | High speed, low transaction costs are enabled via decentralized chain keys. |
-| US Dollar | ckUSDC | High speed, low transaction costs are enabled via decentralized chain keys. |
-| ICP Cycles | XDR | The native utility token of the Internet Computer, tied in price to the IMF XDR basket of currencies. |
-| ICP | ICP | The governance token of the Internet Computer. |
-And many more.  All tokens that support the ICRC-2 standard can be used.
+| Name       | Token  | Comment                                                                                               |
+| ---------- | ------ | ----------------------------------------------------------------------------------------------------- |
+| Bitcoin    | ckBTC  | High speed, low transaction costs are enabled via decentralized chain keys.                           |
+| Ethereum   | ckETH  | High speed, low transaction costs are enabled via decentralized chain keys.                           |
+| US Dollar  | ckUSDC | High speed, low transaction costs are enabled via decentralized chain keys.                           |
+| ICP Cycles | XDR    | The native utility token of the Internet Computer, tied in price to the IMF XDR basket of currencies. |
+| ICP        | ICP    | The governance token of the Internet Computer.                                                        |
+
+And many more. All tokens that support the ICRC-2 standard can be used.
 
 ### Chain keys: ckBTC, ckETH, ckUSDC, ...
-APIs require high speed, low latency and low transaction fees.  Otherwise the user experience will be terrible.  Chain Key provides a standard, cryptocurrency-agnostic, decentralized way of delivering these necessary properties.  If you are excited by technical details, you will be glad to know that Chain Key Technology enables making L2s on the ICP with threshold keys.  ICP provides the high performance and the threshold keys provide the foundation for making the L2 decentralized.
+
+APIs require high speed, low latency and low transaction fees. Otherwise the user experience will be terrible. Chain Key provides a standard, cryptocurrency-agnostic, decentralized way of delivering these necessary properties. If you are excited by technical details, you will be glad to know that Chain Key Technology enables making L2s on the ICP with threshold keys. ICP provides the high performance and the threshold keys provide the foundation for making the L2 decentralized.
 
 ### Technical Integration
-You will need to define a default currency for payment and annotate API methods with how much you would like to charge for each call.  When a customer makes an API call, the customer's default account will be charged for the API call.  The customer will have to authorize the payment in advance using an ICRC-2 approval.  In the case of payment with ICP cycles, payment MAY also be attached directly to the API call.
 
-This flow can be customized by providing explicit payment parameters.  For every API method you have, another will be added with the `paid_` prefix and the payment parameter.  For example, if you have an API method `is_prime(x: u32) -> bool`, a method will be added `paid_is_prime(payment_details, u32) -> Result<bool, PaymentError>`.  The default flow has the advantage that you do not need to alter your API in any way.  With this explicit payment mechanism you have more options, such as support for multiple currencies and payment by accounts other than the caller.
+You will need to define a default currency for payment and annotate API methods with how much you would like to charge for each call. When a customer makes an API call, the customer's default account will be charged for the API call. The customer will have to authorize the payment in advance using an ICRC-2 approval. In the case of payment with ICP cycles, payment MAY also be attached directly to the API call.
 
-Optionally, pre-payment is also supported.  In this case, the `papi` library will need to store customer credits in stable memory and you will need to set the duration for which pre-paid credits are valid.
+This flow can be customized by providing explicit payment parameters. For every API method you have, another will be added with the `paid_` prefix and the payment parameter. For example, if you have an API method `is_prime(x: u32) -> bool`, a method will be added `paid_is_prime(payment_details, u32) -> Result<bool, PaymentError>`. The default flow has the advantage that you do not need to alter your API in any way. With this explicit payment mechanism you have more options, such as support for multiple currencies and payment by accounts other than the caller.
+
+Optionally, pre-payment is also supported. In this case, the `papi` library will need to store customer credits in stable memory and you will need to set the duration for which pre-paid credits are valid.
 
 #### Examples
+
 This API requires payment in cycles:
+
 ```
 #[paid_api(ledger="cycles_ledger", fee="10000")]
 #[update]
 is_prime(x: u32) -> bool {...}
 ```
+
 A user MAY pay by attaching cycles directly to API call:
+
 ```
 dfx canister call "$MATH_CANISTER_ID" --with-cycles 10000 is_prime '(1234567)'
 ```
+
 A user MAY also pre-approve payment, then make the call:
+
 ```
 dfx canister call $CYCLES_LEDGER icrc2_approve '
   record {
@@ -54,7 +65,9 @@ dfx canister call $CYCLES_LEDGER icrc2_approve '
 
 dfx canister call "$MATH_CANISTER_ID" is_prime '(1234567)'
 ```
-Finally, there are complex use cases where another user pays on behalf of the caller.  In this case, the payer needs to set aside some funds for the caller in a sub-account and approve the payment.  The funds can be used only by that caller:
+
+Finally, there are complex use cases where another user pays on behalf of the caller. In this case, the payer needs to set aside some funds for the caller in a sub-account and approve the payment. The funds can be used only by that caller:
+
 ```
 # Payer:
 ## Add funds to a subaccount for the caller:
@@ -77,6 +90,7 @@ dfx canister call $CYCLES_LEDGER icrc2_approve '
 PAYER_ACCOUNT="$(dfx ledger account-id --of-principal "$PAYER")"
 dfx canister call "$MATH_CANISTER_ID" paid_is_prime '(record{account="'$PAYER_ACCOUNT'"}, 1234567)'
 ```
+
 Your canister will retrieve the pre-approved payment before proceeding with the API call.
 
 ## Detailed design

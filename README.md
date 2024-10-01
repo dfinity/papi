@@ -29,11 +29,13 @@ APIs require high speed, low latency and low transaction fees. Otherwise the use
 
 ### Technical Integration
 
-You will need to define a default currency for payment and annotate API methods with how much you would like to charge for each call. When a customer makes an API call, the customer's default account will be charged for the API call. The customer will have to authorize the payment in advance using an ICRC-2 approval. In the case of payment with ICP cycles, payment MAY also be attached directly to the API call.
+You will need to define a default currency for payment and annotate API methods with how much you would like to charge for each call.  The payment method can be either passed explicitly by the caller or you can specify one fixed payment method in your canister.  Payment is currently supported by attached cycles or ICRC2 transfer; more methods are likely to be added in future. For ICRC-2, the customer will have to approve the payment in advance. In the case of payment with ICP cycles, payment is attached directly to the API call.
 
+<!-- NOT IMPLEMENTED YET
 This flow can be customized by providing explicit payment parameters. For every API method you have, another will be added with the `paid_` prefix and the payment parameter. For example, if you have an API method `is_prime(x: u32) -> bool`, a method will be added `paid_is_prime(payment_details, u32) -> Result<bool, PaymentError>`. The default flow has the advantage that you do not need to alter your API in any way. With this explicit payment mechanism you have more options, such as support for multiple currencies and payment by accounts other than the caller.
 
 Optionally, pre-payment is also supported. In this case, the `papi` library will need to store customer credits in stable memory and you will need to set the duration for which pre-paid credits are valid.
+-->
 
 #### Examples
 

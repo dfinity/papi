@@ -1,69 +1,35 @@
 //! Code to receive cycles as payment, credited to the canister, using ICRC-2 and a cycles-ledger specific withdrawal method.
 use super::{PaymentError, PaymentGuard};
-use candid::{Nat, Principal};
+use candid::Nat;
 use cycles_ledger_client::WithdrawFromArgs;
-use ic_papi_api::{caller::TokenAmount, cycles::cycles_ledger_canister_id, Account};
+use ic_papi_api::{
+    caller::TokenAmount, cycles::cycles_ledger_canister_id, principal2account, Account,
+};
 
 /// Accepts cycles using an ICRC-2 approve followed by withdrawing the cycles to the current canister.  Withdrawing
 /// cycles to the current canister is specific to the cycles ledger canister; it is not part of the ICRC-2 standard.
 pub struct PatronPaysIcrc2CyclesPaymentGuard {
-    /// The payer
-    pub payer_account: Account,
-    /// The spender, if different from the payer.
-    pub spender_subaccount: Option<serde_bytes::ByteBuf>,
-    /// Own canister ID
-    pub own_canister_id: Principal,
-}
-impl PatronPaysIcrc2CyclesPaymentGuard {
-    #[must_use]
-    pub fn default_account() -> Account {
-        Account {
-            owner: ic_cdk::caller(),
-            subaccount: None,
-        }
-    }
-    /// The normal cycles ledger canister ID.
-    ///
-    /// - If the cycles ledger is listed in `dfx.json`, a normal `dfx build` will set the
-    ///   environment variable `CANISTER_ID_CYCLES_LEDGER` and we use this to obtain the canister ID.
-    /// - Otherwise, we use the mainnet cycled ledger canister ID, which is `um5iw-rqaaa-aaaaq-qaaba-cai`.
-    ///
-    /// # Panics
-    /// - If the `CANISTER_ID_CYCLES_LEDGER` environment variable is not a valid canister ID at
-    ///   build time.
-    #[must_use]
-    pub fn default_cycles_ledger() -> Principal {
-        Principal::from_text(
-            option_env!("CANISTER_ID_CYCLES_LEDGER").unwrap_or("um5iw-rqaaa-aaaaq-qaaba-cai"),
-        )
-        .expect("Compile error: Failed to parse build env var 'CANISTER_ID_CYCLES_LEDGER' as a canister ID.")
-    }
-}
-
-impl Default for PatronPaysIcrc2CyclesPaymentGuard {
-    fn default() -> Self {
-        Self {
-            payer_account: Self::default_account(),
-            own_canister_id: ic_cdk::api::id(),
-            spender_subaccount: None,
-        }
-    }
+    /// The patron paying on behalf of the caller.
+    pub patron: Account,
 }
 
 impl PaymentGuard for PatronPaysIcrc2CyclesPaymentGuard {
     async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError> {
+        let own_canister_id = ic_cdk::api::id();
+        let caller = ic_cdk::caller();
+        let spender_subaccount = Some(principal2account(&caller));
         // The patron must not be the vendor itself (this canister).
-        if self.payer_account.owner == self.own_canister_id {
+        if self.patron.owner == own_canister_id {
             return Err(PaymentError::InvalidPatron);
         }
         // The cycles ledger has a special `withdraw_from` method, similar to `transfer_from`,
         // but that adds the cycles to the canister rather than putting it into a ledger account.
         cycles_ledger_client::Service(cycles_ledger_canister_id())
             .withdraw_from(&WithdrawFromArgs {
-                to: self.own_canister_id,
+                to: own_canister_id,
                 amount: Nat::from(fee),
-                from: self.payer_account.clone(),
-                spender_subaccount: self.spender_subaccount.clone(),
+                from: self.patron.clone(),
+                spender_subaccount,
                 created_at_time: None,
             })
             .await

@@ -55,7 +55,6 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
     ) -> Result<(), PaymentError> {
         let PaymentContext {
             caller,
-            own_canister_id,
         } = context;
         let payment_config = self
             .config(payment)
@@ -69,7 +68,6 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
                         subaccount: None,
                     },
                     spender_subaccount: None,
-                    own_canister_id,
                 }
                 .deduct(fee)
                 .await

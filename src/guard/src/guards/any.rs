@@ -91,8 +91,6 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
                 PatronPaysIcrc2TokensPaymentGuard {
                     ledger: payment_type.ledger,
                     payer_account: payment_type.patron,
-                    spender_subaccount: Some(principal2account(&caller)),
-                    own_canister_id,
                 }
                 .deduct(fee)
                 .await

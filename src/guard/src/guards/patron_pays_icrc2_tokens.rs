@@ -2,25 +2,24 @@
 use super::{PaymentError, PaymentGuard};
 use candid::{Nat, Principal};
 use cycles_ledger_client::TransferFromArgs;
-use ic_papi_api::{caller::TokenAmount, Account};
+use ic_papi_api::{caller::TokenAmount, principal2account, Account};
 
 /// Accepts cycles using an ICRC-2 approve followed by withdrawing the cycles to the current canister.  Withdrawing
 /// cycles to the current canister is specific to the cycles ledger canister; it is not part of the ICRC-2 standard.
 pub struct PatronPaysIcrc2TokensPaymentGuard {
     /// The ledger for that specific token
     pub ledger: Principal,
-    /// The payer
+    /// The patron
     pub payer_account: Account,
-    /// The spender, if different from the payer.
-    pub spender_subaccount: Option<serde_bytes::ByteBuf>,
-    /// Own canister ID
-    pub own_canister_id: Principal,
 }
 
 impl PaymentGuard for PatronPaysIcrc2TokensPaymentGuard {
     async fn deduct(&self, cost: TokenAmount) -> Result<(), PaymentError> {
+        let caller = ic_cdk::api::caller();
+        let own_canister_id = ic_cdk::api::id();
+        let spender_subaccount = principal2account(&caller);
         // The patron must not be the vendor itself (this canister).
-        if self.payer_account.owner == self.own_canister_id {
+        if self.payer_account.owner == own_canister_id {
             return Err(PaymentError::InvalidPatron);
         }
         // Note: The cycles ledger client is ICRC-2 compatible so can be used here.
@@ -32,7 +31,7 @@ impl PaymentGuard for PatronPaysIcrc2TokensPaymentGuard {
                     subaccount: None,
                 },
                 amount: Nat::from(cost),
-                spender_subaccount: self.spender_subaccount.clone(),
+                spender_subaccount: Some(spender_subaccount),
                 created_at_time: None,
                 memo: None,
                 fee: None,

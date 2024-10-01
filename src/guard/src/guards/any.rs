@@ -64,7 +64,7 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
             }
             PaymentWithConfig::PatronPaysIcrc2Cycles(patron) => {
                 PatronPaysIcrc2CyclesPaymentGuard {
-                    payer_account: patron,
+                    patron,
                     spender_subaccount: Some(principal2account(&caller)),
                     ..PatronPaysIcrc2CyclesPaymentGuard::default()
                 }

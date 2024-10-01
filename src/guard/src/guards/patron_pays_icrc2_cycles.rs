@@ -8,7 +8,7 @@ use ic_papi_api::{caller::TokenAmount, cycles::cycles_ledger_canister_id, Accoun
 /// cycles to the current canister is specific to the cycles ledger canister; it is not part of the ICRC-2 standard.
 pub struct PatronPaysIcrc2CyclesPaymentGuard {
     /// The payer
-    pub payer_account: Account,
+    pub patron: Account,
     /// The spender, if different from the payer.
     pub spender_subaccount: Option<serde_bytes::ByteBuf>,
     /// Own canister ID
@@ -43,7 +43,7 @@ impl PatronPaysIcrc2CyclesPaymentGuard {
 impl Default for PatronPaysIcrc2CyclesPaymentGuard {
     fn default() -> Self {
         Self {
-            payer_account: Self::default_account(),
+            patron: Self::default_account(),
             own_canister_id: ic_cdk::api::id(),
             spender_subaccount: None,
         }
@@ -53,7 +53,7 @@ impl Default for PatronPaysIcrc2CyclesPaymentGuard {
 impl PaymentGuard for PatronPaysIcrc2CyclesPaymentGuard {
     async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError> {
         // The patron must not be the vendor itself (this canister).
-        if self.payer_account.owner == self.own_canister_id {
+        if self.patron.owner == self.own_canister_id {
             return Err(PaymentError::InvalidPatron);
         }
         // The cycles ledger has a special `withdraw_from` method, similar to `transfer_from`,
@@ -62,7 +62,7 @@ impl PaymentGuard for PatronPaysIcrc2CyclesPaymentGuard {
             .withdraw_from(&WithdrawFromArgs {
                 to: self.own_canister_id,
                 amount: Nat::from(fee),
-                from: self.payer_account.clone(),
+                from: self.patron.clone(),
                 spender_subaccount: self.spender_subaccount.clone(),
                 created_at_time: None,
             })

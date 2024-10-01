@@ -1,6 +1,5 @@
 //! Guards for specific flows
 
-use candid::Principal;
 use ic_papi_api::{caller::TokenAmount, PaymentError, PaymentType};
 pub mod any;
 pub mod attached_cycles;
@@ -16,21 +15,5 @@ pub trait PaymentGuard {
 
 #[allow(async_fn_in_trait)]
 pub trait PaymentGuard2 {
-    async fn deduct(
-        &self,
-        context: PaymentContext,
-        payment: PaymentType,
-        fee: TokenAmount,
-    ) -> Result<(), PaymentError>;
-}
-
-pub struct PaymentContext {
-    caller: Principal,
-}
-impl Default for PaymentContext {
-    fn default() -> Self {
-        Self {
-            caller: ic_cdk::caller(),
-        }
-    }
+    async fn deduct(&self, payment: PaymentType, fee: TokenAmount) -> Result<(), PaymentError>;
 }

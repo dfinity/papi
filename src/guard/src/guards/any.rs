@@ -3,7 +3,7 @@
 use candid::{CandidType, Deserialize, Principal};
 use ic_papi_api::{
     caller::{CallerPaysIcrc2Tokens, PatronPaysIcrc2Cycles, PatronPaysIcrc2Tokens, TokenAmount},
-    principal2account, PaymentError, PaymentType,
+    PaymentError, PaymentType,
 };
 
 use super::{
@@ -11,8 +11,7 @@ use super::{
     caller_pays_icrc2_cycles::CallerPaysIcrc2CyclesPaymentGuard,
     caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard,
     patron_pays_icrc2_cycles::PatronPaysIcrc2CyclesPaymentGuard,
-    patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentContext, PaymentGuard,
-    PaymentGuard2,
+    patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentGuard, PaymentGuard2,
 };
 
 /// A guard that accepts a user-specified payment type, providing the vendor supports it.
@@ -47,13 +46,7 @@ pub enum PaymentWithConfig {
 }
 
 impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
-    async fn deduct(
-        &self,
-        context: PaymentContext,
-        payment: PaymentType,
-        fee: TokenAmount,
-    ) -> Result<(), PaymentError> {
-        let PaymentContext { caller } = context;
+    async fn deduct(&self, payment: PaymentType, fee: TokenAmount) -> Result<(), PaymentError> {
         let payment_config = self
             .config(payment)
             .ok_or(PaymentError::UnsupportedPaymentType)?;
@@ -63,13 +56,9 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
                 CallerPaysIcrc2CyclesPaymentGuard {}.deduct(fee).await
             }
             PaymentWithConfig::PatronPaysIcrc2Cycles(patron) => {
-                PatronPaysIcrc2CyclesPaymentGuard {
-                    patron,
-                    spender_subaccount: Some(principal2account(&caller)),
-                    ..PatronPaysIcrc2CyclesPaymentGuard::default()
-                }
-                .deduct(fee)
-                .await
+                PatronPaysIcrc2CyclesPaymentGuard { patron }
+                    .deduct(fee)
+                    .await
             }
             PaymentWithConfig::CallerPaysIcrc2Tokens(CallerPaysIcrc2Tokens { ledger }) => {
                 CallerPaysIcrc2TokensPaymentGuard { ledger }

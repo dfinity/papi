@@ -79,7 +79,7 @@ dfx canister call $CYCLES_LEDGER icrc2_approve '
   }
 '
 
-dfx canister call "$MATH_CANISTER_ID" is_prime '(1234567)'
+dfx canister call "$MATH_CANISTER_ID" is_prime '(1234567, opt variant { CallerPaysIcrc2Cycles })'
 ```
 
 Finally, there are complex use cases where another user pays on behalf of the caller. In this case, the payer needs to set aside some funds for the caller in a sub-account and approve the payment. The funds can be used only by that caller:

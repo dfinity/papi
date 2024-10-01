@@ -1,5 +1,70 @@
+type Account = record { owner : principal; subaccount : opt blob };
+type CallerPaysIcrc2Tokens = record { ledger : principal };
+type InitArgs = record { ledger : principal };
+type PatronPaysIcrc2Tokens = record { ledger : principal; patron : Account };
 type PaymentError = variant {
+  LedgerWithdrawFromError : record {
+    error : WithdrawFromError;
+    ledger : principal;
+  };
+  LedgerUnreachable : CallerPaysIcrc2Tokens;
+  InvalidPatron;
+  LedgerTransferFromError : record {
+    error : TransferFromError;
+    ledger : principal;
+  };
+  UnsupportedPaymentType;
   InsufficientFunds : record { needed : nat64; available : nat64 };
 };
+type PaymentType = variant {
+  PatronPaysIcrc2Tokens : PatronPaysIcrc2Tokens;
+  AttachedCycles;
+  CallerPaysIcrc2Cycles;
+  CallerPaysIcrc2Tokens : CallerPaysIcrc2Tokens;
+  PatronPaysIcrc2Cycles : Account;
+};
+type RejectionCode = variant {
+  NoError;
+  CanisterError;
+  SysTransient;
+  DestinationInvalid;
+  Unknown;
+  SysFatal;
+  CanisterReject;
+};
 type Result = variant { Ok : text; Err : PaymentError };
-service : { cost_1000_attached_cycles : () -> (Result); free : () -> (text) }
+type TransferFromError = variant {
+  GenericError : record { message : text; error_code : nat };
+  TemporarilyUnavailable;
+  InsufficientAllowance : record { allowance : nat };
+  BadBurn : record { min_burn_amount : nat };
+  Duplicate : record { duplicate_of : nat };
+  BadFee : record { expected_fee : nat };
+  CreatedInFuture : record { ledger_time : nat64 };
+  TooOld;
+  InsufficientFunds : record { balance : nat };
+};
+type WithdrawFromError = variant {
+  GenericError : record { message : text; error_code : nat };
+  TemporarilyUnavailable;
+  InsufficientAllowance : record { allowance : nat };
+  Duplicate : record { duplicate_of : nat };
+  InvalidReceiver : record { receiver : principal };
+  CreatedInFuture : record { ledger_time : nat64 };
+  TooOld;
+  FailedToWithdrawFrom : record {
+    withdraw_from_block : opt nat;
+    rejection_code : RejectionCode;
+    refund_block : opt nat;
+    approval_refund_block : opt nat;
+    rejection_reason : text;
+  };
+  InsufficientFunds : record { balance : nat };
+};
+service : (opt InitArgs) -> {
+  caller_pays_1b_icrc2_cycles : () -> (Result);
+  caller_pays_1b_icrc2_tokens : () -> (Result);
+  cost_1000_attached_cycles : () -> (Result);
+  cost_1b : (PaymentType) -> (Result);
+  free : () -> (text);
+}

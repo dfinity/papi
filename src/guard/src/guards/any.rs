@@ -7,11 +7,7 @@ use ic_papi_api::{
 };
 
 use super::{
-    attached_cycles::AttachedCyclesPayment,
-    caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard,
-    caller_pays_icrc2_cycles::Icrc2CyclesPaymentGuard,
-    patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentContext, PaymentGuard,
-    PaymentGuard2,
+    attached_cycles::AttachedCyclesPayment, caller_pays_icrc2_cycles::CallerPaysIcrc2CyclesPaymentGuard, caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard, patron_pays_icrc2_cycles::PatronPaysIcrc2CyclesPaymentGuard, patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentContext, PaymentGuard, PaymentGuard2
 };
 
 /// A guard that accepts a user-specified payment type, providing the vendor supports it.
@@ -62,7 +58,7 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
         match payment_config {
             PaymentWithConfig::AttachedCycles => AttachedCyclesPayment {}.deduct(fee).await,
             PaymentWithConfig::CallerPaysIcrc2Cycles => {
-                Icrc2CyclesPaymentGuard {
+                CallerPaysIcrc2CyclesPaymentGuard {
                     payer_account: Account {
                         owner: caller,
                         subaccount: None,
@@ -74,10 +70,10 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
                 .await
             }
             PaymentWithConfig::PatronPaysIcrc2Cycles(patron) => {
-                Icrc2CyclesPaymentGuard {
+                PatronPaysIcrc2CyclesPaymentGuard {
                     payer_account: patron,
                     spender_subaccount: Some(principal2account(&caller)),
-                    ..Icrc2CyclesPaymentGuard::default()
+                    ..PatronPaysIcrc2CyclesPaymentGuard::default()
                 }
                 .deduct(fee)
                 .await

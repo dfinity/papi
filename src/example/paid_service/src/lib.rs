@@ -8,7 +8,7 @@ use ic_papi_api::{PaymentError, PaymentType};
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment,
     caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard,
-    caller_pays_icrc2_cycles::Icrc2CyclesPaymentGuard,
+    caller_pays_icrc2_cycles::CallerPaysIcrc2CyclesPaymentGuard,
 };
 use ic_papi_guard::guards::{PaymentContext, PaymentGuard, PaymentGuard2};
 use state::{set_init_args, PAYMENT_GUARD};
@@ -35,7 +35,7 @@ async fn cost_1000_attached_cycles() -> Result<String, PaymentError> {
 /// An API method that requires 1 billion cycles using an ICRC-2 approve with default parameters.
 #[update()]
 async fn caller_pays_1b_icrc2_cycles() -> Result<String, PaymentError> {
-    Icrc2CyclesPaymentGuard::default()
+    CallerPaysIcrc2CyclesPaymentGuard::default()
         .deduct(1_000_000_000)
         .await?;
     Ok("Yes, you paid 1 billion cycles!".to_string())

@@ -11,7 +11,7 @@ use super::{
     caller_pays_icrc2_cycles::CallerPaysIcrc2CyclesPaymentGuard,
     caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard,
     patron_pays_icrc2_cycles::PatronPaysIcrc2CyclesPaymentGuard,
-    patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentGuard, PaymentGuard2,
+    patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentGuard,
 };
 
 /// A guard that accepts a user-specified payment type, providing the vendor supports it.
@@ -45,8 +45,8 @@ pub enum PaymentWithConfig {
     PatronPaysIcrc2Tokens(PatronPaysIcrc2Tokens),
 }
 
-impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
-    async fn deduct(&self, payment: PaymentType, fee: TokenAmount) -> Result<(), PaymentError> {
+impl<const CAP: usize> AnyPaymentGuard<CAP> {
+    pub async fn deduct(&self, payment: PaymentType, fee: TokenAmount) -> Result<(), PaymentError> {
         let payment_config = self
             .config(payment)
             .ok_or(PaymentError::UnsupportedPaymentType)?;

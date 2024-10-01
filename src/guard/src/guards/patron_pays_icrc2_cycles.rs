@@ -9,7 +9,7 @@ use ic_papi_api::{
 /// Accepts cycles using an ICRC-2 approve followed by withdrawing the cycles to the current canister.  Withdrawing
 /// cycles to the current canister is specific to the cycles ledger canister; it is not part of the ICRC-2 standard.
 pub struct PatronPaysIcrc2CyclesPaymentGuard {
-    /// The payer
+    /// The patron paying on behalf of the caller.
     pub patron: Account,
 }
 impl PatronPaysIcrc2CyclesPaymentGuard {

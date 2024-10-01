@@ -1,7 +1,55 @@
 type PaymentError = variant {
+  LedgerWithdrawFromError : record {
+    error : WithdrawFromError;
+    ledger : principal;
+  };
+  LedgerUnreachable : record { ledger : principal };
+  InvalidPatron;
+  LedgerTransferFromError : record {
+    error : TransferFromError;
+    ledger : principal;
+  };
+  UnsupportedPaymentType;
   InsufficientFunds : record { needed : nat64; available : nat64 };
 };
+type RejectionCode = variant {
+  NoError;
+  CanisterError;
+  SysTransient;
+  DestinationInvalid;
+  Unknown;
+  SysFatal;
+  CanisterReject;
+};
 type Result = variant { Ok : text; Err : PaymentError };
+type TransferFromError = variant {
+  GenericError : record { message : text; error_code : nat };
+  TemporarilyUnavailable;
+  InsufficientAllowance : record { allowance : nat };
+  BadBurn : record { min_burn_amount : nat };
+  Duplicate : record { duplicate_of : nat };
+  BadFee : record { expected_fee : nat };
+  CreatedInFuture : record { ledger_time : nat64 };
+  TooOld;
+  InsufficientFunds : record { balance : nat };
+};
+type WithdrawFromError = variant {
+  GenericError : record { message : text; error_code : nat };
+  TemporarilyUnavailable;
+  InsufficientAllowance : record { allowance : nat };
+  Duplicate : record { duplicate_of : nat };
+  InvalidReceiver : record { receiver : principal };
+  CreatedInFuture : record { ledger_time : nat64 };
+  TooOld;
+  FailedToWithdrawFrom : record {
+    withdraw_from_block : opt nat;
+    rejection_code : RejectionCode;
+    refund_block : opt nat;
+    approval_refund_block : opt nat;
+    rejection_reason : text;
+  };
+  InsufficientFunds : record { balance : nat };
+};
 service : {
   call_with_attached_cycles : (record { principal; text; nat64 }) -> (Result);
 }

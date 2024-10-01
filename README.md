@@ -37,12 +37,28 @@ Optionally, pre-payment is also supported. In this case, the `papi` library will
 
 #### Examples
 
-This API requires payment in cycles:
-
+This API requires payment in cycles, directly to the canister.  The acceptable payment types are configured like this:
 ```
-#[paid_api(ledger="cycles_ledger", fee="10000")]
+lazy_static! {
+    pub static ref PAYMENT_GUARD: PaymentGuard<3> = PaymentGuard {
+        supported: [
+            VendorPaymentConfig::AttachedCycles,
+            VendorPaymentConfig::CallerPaysIcrc2Cycles,
+            VendorPaymentConfig::PatronPaysIcrc2Cycles,
+        ],
+    };
+}
+```
+
+The API is protected like this:
+```
 #[update]
-is_prime(x: u32) -> bool {...}
+is_prime(x: u32, payment: Option<PaymentType>) -> Result<bool, PaymentError> {
+  let fee = 1_000_000_000;
+  PAYMENT_GUARD.deduct(payment.unwrap_or(VendorPaymentConfig::AttachedCycles), fee).await?;
+  // Now check whether the number really is prime:
+  ...
+}
 ```
 
 A user MAY pay by attaching cycles directly to API call:
@@ -63,7 +79,7 @@ dfx canister call $CYCLES_LEDGER icrc2_approve '
   }
 '
 
-dfx canister call "$MATH_CANISTER_ID" is_prime '(1234567)'
+dfx canister call "$MATH_CANISTER_ID" is_prime '(1234567, opt variant { CallerPaysIcrc2Cycles })'
 ```
 
 Finally, there are complex use cases where another user pays on behalf of the caller. In this case, the payer needs to set aside some funds for the caller in a sub-account and approve the payment. The funds can be used only by that caller:
@@ -88,7 +104,16 @@ dfx canister call $CYCLES_LEDGER icrc2_approve '
 # Caller:
 ## The caller needs to specify the payment source explicitly:
 PAYER_ACCOUNT="$(dfx ledger account-id --of-principal "$PAYER")"
-dfx canister call "$MATH_CANISTER_ID" paid_is_prime '(record{account="'$PAYER_ACCOUNT'"}, 1234567)'
+dfx canister call "$MATH_CANISTER_ID" paid_is_prime '
+(
+  1234,
+  opt variant {
+    PatronPaysIcrc2Cycles = record {
+      owner = principal "PAYER_ACCOUNT";
+    }
+  },
+)
+'
 ```
 
 Your canister will retrieve the pre-approved payment before proceeding with the API call.

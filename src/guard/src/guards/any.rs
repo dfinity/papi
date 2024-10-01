@@ -90,7 +90,7 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
             PaymentWithConfig::PatronPaysIcrc2Tokens(payment_type) => {
                 PatronPaysIcrc2TokensPaymentGuard {
                     ledger: payment_type.ledger,
-                    payer_account: payment_type.patron,
+                    patron: payment_type.patron,
                 }
                 .deduct(fee)
                 .await

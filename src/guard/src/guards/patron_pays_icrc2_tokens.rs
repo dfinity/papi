@@ -9,8 +9,8 @@ use ic_papi_api::{caller::TokenAmount, principal2account, Account};
 pub struct PatronPaysIcrc2TokensPaymentGuard {
     /// The ledger for that specific token
     pub ledger: Principal,
-    /// The patron
-    pub payer_account: Account,
+    /// The patron paying on behalf of the caller
+    pub patron: Account,
 }
 
 impl PaymentGuard for PatronPaysIcrc2TokensPaymentGuard {
@@ -19,13 +19,13 @@ impl PaymentGuard for PatronPaysIcrc2TokensPaymentGuard {
         let own_canister_id = ic_cdk::api::id();
         let spender_subaccount = principal2account(&caller);
         // The patron must not be the vendor itself (this canister).
-        if self.payer_account.owner == own_canister_id {
+        if self.patron.owner == own_canister_id {
             return Err(PaymentError::InvalidPatron);
         }
         // Note: The cycles ledger client is ICRC-2 compatible so can be used here.
         cycles_ledger_client::Service(self.ledger)
             .icrc_2_transfer_from(&TransferFromArgs {
-                from: self.payer_account.clone(),
+                from: self.patron.clone(),
                 to: Account {
                     owner: ic_cdk::api::id(),
                     subaccount: None,

@@ -1,6 +1,6 @@
 use candid::Principal;
 use example_paid_service_api::InitArgs;
-use ic_papi_guard::guards::any::{AnyPaymentGuard, VendorPaymentConfig};
+use ic_papi_guard::guards::any::{PaymentGuard, VendorPaymentConfig};
 use lazy_static::lazy_static;
 use std::cell::RefCell;
 
@@ -8,7 +8,7 @@ thread_local! {
     pub static INIT_ARGS: RefCell<Option<InitArgs>> = const {RefCell::new(None)};
 }
 lazy_static! {
-    pub static ref PAYMENT_GUARD: AnyPaymentGuard<5> = AnyPaymentGuard {
+    pub static ref PAYMENT_GUARD: PaymentGuard<5> = PaymentGuard {
         supported: [
             VendorPaymentConfig::AttachedCycles,
             VendorPaymentConfig::CallerPaysIcrc2Cycles,

@@ -1,7 +1,7 @@
 //! Tests for the `PaymentType::CallerPaysIcrc2Tokens` payment type.
 use crate::util::cycles_ledger::Account;
 use crate::util::pic_canister::PicCanisterTrait;
-use crate::util::test_environment::{TestSetup, PaidMethods, LEDGER_FEE};
+use crate::util::test_environment::{PaidMethods, TestSetup, LEDGER_FEE};
 use candid::Nat;
 use ic_papi_api::caller::CallerPaysIcrc2Tokens;
 use ic_papi_api::cycles::cycles_ledger_canister_id;

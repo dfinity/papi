@@ -1,6 +1,6 @@
 //! Code to receive cycles as payment, credited to the canister, using ICRC-2 and a cycles-ledger specific withdrawal method.
 use super::{PaymentError, PaymentGuard};
-use candid::{Nat, Principal};
+use candid::Nat;
 use cycles_ledger_client::WithdrawFromArgs;
 use ic_papi_api::{
     caller::TokenAmount, cycles::cycles_ledger_canister_id, principal2account, Account,
@@ -11,31 +11,6 @@ use ic_papi_api::{
 pub struct PatronPaysIcrc2CyclesPaymentGuard {
     /// The patron paying on behalf of the caller.
     pub patron: Account,
-}
-impl PatronPaysIcrc2CyclesPaymentGuard {
-    #[must_use]
-    pub fn default_account() -> Account {
-        Account {
-            owner: ic_cdk::caller(),
-            subaccount: None,
-        }
-    }
-    /// The normal cycles ledger canister ID.
-    ///
-    /// - If the cycles ledger is listed in `dfx.json`, a normal `dfx build` will set the
-    ///   environment variable `CANISTER_ID_CYCLES_LEDGER` and we use this to obtain the canister ID.
-    /// - Otherwise, we use the mainnet cycled ledger canister ID, which is `um5iw-rqaaa-aaaaq-qaaba-cai`.
-    ///
-    /// # Panics
-    /// - If the `CANISTER_ID_CYCLES_LEDGER` environment variable is not a valid canister ID at
-    ///   build time.
-    #[must_use]
-    pub fn default_cycles_ledger() -> Principal {
-        Principal::from_text(
-            option_env!("CANISTER_ID_CYCLES_LEDGER").unwrap_or("um5iw-rqaaa-aaaaq-qaaba-cai"),
-        )
-        .expect("Compile error: Failed to parse build env var 'CANISTER_ID_CYCLES_LEDGER' as a canister ID.")
-    }
 }
 
 impl PaymentGuard for PatronPaysIcrc2CyclesPaymentGuard {

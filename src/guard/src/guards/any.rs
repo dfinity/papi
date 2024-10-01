@@ -53,9 +53,7 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
         payment: PaymentType,
         fee: TokenAmount,
     ) -> Result<(), PaymentError> {
-        let PaymentContext {
-            caller,
-        } = context;
+        let PaymentContext { caller } = context;
         let payment_config = self
             .config(payment)
             .ok_or(PaymentError::UnsupportedPaymentType)?;
@@ -67,7 +65,6 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
                         owner: caller,
                         subaccount: None,
                     },
-                    spender_subaccount: None,
                 }
                 .deduct(fee)
                 .await

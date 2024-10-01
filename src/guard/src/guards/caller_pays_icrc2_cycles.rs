@@ -9,8 +9,6 @@ use ic_papi_api::{caller::TokenAmount, cycles::cycles_ledger_canister_id, Accoun
 pub struct CallerPaysIcrc2CyclesPaymentGuard {
     /// The payer
     pub payer_account: Account,
-    /// The spender, if different from the payer.
-    pub spender_subaccount: Option<serde_bytes::ByteBuf>,
 }
 impl CallerPaysIcrc2CyclesPaymentGuard {
     #[must_use]
@@ -42,7 +40,6 @@ impl Default for CallerPaysIcrc2CyclesPaymentGuard {
     fn default() -> Self {
         Self {
             payer_account: Self::default_account(),
-            spender_subaccount: None,
         }
     }
 }
@@ -61,7 +58,7 @@ impl PaymentGuard for CallerPaysIcrc2CyclesPaymentGuard {
                 to: own_canister_id,
                 amount: Nat::from(fee),
                 from: self.payer_account.clone(),
-                spender_subaccount: self.spender_subaccount.clone(),
+                spender_subaccount: None,
                 created_at_time: None,
             })
             .await

@@ -3,7 +3,7 @@
 use candid::{CandidType, Deserialize, Principal};
 use ic_papi_api::{
     caller::{CallerPaysIcrc2Tokens, PatronPaysIcrc2Cycles, PatronPaysIcrc2Tokens, TokenAmount},
-    principal2account, Account, PaymentError, PaymentType,
+    principal2account, PaymentError, PaymentType,
 };
 
 use super::{
@@ -60,14 +60,7 @@ impl<const CAP: usize> PaymentGuard2 for AnyPaymentGuard<CAP> {
         match payment_config {
             PaymentWithConfig::AttachedCycles => AttachedCyclesPayment {}.deduct(fee).await,
             PaymentWithConfig::CallerPaysIcrc2Cycles => {
-                CallerPaysIcrc2CyclesPaymentGuard {
-                    payer_account: Account {
-                        owner: caller,
-                        subaccount: None,
-                    },
-                }
-                .deduct(fee)
-                .await
+                CallerPaysIcrc2CyclesPaymentGuard {}.deduct(fee).await
             }
             PaymentWithConfig::PatronPaysIcrc2Cycles(patron) => {
                 PatronPaysIcrc2CyclesPaymentGuard {

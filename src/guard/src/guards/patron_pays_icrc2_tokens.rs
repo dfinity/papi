@@ -16,18 +16,13 @@ pub struct PatronPaysIcrc2TokensPaymentGuard {
     /// Own canister ID
     pub own_canister_id: Principal,
 }
-impl PatronPaysIcrc2TokensPaymentGuard {
-    #[must_use]
-    pub fn default_account() -> Account {
-        Account {
-            owner: ic_cdk::caller(),
-            subaccount: None,
-        }
-    }
-}
 
 impl PaymentGuard for PatronPaysIcrc2TokensPaymentGuard {
     async fn deduct(&self, cost: TokenAmount) -> Result<(), PaymentError> {
+        // The patron must not be the vendor itself (this canister).
+        if self.payer_account.owner == self.own_canister_id {
+            return Err(PaymentError::InvalidPatron);
+        }
         // Note: The cycles ledger client is ICRC-2 compatible so can be used here.
         cycles_ledger_client::Service(self.ledger)
             .icrc_2_transfer_from(&TransferFromArgs {

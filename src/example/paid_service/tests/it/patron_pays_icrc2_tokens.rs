@@ -1,7 +1,7 @@
 //! Tests for the `PaymentType::PatronPaysIcrc2Tokens` payment type.
 use crate::util::cycles_ledger::{Account, ApproveArgs};
 use crate::util::pic_canister::PicCanisterTrait;
-use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMethods, LEDGER_FEE};
+use crate::util::test_environment::{TestSetup, PaidMethods, LEDGER_FEE};
 use candid::Nat;
 use ic_papi_api::caller::PatronPaysIcrc2Tokens;
 use ic_papi_api::{principal2account, PaymentError, PaymentType};
@@ -13,8 +13,8 @@ use ic_papi_api::{principal2account, PaymentError, PaymentType};
 /// - `user2` should be able to make the API call.
 #[test]
 fn user_pays_tokens_for_user2() {
-    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
-    let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
+    let setup = TestSetup::default();
+    let mut expected_user_balance = TestSetup::USER_INITIAL_BALANCE;
 
     // Here the user pays for user2.
     let patron = setup.user;
@@ -113,5 +113,33 @@ fn user_pays_tokens_for_user2() {
                 "Expected the service balance to be the cost of the API call"
             );
         }
+    }
+}
+
+/// If the caller can set the vendor as patron, the caller may potentially succeed in getting free goods.
+#[test]
+fn user_cannot_specify_vendor_as_patron() {
+    let setup = TestSetup::default();
+
+    // Here the caller will try to specify the vendor as the patron.
+    let caller = setup.user;
+    let patron = setup.paid_service.canister_id();
+    let method = PaidMethods::Cost1b;
+    let payment_arg = PaymentType::PatronPaysIcrc2Tokens(PatronPaysIcrc2Tokens {
+        ledger: setup.ledger.canister_id(),
+        patron: ic_papi_api::Account {
+            owner: patron,
+            subaccount: None,
+        },
+    });
+    // The call should fail:
+    {
+        let response: Result<String, PaymentError> =
+            setup.call_paid_service(caller, method, &payment_arg);
+        assert_eq!(
+            response,
+            Err(PaymentError::InvalidPatron),
+            "The caller should not be able to specify the vendor as patron.",
+        );
     }
 }

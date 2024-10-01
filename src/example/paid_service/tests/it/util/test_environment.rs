@@ -36,7 +36,7 @@ impl PaidMethods {
     }
 }
 
-pub struct CallerPaysWithIcrc2CyclesTestSetup {
+pub struct TestSetup {
     /// The PocketIC instance.
     #[allow(dead_code)]
     // The Arc is used; this makes it accessible without having to refer to a specific canister.
@@ -56,7 +56,7 @@ pub struct CallerPaysWithIcrc2CyclesTestSetup {
     /// A canister used to deposit cycles into the ledger.
     pub cycles_depositor: CyclesDepositorPic,
 }
-impl Default for CallerPaysWithIcrc2CyclesTestSetup {
+impl Default for TestSetup {
     fn default() -> Self {
         let pic = Arc::new(
             PocketIcBuilder::new()
@@ -141,7 +141,7 @@ impl Default for CallerPaysWithIcrc2CyclesTestSetup {
         ans
     }
 }
-impl CallerPaysWithIcrc2CyclesTestSetup {
+impl TestSetup {
     /// The user's initial balance.
     pub const USER_INITIAL_BALANCE: u128 = 100_000_000_000;
     /// Deposit 100 * the ledger fee in the user's ledger wallet. That should be enough to be getting on with.
@@ -223,5 +223,5 @@ impl CallerPaysWithIcrc2CyclesTestSetup {
 
 #[test]
 fn icrc2_test_setup_works() {
-    let _setup = CallerPaysWithIcrc2CyclesTestSetup::default();
+    let _setup = TestSetup::default();
 }

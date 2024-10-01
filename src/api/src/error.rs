@@ -24,4 +24,5 @@ pub enum PaymentError {
         needed: TokenAmount,
         available: TokenAmount,
     },
+    InvalidPatron,
 }

@@ -52,6 +52,12 @@ impl Default for Icrc2CyclesPaymentGuard {
 
 impl PaymentGuard for Icrc2CyclesPaymentGuard {
     async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError> {
+        // The patron must not be the vendor itself (this canister).
+        if self.payer_account.owner == self.own_canister_id {
+            return Err(PaymentError::InvalidPatron);
+        }
+        // The cycles ledger has a special `withdraw_from` method, similar to `transfer_from`,
+        // but that adds the cycles to the canister rather than putting it into a ledger account.
         cycles_ledger_client::Service(cycles_ledger_canister_id())
             .withdraw_from(&WithdrawFromArgs {
                 to: self.own_canister_id,

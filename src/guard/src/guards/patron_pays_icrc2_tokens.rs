@@ -16,15 +16,6 @@ pub struct PatronPaysIcrc2TokensPaymentGuard {
     /// Own canister ID
     pub own_canister_id: Principal,
 }
-impl PatronPaysIcrc2TokensPaymentGuard {
-    #[must_use]
-    pub fn default_account() -> Account {
-        Account {
-            owner: ic_cdk::caller(),
-            subaccount: None,
-        }
-    }
-}
 
 impl PaymentGuard for PatronPaysIcrc2TokensPaymentGuard {
     async fn deduct(&self, cost: TokenAmount) -> Result<(), PaymentError> {

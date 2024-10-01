@@ -37,12 +37,28 @@ Optionally, pre-payment is also supported. In this case, the `papi` library will
 
 #### Examples
 
-This API requires payment in cycles:
-
+This API requires payment in cycles, directly to the canister.  The acceptable payment types are configured like this:
 ```
-#[paid_api(ledger="cycles_ledger", fee="10000")]
+lazy_static! {
+    pub static ref PAYMENT_GUARD: PaymentGuard<3> = PaymentGuard {
+        supported: [
+            VendorPaymentConfig::AttachedCycles,
+            VendorPaymentConfig::CallerPaysIcrc2Cycles,
+            VendorPaymentConfig::PatronPaysIcrc2Cycles,
+        ],
+    };
+}
+```
+
+The API is protected like this:
+```
 #[update]
-is_prime(x: u32) -> bool {...}
+is_prime(x: u32, payment: Option<PaymentType>) -> Result<bool, PaymentError> {
+  let fee = 1_000_000_000;
+  PAYMENT_GUARD.deduct(payment.unwrap_or(VendorPaymentConfig::AttachedCycles), fee).await?;
+  // Now check whether the number really is prime:
+  ...
+}
 ```
 
 A user MAY pay by attaching cycles directly to API call:

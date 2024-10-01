@@ -115,3 +115,31 @@ fn user_pays_tokens_for_user2() {
         }
     }
 }
+
+/// If the caller can set the vendor as patron, the caller may potentially succeed in getting free goods.
+#[test]
+fn user_cannot_specify_vendor_as_patron() {
+    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
+
+    // Here the caller will try to specify the vendor as the patron.
+    let caller = setup.user;
+    let patron = setup.paid_service.canister_id();
+    let method = PaidMethods::Cost1b;
+    let payment_arg = PaymentType::PatronPaysIcrc2Tokens(PatronPaysIcrc2Tokens {
+        ledger: setup.ledger.canister_id(),
+        patron: ic_papi_api::Account {
+            owner: patron,
+            subaccount: None,
+        },
+    });
+    // The call should fail:
+    {
+        let response: Result<String, PaymentError> =
+            setup.call_paid_service(caller, method, &payment_arg);
+        assert_eq!(
+            response,
+            Err(PaymentError::InvalidPatron),
+            "The caller should not be able to specify the vendor as patron.",
+        );
+    }
+}

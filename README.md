@@ -11,7 +11,7 @@
 
 ### Choice of cryptocurrency
 
-The following cryptocurrencies are supported:
+The following cryptocurrencies are currently supported:
 
 | Name       | Token  | Comment                                                                                               |
 | ---------- | ------ | ----------------------------------------------------------------------------------------------------- |
@@ -21,7 +21,7 @@ The following cryptocurrencies are supported:
 | ICP Cycles | XDR    | The native utility token of the Internet Computer, tied in price to the IMF XDR basket of currencies. |
 | ICP        | ICP    | The governance token of the Internet Computer.                                                        |
 
-And many more. All tokens that support the ICRC-2 standard can be used.
+And many more. All tokens that support the ICRC-2 standard can be used.  We are considering how best to add other currencies such as native Eth; ck* tokens provide fast and inexpensive settlement but there will be use cases where native tokens may be wanted.
 
 ### Chain keys: ckBTC, ckETH, ckUSDC, ...
 

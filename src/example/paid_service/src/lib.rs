@@ -5,12 +5,12 @@ use ic_cdk::init;
 use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::cycles::cycles_ledger_canister_id;
 use ic_papi_api::{PaymentError, PaymentType};
+use ic_papi_guard::guards::PaymentGuardTrait;
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment,
     caller_pays_icrc2_cycles::CallerPaysIcrc2CyclesPaymentGuard,
     caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard,
 };
-use ic_papi_guard::guards::PaymentGuard;
 use state::{set_init_args, PAYMENT_GUARD};
 
 #[init]

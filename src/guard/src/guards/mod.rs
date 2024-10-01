@@ -25,13 +25,11 @@ pub trait PaymentGuard2 {
 }
 
 pub struct PaymentContext {
-    own_canister_id: Principal,
     caller: Principal,
 }
 impl Default for PaymentContext {
     fn default() -> Self {
         Self {
-            own_canister_id: ic_cdk::api::id(),
             caller: ic_cdk::caller(),
         }
     }

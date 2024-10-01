@@ -8,7 +8,7 @@ use ic_papi_api::{PaymentError, PaymentType};
 use ic_papi_guard::guards::{
     attached_cycles::AttachedCyclesPayment,
     caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard,
-    icrc2_cycles::Icrc2CyclesPaymentGuard,
+    caller_pays_icrc2_cycles::Icrc2CyclesPaymentGuard,
 };
 use ic_papi_guard::guards::{PaymentContext, PaymentGuard, PaymentGuard2};
 use state::{set_init_args, PAYMENT_GUARD};

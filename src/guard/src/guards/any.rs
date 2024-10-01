@@ -9,7 +9,7 @@ use ic_papi_api::{
 use super::{
     attached_cycles::AttachedCyclesPayment,
     caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard,
-    icrc2_cycles::Icrc2CyclesPaymentGuard,
+    caller_pays_icrc2_cycles::Icrc2CyclesPaymentGuard,
     patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentContext, PaymentGuard,
     PaymentGuard2,
 };

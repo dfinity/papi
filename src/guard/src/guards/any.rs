@@ -7,7 +7,12 @@ use ic_papi_api::{
 };
 
 use super::{
-    attached_cycles::AttachedCyclesPayment, caller_pays_icrc2_cycles::CallerPaysIcrc2CyclesPaymentGuard, caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard, patron_pays_icrc2_cycles::PatronPaysIcrc2CyclesPaymentGuard, patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentContext, PaymentGuard, PaymentGuard2
+    attached_cycles::AttachedCyclesPayment,
+    caller_pays_icrc2_cycles::CallerPaysIcrc2CyclesPaymentGuard,
+    caller_pays_icrc2_tokens::CallerPaysIcrc2TokensPaymentGuard,
+    patron_pays_icrc2_cycles::PatronPaysIcrc2CyclesPaymentGuard,
+    patron_pays_icrc2_tokens::PatronPaysIcrc2TokensPaymentGuard, PaymentContext, PaymentGuard,
+    PaymentGuard2,
 };
 
 /// A guard that accepts a user-specified payment type, providing the vendor supports it.

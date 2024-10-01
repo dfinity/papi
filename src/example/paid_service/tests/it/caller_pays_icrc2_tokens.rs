@@ -1,7 +1,7 @@
 //! Tests for the `PaymentType::CallerPaysIcrc2Tokens` payment type.
 use crate::util::cycles_ledger::Account;
 use crate::util::pic_canister::PicCanisterTrait;
-use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMethods, LEDGER_FEE};
+use crate::util::test_environment::{TestSetup, PaidMethods, LEDGER_FEE};
 use candid::Nat;
 use ic_papi_api::caller::CallerPaysIcrc2Tokens;
 use ic_papi_api::cycles::cycles_ledger_canister_id;
@@ -18,8 +18,8 @@ use ic_papi_api::{PaymentError, PaymentType};
 ///   - TODO: Test with other ICRC-2 ledgers as well.
 #[test]
 fn caller_pays_icrc2_tokens() {
-    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
-    let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
+    let setup = TestSetup::default();
+    let mut expected_user_balance = TestSetup::USER_INITIAL_BALANCE;
     // Ok, now we should be able to make an API call with an ICRC-2 approve.
     let method = PaidMethods::CallerPays1bIcrc2Tokens;
     // Pre-approve payment
@@ -68,8 +68,8 @@ fn caller_pays_icrc2_tokens() {
 /// Verifies that the caller can pay for an API call with ICRC-2 tokens explicitly.
 #[test]
 fn caller_pays_icrc2_tokens_explicitly() {
-    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
-    let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
+    let setup = TestSetup::default();
+    let mut expected_user_balance = TestSetup::USER_INITIAL_BALANCE;
     // Ok, now we should be able to make an API call with an ICRC-2 approve.
     let method = PaidMethods::Cost1b;
     // Pre-approve payment

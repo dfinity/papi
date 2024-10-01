@@ -1,6 +1,6 @@
 //! Tests for the `PaymentType::CallerPaysIcrc2Cycles` payment type.
 use crate::util::pic_canister::PicCanisterTrait;
-use crate::util::test_environment::{CallerPaysWithIcrc2CyclesTestSetup, PaidMethods, LEDGER_FEE};
+use crate::util::test_environment::{TestSetup, PaidMethods, LEDGER_FEE};
 use candid::Nat;
 use ic_papi_api::{PaymentError, PaymentType};
 
@@ -12,8 +12,8 @@ use ic_papi_api::{PaymentError, PaymentType};
 /// - The caller needs to pay the API cost plus one ledger fee, for the privilege of using this payment type. (See `user_approves_payment_for_paid_service(...)` in the test.)
 #[test]
 fn caller_pays_cycles_by_icrc2() {
-    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
-    let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
+    let setup = TestSetup::default();
+    let mut expected_user_balance = TestSetup::USER_INITIAL_BALANCE;
     // Ok, now we should be able to make an API call with an ICRC-2 approve.
     let method = PaidMethods::Cost1bIcrc2Cycles;
     // Pre-approve payment
@@ -52,8 +52,8 @@ fn caller_pays_cycles_by_icrc2() {
 /// on an API method that requires the payment argument to be declared explicitly.
 #[test]
 fn caller_pays_cycles_by_named_icrc2() {
-    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
-    let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
+    let setup = TestSetup::default();
+    let mut expected_user_balance = TestSetup::USER_INITIAL_BALANCE;
     // Ok, now we should be able to make an API call with an ICRC-2 approve.
     let method = PaidMethods::Cost1b;
     // Pre-approve payment
@@ -97,8 +97,8 @@ fn caller_pays_cycles_by_named_icrc2() {
 ///  - Note: Given that the canister consumes cycles as part of the operation, we check that the balance increases but do not check an exact amount.
 #[test]
 fn caller_pays_icrc2_cycles_works_with_large_enough_approval() {
-    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
-    let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
+    let setup = TestSetup::default();
+    let mut expected_user_balance = TestSetup::USER_INITIAL_BALANCE;
 
     // Try calling a method with a range of approval amounts.  The call should succeed if the
     // ICRC2 approval is greater than or equal to the cost of the method.
@@ -164,8 +164,8 @@ fn caller_pays_icrc2_cycles_works_with_large_enough_approval() {
 /// Verifies that a user can pay for multiple API calls with a single approval.
 #[test]
 fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
-    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
-    let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
+    let setup = TestSetup::default();
+    let mut expected_user_balance = TestSetup::USER_INITIAL_BALANCE;
 
     // Exercise the protocol...
     // Pre-approve a large sum.
@@ -208,7 +208,7 @@ fn caller_pays_icrc2_cycles_supports_multiple_calls_with_a_single_approval() {
 /// Verifies that a user cannot pay without an ICRC2 approval.
 #[test]
 fn caller_needs_to_approve() {
-    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
+    let setup = TestSetup::default();
     // Ok, now we should be able to make an API call with an ICRC-2 approve.
     let method = PaidMethods::Cost1b;
     // Call the API
@@ -229,8 +229,8 @@ fn caller_needs_to_approve() {
 /// Verifies that an authorized ICRC2 approval cannot be used by another caller.
 #[test]
 fn payment_cannot_be_used_by_another_caller() {
-    let setup = CallerPaysWithIcrc2CyclesTestSetup::default();
-    let mut expected_user_balance = CallerPaysWithIcrc2CyclesTestSetup::USER_INITIAL_BALANCE;
+    let setup = TestSetup::default();
+    let mut expected_user_balance = TestSetup::USER_INITIAL_BALANCE;
     // Ok, now we should be able to make an API call with an ICRC-2 approve.
     let method = PaidMethods::Cost1b;
     // Pre-approve payment

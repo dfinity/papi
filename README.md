@@ -107,7 +107,7 @@ PAYER_ACCOUNT="$(dfx ledger account-id --of-principal "$PAYER")"
 dfx canister call "$MATH_CANISTER_ID" paid_is_prime '
 (
   1234,
-  variant {
+  opt variant {
     PatronPaysIcrc2Cycles = record {
       owner = principal "PAYER_ACCOUNT";
     }

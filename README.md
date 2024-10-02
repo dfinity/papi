@@ -120,6 +120,8 @@ dfx canister call "$MATH_CANISTER_ID" paid_is_prime '
 
 Your canister will retrieve the pre-approved payment before proceeding with the API call.
 
-## Detailed design
+## Licence & Contribution
 
-### Flow: Attached cycles
+This repository is released under the [Apache2 license](./LICENSE).
+
+Unfortunately we are unable to accept contributions yet.  When we do, we will provide a contribution guide.

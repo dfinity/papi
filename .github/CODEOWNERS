@@ -1,5 +1,8 @@
+# IMPORTANT: The last matching entry has the highest precedence.
+
+# The GIX team members who maintain this repo:
+* @bitdivine
+
 # The codebase is owned by the Governance & Identity Experience team at DFINITY
 # For questions, reach out to: <gix@dfinity.org>
 .github/CODEOWNERS @dfinity/gix
-# The GIX team members who maintain this repo:
-* @bitdivine

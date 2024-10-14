@@ -1,7 +1,7 @@
 //! Payment API error types.
 use candid::{CandidType, Deserialize, Principal};
-pub use cycles_ledger_client::Account;
-use cycles_ledger_client::{TransferFromError, WithdrawFromError};
+pub use ic_cycles_ledger_client::Account;
+use ic_cycles_ledger_client::{TransferFromError, WithdrawFromError};
 
 use crate::caller::TokenAmount;
 

@@ -56,7 +56,7 @@ fn user_pays_tokens_for_user2() {
             response,
             Err(PaymentError::LedgerWithdrawFromError {
                 ledger: setup.ledger.canister_id(),
-                error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
+                error: ic_cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
                     allowance: Nat::from(0u32),
                 }
             }),
@@ -150,7 +150,7 @@ fn user_pays_cycles_for_other_users() {
             response,
             Err(PaymentError::LedgerWithdrawFromError {
                 ledger: setup.ledger.canister_id(),
-                error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
+                error: ic_cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
                     allowance: Nat::from(0u32),
                 }
             }),
@@ -204,7 +204,7 @@ fn user_pays_cycles_for_other_users() {
             response,
             Err(PaymentError::LedgerWithdrawFromError {
                 ledger: setup.ledger.canister_id(),
-                error: cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
+                error: ic_cycles_ledger_client::WithdrawFromError::InsufficientAllowance {
                     allowance: Nat::from(0u32),
                 }
             }),

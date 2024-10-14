@@ -240,16 +240,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cycles-ledger-client"
-version = "0.1.0"
-dependencies = [
- "candid",
- "ic-cdk 0.16.0",
- "serde",
- "serde_bytes",
-]
-
-[[package]]
 name = "data-encoding"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -317,10 +307,10 @@ name = "example_paid_service"
 version = "0.1.0"
 dependencies = [
  "candid",
- "cycles-ledger-client",
  "example-paid-service-api",
  "ic-cdk 0.16.0",
  "ic-cdk-macros 0.16.0",
+ "ic-cycles-ledger-client",
  "ic-papi-api",
  "ic-papi-guard",
  "ic-stable-structures",
@@ -628,6 +618,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-cycles-ledger-client"
+version = "0.1.0"
+dependencies = [
+ "candid",
+ "ic-cdk 0.16.0",
+ "serde",
+ "serde_bytes",
+]
+
+[[package]]
 name = "ic-ledger-types"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -655,8 +655,8 @@ name = "ic-papi-api"
 version = "0.1.0"
 dependencies = [
  "candid",
- "cycles-ledger-client",
  "hex",
+ "ic-cycles-ledger-client",
  "ic-ledger-types",
  "serde",
  "serde_bytes",
@@ -667,8 +667,8 @@ name = "ic-papi-guard"
 version = "0.1.0"
 dependencies = [
  "candid",
- "cycles-ledger-client",
  "ic-cdk 0.16.0",
+ "ic-cycles-ledger-client",
  "ic-papi-api",
  "serde",
  "serde_bytes",

@@ -19,5 +19,5 @@ serde = { workspace = true }
 serde_bytes = { workspace = true }
 
 [dev-dependencies]
-cycles-ledger-client = { workspace = true }
+ic-cycles-ledger-client = { workspace = true }
 pocket-ic = { workspace = true }

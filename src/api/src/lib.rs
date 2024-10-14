@@ -1,5 +1,5 @@
 use candid::Principal;
-pub use cycles_ledger_client::Account;
+pub use ic_cycles_ledger_client::Account;
 use ic_ledger_types::Subaccount;
 use serde_bytes::ByteBuf;
 

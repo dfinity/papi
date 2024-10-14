@@ -60,7 +60,7 @@ fn user_pays_tokens_for_user2() {
             response,
             Err(PaymentError::LedgerTransferFromError {
                 ledger: setup.ledger.canister_id(),
-                error: cycles_ledger_client::TransferFromError::InsufficientAllowance {
+                error: ic_cycles_ledger_client::TransferFromError::InsufficientAllowance {
                     allowance: Nat::from(0u32),
                 }
             }),

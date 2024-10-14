@@ -5,7 +5,7 @@
 
 use super::{PaymentError, PaymentGuardTrait};
 use candid::{Nat, Principal};
-use cycles_ledger_client::TransferFromArgs;
+use ic_cycles_ledger_client::TransferFromArgs;
 use ic_papi_api::{caller::TokenAmount, Account};
 
 pub struct CallerPaysIcrc2TokensPaymentGuard {
@@ -16,7 +16,7 @@ pub struct CallerPaysIcrc2TokensPaymentGuard {
 impl PaymentGuardTrait for CallerPaysIcrc2TokensPaymentGuard {
     async fn deduct(&self, cost: TokenAmount) -> Result<(), PaymentError> {
         let caller = ic_cdk::api::caller();
-        cycles_ledger_client::Service(self.ledger)
+        ic_cycles_ledger_client::Service(self.ledger)
             .icrc_2_transfer_from(&TransferFromArgs {
                 from: Account {
                     owner: caller,

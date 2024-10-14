@@ -1,6 +1,6 @@
 //! Types used primarily by the caller of the payment API.
 use candid::{CandidType, Deserialize, Principal};
-pub use cycles_ledger_client::Account;
+pub use ic_cycles_ledger_client::Account;
 
 /// How a caller states that they will pay.
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]

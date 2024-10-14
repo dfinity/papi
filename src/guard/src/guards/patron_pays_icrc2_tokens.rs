@@ -1,7 +1,7 @@
 //! Code to receive cycles as payment, credited to the canister, using ICRC-2 and a cycles-ledger specific withdrawal method.
 use super::{PaymentError, PaymentGuardTrait};
 use candid::{Nat, Principal};
-use cycles_ledger_client::TransferFromArgs;
+use ic_cycles_ledger_client::TransferFromArgs;
 use ic_papi_api::{caller::TokenAmount, principal2account, Account};
 
 /// Accepts cycles using an ICRC-2 approve followed by withdrawing the cycles to the current canister.  Withdrawing
@@ -23,7 +23,7 @@ impl PaymentGuardTrait for PatronPaysIcrc2TokensPaymentGuard {
             return Err(PaymentError::InvalidPatron);
         }
         // Note: The cycles ledger client is ICRC-2 compatible so can be used here.
-        cycles_ledger_client::Service(self.ledger)
+        ic_cycles_ledger_client::Service(self.ledger)
             .icrc_2_transfer_from(&TransferFromArgs {
                 from: self.patron.clone(),
                 to: Account {

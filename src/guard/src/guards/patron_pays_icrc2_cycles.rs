@@ -1,7 +1,7 @@
 //! Code to receive cycles as payment, credited to the canister, using ICRC-2 and a cycles-ledger specific withdrawal method.
 use super::{PaymentError, PaymentGuardTrait};
 use candid::Nat;
-use cycles_ledger_client::WithdrawFromArgs;
+use ic_cycles_ledger_client::WithdrawFromArgs;
 use ic_papi_api::{
     caller::TokenAmount, cycles::cycles_ledger_canister_id, principal2account, Account,
 };
@@ -24,7 +24,7 @@ impl PaymentGuardTrait for PatronPaysIcrc2CyclesPaymentGuard {
         }
         // The cycles ledger has a special `withdraw_from` method, similar to `transfer_from`,
         // but that adds the cycles to the canister rather than putting it into a ledger account.
-        cycles_ledger_client::Service(cycles_ledger_canister_id())
+        ic_cycles_ledger_client::Service(cycles_ledger_canister_id())
             .withdraw_from(&WithdrawFromArgs {
                 to: own_canister_id,
                 amount: Nat::from(fee),

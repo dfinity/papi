@@ -297,7 +297,7 @@ version = "0.1.0"
 dependencies = [
  "candid",
  "ic-cdk 0.17.0",
- "ic-cdk-macros 0.16.0",
+ "ic-cdk-macros 0.17.0",
  "ic-papi-api",
  "pocket-ic",
 ]
@@ -309,7 +309,7 @@ dependencies = [
  "candid",
  "example-paid-service-api",
  "ic-cdk 0.17.0",
- "ic-cdk-macros 0.16.0",
+ "ic-cdk-macros 0.17.0",
  "ic-cycles-ledger-client",
  "ic-papi-api",
  "ic-papi-guard",

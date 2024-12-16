@@ -4,7 +4,7 @@ resolver = "2"
 
 [workspace.dependencies]
 pocket-ic = "4.0.0"
-candid = "0.10.10"
+candid = "0.10.11"
 ic-cdk = "0.17.0"
 ic-cdk-macros = "0.17.0"
 serde = "1"

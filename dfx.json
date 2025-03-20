@@ -1,5 +1,5 @@
 {
-  "dfx": "0.23.0",
+  "dfx": "0.25.0",
   "canisters": {
     "example_paid_service": {
       "candid": "src/example/paid_service/example-paid-service.did",

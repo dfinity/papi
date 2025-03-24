@@ -10,6 +10,13 @@ updates:
     commit-message:
       prefix: "chore(cargo deps): "
       prefix-development: "chore(cargo deps-dev): "
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(github-actions): "
+      prefix-development: "chore(github-actions-dev): "
   - package-ecosystem: "npm"
     directory: "/"
     schedule:

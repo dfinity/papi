@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 candid = { workspace = true }
-ic-cdk = "0.17.1"
+ic-cdk = "0.18.0"
 ic-cycles-ledger-client = { workspace = true }
 ic-papi-api = { workspace = true }
 serde = { workspace = true }

@@ -1,5 +1,5 @@
 [package]
-name = "example_paid_service"
+name = "example-paid-service"
 license = { workspace = true }
 description = { workspace = true }
 homepage = { workspace = true }

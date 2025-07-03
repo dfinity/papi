@@ -9,7 +9,8 @@ keywords = { workspace = true }
 include = { workspace = true }
 authors = { workspace = true }
 edition = { workspace = true }
-
+publish = false
+version = { workspace = true }
 
 [lib]
 crate-type = ["cdylib"]

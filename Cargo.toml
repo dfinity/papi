@@ -12,6 +12,8 @@ description = "A payment system for ICP canisters offering paid APIs."
 include = ["src", "Cargo.toml", "CHANGELOG.md", "LICENSE", "README.md"]
 authors = [ "Max Murphy <max@dfinity.org>" ]
 edition = "2021"
+publish = true
+version = "0.1.1"
 
 [workspace.dependencies]
 pocket-ic = "4.0.0"
@@ -24,8 +26,8 @@ ic-papi-api = { path = "src/api" }
 ic-papi-guard = { path = "src/guard" }
 ic-stable-structures = "0.6.9"
 ic-ledger-types = "0.13.0"
-ic-cycles-ledger-client = { path = "src/declarations/cycles_ledger" }
-example-paid-service-api = { path = "src/example/paid_service_api" }
+ic-cycles-ledger-client = { path = "src/declarations/cycles_ledger", version = "0.1.1" }
+example-paid-service-api = { path = "src/example/paid_service_api", version = "0.1.1" }
 lazy_static = { version = "1.5.0" }
 hex = { version = "0.4.3" }
 

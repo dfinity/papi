@@ -9,6 +9,8 @@ keywords = { workspace = true }
 include = { workspace = true }
 authors = { workspace = true }
 edition = { workspace = true }
+publish = { workspace = true }
+version = { workspace = true }
 
 [dependencies]
 ic-papi-api = { workspace = true }

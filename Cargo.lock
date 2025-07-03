@@ -286,7 +286,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
-name = "example-app-backend"
+name = "example-paid-service-api"
+version = "0.1.1-alpha.1"
+dependencies = [
+ "candid",
+ "serde",
+ "serde_bytes",
+]
+
+[[package]]
+name = "example_app_backend"
 version = "0.1.1-alpha.1"
 dependencies = [
  "candid",
@@ -297,7 +306,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "example-paid-service"
+name = "example_paid_service"
 version = "0.1.1-alpha.1"
 dependencies = [
  "candid",
@@ -310,15 +319,6 @@ dependencies = [
  "ic-stable-structures",
  "lazy_static",
  "pocket-ic",
- "serde",
- "serde_bytes",
-]
-
-[[package]]
-name = "example-paid-service-api"
-version = "0.1.1-alpha.1"
-dependencies = [
- "candid",
  "serde",
  "serde_bytes",
 ]

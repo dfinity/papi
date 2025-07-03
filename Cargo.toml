@@ -1,9 +1,9 @@
 [workspace]
 members = ["src/api", "src/declarations/cycles_ledger", "src/example/app_backend", "src/example/paid_service", "src/example/paid_service_api", "src/guard", "src/papi"]
 resolver = "2"
-readme = "README.md"
 
 [workspace.package]
+readme = "README.md"
 repository = "https://github.com/dfinity/papi"
 license = "Apache-2.0"
 keywords = ["payment", "internet-computer", "dfinity", "canister", "api"]

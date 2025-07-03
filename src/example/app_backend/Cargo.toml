@@ -1,5 +1,5 @@
 [package]
-name = "example-app-backend"
+name = "example_app_backend"
 license = { workspace = true }
 description = { workspace = true }
 homepage = { workspace = true }

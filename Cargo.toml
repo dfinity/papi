@@ -2,6 +2,19 @@
 members = ["src/api", "src/declarations/cycles_ledger", "src/example/app_backend", "src/example/paid_service", "src/example/paid_service_api", "src/guard", "src/papi"]
 resolver = "2"
 
+[workspace.package]
+readme = "README.md"
+repository = "https://github.com/dfinity/papi"
+license = "Apache-2.0"
+keywords = ["payment", "internet-computer", "dfinity", "canister", "api"]
+homepage = "https://github.com/dfinity/papi"
+description = "A payment system for ICP canisters offering paid APIs."
+include = ["src", "Cargo.toml", "CHANGELOG.md", "LICENSE", "README.md"]
+authors = [ "Max Murphy <max@dfinity.org>" ]
+edition = "2021"
+publish = true
+version = "0.1.1-alpha.1"
+
 [workspace.dependencies]
 pocket-ic = "4.0.0"
 candid = "0.10.13"
@@ -9,12 +22,12 @@ ic-cdk = "0.17.2"
 ic-cdk-macros = "0.17.0"
 serde = "1"
 serde_bytes = "0.11"
-ic-papi-api = { path = "src/api" }
-ic-papi-guard = { path = "src/guard" }
+ic-papi-api = { path = "src/api", version = "0.1.1-alpha.1" }
+ic-papi-guard = { path = "src/guard", version = "0.1.1-alpha.1" }
 ic-stable-structures = "0.6.9"
 ic-ledger-types = "0.13.0"
-ic-cycles-ledger-client = { path = "src/declarations/cycles_ledger" }
-example-paid-service-api = { path = "src/example/paid_service_api" }
+ic-cycles-ledger-client = { path = "src/declarations/cycles_ledger", version = "0.1.1-alpha.1" }
+example-paid-service-api = { path = "src/example/paid_service_api", version = "0.1.1-alpha.1" }
 lazy_static = { version = "1.5.0" }
 hex = { version = "0.4.3" }
 

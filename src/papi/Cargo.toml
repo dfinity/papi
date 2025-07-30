@@ -1,8 +1,16 @@
 [package]
 name = "ic-papi"
-version = "0.1.0"
-edition = "2021"
-description = "Library for implementing Paid APIs on the Internet Computer"
+license = { workspace = true }
+description = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+readme = { workspace = true }
+keywords = { workspace = true }
+include = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+publish = { workspace = true }
+version = { workspace = true }
 
 [dependencies]
 ic-papi-api = { workspace = true }

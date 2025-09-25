@@ -56,7 +56,7 @@ impl PicCanisterTrait for CyclesDepositorPic {
     }
     /// The ID of this canister.
     fn canister_id(&self) -> Principal {
-        self.canister_id.clone()
+        self.canister_id
     }
 }
 

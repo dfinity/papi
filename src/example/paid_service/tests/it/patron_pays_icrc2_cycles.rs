@@ -80,8 +80,8 @@ fn user_pays_tokens_for_user2() {
             response,
             Ok("Yes, you paid 1 billion cycles!".to_string()),
             "Should have succeeded for caller {} with patron {}.",
-            caller.to_string(),
-            patron.to_string(),
+            caller,
+            patron,
         );
         let service_canister_cycles_after = setup.pic.cycle_balance(setup.paid_service.canister_id);
         assert!(
@@ -177,7 +177,7 @@ fn user_pays_cycles_for_other_users() {
                 response,
                 Ok("Yes, you paid 1 billion cycles!".to_string()),
                 "Should have succeeded for user {} on repetition {repetition}",
-                caller.to_string(),
+                caller,
             );
             let service_canister_cycles_after =
                 setup.pic.cycle_balance(setup.paid_service.canister_id);

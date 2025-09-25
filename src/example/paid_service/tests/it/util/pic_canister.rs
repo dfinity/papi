@@ -1,5 +1,5 @@
 use candid::{decode_one, encode_one, CandidType, Deserialize, Principal};
-use pocket_ic::{PocketIc, WasmResult};
+use pocket_ic::PocketIc;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -24,15 +24,10 @@ pub trait PicCanisterTrait {
             .map_err(|e| {
                 format!(
                     "Update call error. RejectionCode: {:?}, Error: {}",
-                    e.code, e.description
+                    e.reject_code, e.reject_message
                 )
             })
-            .and_then(|reply| match reply {
-                WasmResult::Reply(reply) => {
-                    decode_one(&reply).map_err(|e| format!("Decoding failed: {e}"))
-                }
-                WasmResult::Reject(error) => Err(error),
-            })
+            .and_then(|bytes| decode_one(&bytes).map_err(|e| format!("Decoding failed: {e}")))
     }
 
     /// Makes a query call to the canister.
@@ -46,15 +41,10 @@ pub trait PicCanisterTrait {
             .map_err(|e| {
                 format!(
                     "Query call error. RejectionCode: {:?}, Error: {}",
-                    e.code, e.description
+                    e.reject_code, e.reject_message
                 )
             })
-            .and_then(|reply| match reply {
-                WasmResult::Reply(reply) => {
-                    decode_one(&reply).map_err(|_| "Decoding failed".to_string())
-                }
-                WasmResult::Reject(error) => Err(error),
-            })
+            .and_then(|bytes| decode_one(&bytes).map_err(|_| "Decoding failed".to_string()))
     }
     fn workspace_dir() -> PathBuf {
         let output = std::process::Command::new(env!("CARGO"))

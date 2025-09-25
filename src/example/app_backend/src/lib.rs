@@ -5,7 +5,7 @@ use ic_papi_api::PaymentError;
 
 /// Calls an arbitrary method on an arbitrary canister with an arbitrary amount of cycles attached.
 ///
-/// Note: This is for demonstration purposes only.  To avoid cycle theft, the API may be aclled by a controller only.
+/// Note: This is for demonstration purposes only.  To avoid cycle theft, the API may be called by a controller only.
 #[update()]
 async fn call_with_attached_cycles(
     call_params: (Principal, String, u128),

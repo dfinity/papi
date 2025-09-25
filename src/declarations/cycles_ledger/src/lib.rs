@@ -2,7 +2,10 @@
 // You may want to manually adjust some of the types.
 #![allow(dead_code, unused_imports)]
 use candid::{self, CandidType, Deserialize, Principal};
-use ic_cdk::api::call::CallResult as Result;
+use ic_cdk::{
+    api::call::CallResult as Result,
+    call::{Call, CallResult},
+};
 
 #[derive(CandidType, Deserialize, Debug, Clone)]
 pub enum ChangeIndexId {
@@ -512,7 +515,10 @@ impl Service {
     pub async fn withdraw_from(
         &self,
         arg0: &WithdrawFromArgs,
-    ) -> Result<(std::result::Result<BlockIndex, WithdrawFromError>,)> {
-        ic_cdk::call(self.0, "withdraw_from", (arg0,)).await
+    ) -> CallResult<(std::result::Result<BlockIndex, WithdrawFromError>,)> {
+        Ok(Call::unbounded_wait(self.0, "withdraw_from")
+            .with_arg(arg0)
+            .await?
+            .candid()?)
     }
 }

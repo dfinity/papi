@@ -33,9 +33,9 @@ impl PaymentGuardTrait for PatronPaysIcrc2CyclesPaymentGuard {
                 created_at_time: None,
             })
             .await
-            .map_err(|(rejection_code, string)| {
+            .map_err(|err| {
                 eprintln!(
-                    "Failed to reach ledger canister at {}: {rejection_code:?}: {string}",
+                    "Failed to reach ledger canister at {}: {err:?}",
                     cycles_ledger_canister_id()
                 );
                 PaymentError::LedgerUnreachable {

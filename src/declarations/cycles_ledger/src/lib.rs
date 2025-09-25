@@ -351,15 +351,15 @@ pub struct GetBlocksResult {
     /// block log.
     pub log_length: candid::Nat,
     pub blocks: Vec<GetBlocksResultBlocksItem>,
-    /// The archived_blocks vector is always going to be empty
+    /// The `archived_blocks` vector is always going to be empty
     /// for this ledger because there is no archive node.
     pub archived_blocks: Vec<GetBlocksResultArchivedBlocksItem>,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct DataCertificate {
-    /// See https://internetcomputer.org/docs/current/references/ic-interface-spec#certification
+    /// See <https://internetcomputer.org/docs/current/references/ic-interface-spec#certification>
     pub certificate: serde_bytes::ByteBuf,
-    /// CBOR encoded hash_tree
+    /// CBOR encoded `hash_tree`
     pub hash_tree: serde_bytes::ByteBuf,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]

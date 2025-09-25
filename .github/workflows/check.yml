@@ -133,7 +133,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   check-pass:
     name: 'Checks pass'
-    needs: ["format", "rust-tests", "installation"] # TODO: Add lint-github-actions
+    needs: ["format", "rust-tests", "installation", "lint-github-actions"]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
     steps:

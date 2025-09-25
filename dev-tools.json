@@ -3,7 +3,11 @@
     "method": "curl",
     "version": "1.25.2",
     "url": "https://raw.githubusercontent.com/rust-lang/rustup/1.25.2/rustup-init.sh",
-    "pipe": [["sh"]]
+    "pipe": [
+      [
+        "sh"
+      ]
+    ]
   },
   "n": {
     "method": "curl",
@@ -43,5 +47,9 @@
   "cargo-tarpaulin": {
     "method": "cargo-binstall",
     "version": "0.26.1"
+  },
+  "zizmor": {
+    "method": "cargo-binstall",
+    "version": "1.5.2"
   }
 }

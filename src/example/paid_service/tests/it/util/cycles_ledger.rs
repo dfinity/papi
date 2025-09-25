@@ -335,7 +335,7 @@ pub enum Value {
     Nat64(u64),
     Blob(serde_bytes::ByteBuf),
     Text(String),
-    Array(Vec<Box<Value>>),
+    Array(Vec<Value>),
 }
 #[derive(CandidType, Deserialize, Debug)]
 pub struct GetBlocksResultBlocksItem {

@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Updated
 
 - Updated candid dependency from 0.10.13 to 0.10.19
+- Updated ic-cdk dependency from 0.17.1 to 0.17.2
+- Updated ic-stable-structures dependency from 0.6.7 to 0.6.9
 
 ### Added
 

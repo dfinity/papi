@@ -12,7 +12,7 @@ defaults:
     shell: bash -euxlo pipefail {0}
 jobs:
   format:
-    name: 'Format'
+    name: 'format'
     runs-on: ubuntu-24.04
     env:
       TITLE: ${{ github.event.pull_request.title }}
@@ -35,7 +35,7 @@ jobs:
                   exit 1
           }
   rust-tests:
-    name: 'Rust tests'
+    name: 'rust-tests'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -70,7 +70,7 @@ jobs:
         shell: bash
         run: scripts/test-rs
   installation:
-    name: 'Installation tests'
+    name: 'installation'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -103,7 +103,7 @@ jobs:
       - name: Stop dfx
         run: dfx stop
   lint-github-actions:
-    name: 'Lint GitHub actions'
+    name: 'lint-github-actions'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -132,7 +132,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   check-pass:
-    name: 'Checks pass'
+    name: 'check-pass'
     needs: ["format", "rust-tests", "installation", "lint-github-actions"]
     if: ${{ always() }}
     runs-on: ubuntu-24.04

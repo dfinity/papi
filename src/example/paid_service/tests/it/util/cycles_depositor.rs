@@ -2,7 +2,7 @@
 use std::sync::Arc;
 
 use candid::{self, CandidType, Deserialize, Principal};
-use ic_cdk::api::call::CallResult as Result;
+use ic_cdk::call::CallResult as Result;
 use pocket_ic::PocketIc;
 
 use super::pic_canister::{PicCanister, PicCanisterTrait};

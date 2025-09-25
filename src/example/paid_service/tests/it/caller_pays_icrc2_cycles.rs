@@ -228,7 +228,7 @@ fn caller_needs_to_approve() {
 
 /// Verifies that an authorized ICRC2 approval cannot be used by another caller.
 #[test]
-fn payment_cannot_be_used_by_another_caller() {
+fn payment_cannot_be_used_by_another_msg_caller() {
     let setup = TestSetup::default();
     let mut expected_user_balance = TestSetup::USER_INITIAL_BALANCE;
     // Ok, now we should be able to make an API call with an ICRC-2 approve.

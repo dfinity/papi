@@ -15,7 +15,7 @@ pub struct CallerPaysIcrc2TokensPaymentGuard {
 
 impl PaymentGuardTrait for CallerPaysIcrc2TokensPaymentGuard {
     async fn deduct(&self, cost: TokenAmount) -> Result<(), PaymentError> {
-        let caller = ic_cdk::api::caller();
+        let caller = ic_cdk::api::msg_caller();
         ic_cycles_ledger_client::Service(self.ledger)
             .icrc_2_transfer_from(&TransferFromArgs {
                 from: Account {

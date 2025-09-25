@@ -15,8 +15,8 @@ pub struct PatronPaysIcrc2TokensPaymentGuard {
 
 impl PaymentGuardTrait for PatronPaysIcrc2TokensPaymentGuard {
     async fn deduct(&self, cost: TokenAmount) -> Result<(), PaymentError> {
-        let caller = ic_cdk::api::caller();
-        let own_canister_id = ic_cdk::api::id();
+        let caller = ic_cdk::api::msg_caller();
+        let own_canister_id = ic_cdk::api::canister_self();
         let spender_subaccount = principal2account(&caller);
         // The patron must not be the vendor itself (this canister).
         if self.patron.owner == own_canister_id {

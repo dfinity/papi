@@ -11,7 +11,7 @@ async fn call_with_attached_cycles(
     call_params: (Principal, String, u64),
 ) -> Result<String, PaymentError> {
     assert!(
-        is_controller(&ic_cdk::caller()),
+        is_controller(&ic_cdk::msg_caller()),
         "The caller must be a controller."
     );
     let (canister_id, method, cycles) = call_params;

@@ -11,7 +11,7 @@ pub struct CallerPaysIcrc2CyclesPaymentGuard {}
 
 impl PaymentGuardTrait for CallerPaysIcrc2CyclesPaymentGuard {
     async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError> {
-        let caller = ic_cdk::caller();
+        let caller = ic_cdk::msg_caller();
         let own_canister_id = ic_cdk::api::id();
         let payer_account = Account {
             owner: caller,

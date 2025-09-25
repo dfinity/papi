@@ -11,8 +11,8 @@ pub struct CallerPaysIcrc2CyclesPaymentGuard {}
 
 impl PaymentGuardTrait for CallerPaysIcrc2CyclesPaymentGuard {
     async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError> {
-        let caller = ic_cdk::msg_caller();
-        let own_canister_id = ic_cdk::api::id();
+        let caller = ic_cdk::api::msg_caller();
+        let own_canister_id = ic_cdk::api::canister_self();
         let payer_account = Account {
             owner: caller,
             subaccount: None,
@@ -32,9 +32,9 @@ impl PaymentGuardTrait for CallerPaysIcrc2CyclesPaymentGuard {
                 created_at_time: None,
             })
             .await
-            .map_err(|(rejection_code, string)| {
+            .map_err(|error| {
                 eprintln!(
-                    "Failed to reach ledger canister at {}: {rejection_code:?}: {string}",
+                    "Failed to reach ledger canister at {}: {error:?}",
                     cycles_ledger_canister_id()
                 );
                 PaymentError::LedgerUnreachable {

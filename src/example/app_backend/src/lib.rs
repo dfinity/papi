@@ -1,5 +1,6 @@
 use candid::Principal;
-use ic_cdk::api::{call::call_with_payment128, is_controller};
+use ic_cdk::api::{is_controller, msg_caller};
+use ic_cdk::call::Call;
 use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::PaymentError;
 
@@ -11,15 +12,17 @@ async fn call_with_attached_cycles(
     call_params: (Principal, String, u64),
 ) -> Result<String, PaymentError> {
     assert!(
-        is_controller(&ic_cdk::msg_caller()),
+        is_controller(&msg_caller()),
         "The caller must be a controller."
     );
     let (canister_id, method, cycles) = call_params;
     let arg = ();
-    let (ans,): (Result<String, PaymentError>,) =
-        call_with_payment128(canister_id, &method, arg, u128::from(cycles))
-            .await
-            .unwrap();
+    let response = Call::unbounded_wait(canister_id, &method)
+        .with_cycles(u128::from(cycles))
+        .with_arg(arg)
+        .await
+        .unwrap();
+    let (ans,): (Result<String, PaymentError>,) = response.candid().unwrap();
     ans
 }
 

@@ -27,7 +27,7 @@ impl PaymentGuardTrait for PatronPaysIcrc2TokensPaymentGuard {
             .icrc_2_transfer_from(&TransferFromArgs {
                 from: self.patron.clone(),
                 to: Account {
-                    owner: ic_cdk::api::id(),
+                    owner: ic_cdk::api::canister_self(),
                     subaccount: None,
                 },
                 amount: Nat::from(cost),
@@ -37,9 +37,9 @@ impl PaymentGuardTrait for PatronPaysIcrc2TokensPaymentGuard {
                 fee: None,
             })
             .await
-            .map_err(|(rejection_code, string)| {
+            .map_err(|error| {
                 eprintln!(
-                    "Failed to reach ledger canister at {}: {rejection_code:?}: {string}",
+                    "Failed to reach ledger canister at {}: {error:?}",
                     self.ledger
                 );
                 PaymentError::LedgerUnreachable {

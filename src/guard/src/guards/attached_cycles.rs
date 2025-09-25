@@ -1,5 +1,5 @@
 use super::{PaymentError, PaymentGuardTrait};
-use ic_cdk::api::call::{msg_cycles_accept, msg_cycles_available};
+use ic_cdk::api::{msg_cycles_accept, msg_cycles_available};
 use ic_papi_api::caller::TokenAmount;
 
 /// The information required to charge attached cycles.
@@ -9,13 +9,14 @@ pub struct AttachedCyclesPayment {}
 impl PaymentGuardTrait for AttachedCyclesPayment {
     async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError> {
         let available = msg_cycles_available();
-        if available < fee {
+        let fee_u128 = u128::from(fee);
+        if available < fee_u128 {
             return Err(PaymentError::InsufficientFunds {
                 needed: fee,
-                available,
+                available: available.try_into().unwrap_or(u64::MAX),
             });
         }
-        msg_cycles_accept(fee);
+        msg_cycles_accept(fee_u128);
         Ok(())
     }
 }

@@ -8,427 +8,603 @@ use candid::{self, CandidType, Deserialize, Principal};
 use ic_cdk::call::{Call, CallResult};
 
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
-pub enum ChangeIndexId { SetTo(Principal), Unset }
+pub enum ChangeIndexId {
+    SetTo(Principal),
+    Unset,
+}
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct UpgradeArgs {
-  pub change_index_id: Option<ChangeIndexId>,
-  pub max_blocks_per_request: Option<u64>,
+    pub change_index_id: Option<ChangeIndexId>,
+    pub max_blocks_per_request: Option<u64>,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct InitArgs {
-  pub index_id: Option<Principal>,
-  pub max_blocks_per_request: u64,
+    pub index_id: Option<Principal>,
+    pub max_blocks_per_request: u64,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
-pub enum LedgerArgs { Upgrade(Option<UpgradeArgs>), Init(InitArgs) }
+pub enum LedgerArgs {
+    Upgrade(Option<UpgradeArgs>),
+    Init(InitArgs),
+}
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
-pub struct SubnetFilter { pub subnet_type: Option<String> }
+pub struct SubnetFilter {
+    pub subnet_type: Option<String>,
+}
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum SubnetSelection {
-  /// Choose a random subnet that satisfies the specified properties.
-  Filter(SubnetFilter),
-  /// / Choose a specific subnet
-  Subnet{ subnet: Principal },
+    /// Choose a random subnet that satisfies the specified properties.
+    Filter(SubnetFilter),
+    /// / Choose a specific subnet
+    Subnet { subnet: Principal },
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct CanisterSettings {
-  pub freezing_threshold: Option<candid::Nat>,
-  pub controllers: Option<Vec<Principal>>,
-  pub reserved_cycles_limit: Option<candid::Nat>,
-  pub memory_allocation: Option<candid::Nat>,
-  pub compute_allocation: Option<candid::Nat>,
+    pub freezing_threshold: Option<candid::Nat>,
+    pub controllers: Option<Vec<Principal>>,
+    pub reserved_cycles_limit: Option<candid::Nat>,
+    pub memory_allocation: Option<candid::Nat>,
+    pub compute_allocation: Option<candid::Nat>,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct CmcCreateCanisterArgs {
-  /// Optional instructions to select on which subnet the new canister will be created on.
-  pub subnet_selection: Option<SubnetSelection>,
-  /// Optional canister settings that, if set, are applied to the newly created canister.
-  /// If not specified, the caller is the controller of the canister and the other settings are set to default values.
-  pub settings: Option<CanisterSettings>,
+    /// Optional instructions to select on which subnet the new canister will be created on.
+    pub subnet_selection: Option<SubnetSelection>,
+    /// Optional canister settings that, if set, are applied to the newly created canister.
+    /// If not specified, the caller is the controller of the canister and the other settings are set to default values.
+    pub settings: Option<CanisterSettings>,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct CreateCanisterArgs {
-  pub from_subaccount: Option<serde_bytes::ByteBuf>,
-  pub created_at_time: Option<u64>,
-  pub amount: candid::Nat,
-  pub creation_args: Option<CmcCreateCanisterArgs>,
+    pub from_subaccount: Option<serde_bytes::ByteBuf>,
+    pub created_at_time: Option<u64>,
+    pub amount: candid::Nat,
+    pub creation_args: Option<CmcCreateCanisterArgs>,
 }
 pub type BlockIndex = candid::Nat;
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct CreateCanisterSuccess {
-  pub block_id: BlockIndex,
-  pub canister_id: Principal,
+    pub block_id: BlockIndex,
+    pub canister_id: Principal,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum CreateCanisterError {
-  GenericError{ message: String, error_code: candid::Nat },
-  TemporarilyUnavailable,
-  Duplicate{
-    duplicate_of: candid::Nat,
-    /// If the original transaction created a canister then this field will contain the canister id.
-    canister_id: Option<Principal>,
-  },
-  CreatedInFuture{ ledger_time: u64 },
-  FailedToCreate{
-    error: String,
-    refund_block: Option<BlockIndex>,
-    fee_block: Option<BlockIndex>,
-  },
-  TooOld,
-  InsufficientFunds{ balance: candid::Nat },
+    GenericError {
+        message: String,
+        error_code: candid::Nat,
+    },
+    TemporarilyUnavailable,
+    Duplicate {
+        duplicate_of: candid::Nat,
+        /// If the original transaction created a canister then this field will contain the canister id.
+        canister_id: Option<Principal>,
+    },
+    CreatedInFuture {
+        ledger_time: u64,
+    },
+    FailedToCreate {
+        error: String,
+        refund_block: Option<BlockIndex>,
+        fee_block: Option<BlockIndex>,
+    },
+    TooOld,
+    InsufficientFunds {
+        balance: candid::Nat,
+    },
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct Account {
-  pub owner: Principal,
-  pub subaccount: Option<serde_bytes::ByteBuf>,
+    pub owner: Principal,
+    pub subaccount: Option<serde_bytes::ByteBuf>,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct CreateCanisterFromArgs {
-  pub spender_subaccount: Option<serde_bytes::ByteBuf>,
-  pub from: Account,
-  pub created_at_time: Option<u64>,
-  pub amount: candid::Nat,
-  pub creation_args: Option<CmcCreateCanisterArgs>,
+    pub spender_subaccount: Option<serde_bytes::ByteBuf>,
+    pub from: Account,
+    pub created_at_time: Option<u64>,
+    pub amount: candid::Nat,
+    pub creation_args: Option<CmcCreateCanisterArgs>,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum RejectionCode {
-  NoError,
-  CanisterError,
-  SysTransient,
-  DestinationInvalid,
-  Unknown,
-  SysFatal,
-  CanisterReject,
+    NoError,
+    CanisterError,
+    SysTransient,
+    DestinationInvalid,
+    Unknown,
+    SysFatal,
+    CanisterReject,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum CreateCanisterFromError {
-  FailedToCreateFrom{
-    create_from_block: Option<BlockIndex>,
-    rejection_code: RejectionCode,
-    refund_block: Option<BlockIndex>,
-    approval_refund_block: Option<BlockIndex>,
-    rejection_reason: String,
-  },
-  GenericError{ message: String, error_code: candid::Nat },
-  TemporarilyUnavailable,
-  InsufficientAllowance{ allowance: candid::Nat },
-  Duplicate{
-    duplicate_of: candid::Nat,
-    /// If the original transaction created a canister then this field will contain the canister id.
-    canister_id: Option<Principal>,
-  },
-  CreatedInFuture{ ledger_time: u64 },
-  TooOld,
-  InsufficientFunds{ balance: candid::Nat },
+    FailedToCreateFrom {
+        create_from_block: Option<BlockIndex>,
+        rejection_code: RejectionCode,
+        refund_block: Option<BlockIndex>,
+        approval_refund_block: Option<BlockIndex>,
+        rejection_reason: String,
+    },
+    GenericError {
+        message: String,
+        error_code: candid::Nat,
+    },
+    TemporarilyUnavailable,
+    InsufficientAllowance {
+        allowance: candid::Nat,
+    },
+    Duplicate {
+        duplicate_of: candid::Nat,
+        /// If the original transaction created a canister then this field will contain the canister id.
+        canister_id: Option<Principal>,
+    },
+    CreatedInFuture {
+        ledger_time: u64,
+    },
+    TooOld,
+    InsufficientFunds {
+        balance: candid::Nat,
+    },
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct DepositArgs {
-  pub to: Account,
-  pub memo: Option<serde_bytes::ByteBuf>,
+    pub to: Account,
+    pub memo: Option<serde_bytes::ByteBuf>,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct DepositResult {
-  pub balance: candid::Nat,
-  pub block_index: BlockIndex,
+    pub balance: candid::Nat,
+    pub block_index: BlockIndex,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct HttpRequest {
-  pub url: String,
-  pub method: String,
-  pub body: serde_bytes::ByteBuf,
-  pub headers: Vec<(String,String,)>,
+    pub url: String,
+    pub method: String,
+    pub body: serde_bytes::ByteBuf,
+    pub headers: Vec<(String, String)>,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct HttpResponse {
-  pub body: serde_bytes::ByteBuf,
-  pub headers: Vec<(String,String,)>,
-  pub status_code: u16,
+    pub body: serde_bytes::ByteBuf,
+    pub headers: Vec<(String, String)>,
+    pub status_code: u16,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum MetadataValue {
-  Int(candid::Int),
-  Nat(candid::Nat),
-  Blob(serde_bytes::ByteBuf),
-  Text(String),
+    Int(candid::Int),
+    Nat(candid::Nat),
+    Blob(serde_bytes::ByteBuf),
+    Text(String),
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
-pub struct SupportedStandard { pub url: String, pub name: String }
+pub struct SupportedStandard {
+    pub url: String,
+    pub name: String,
+}
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct TransferArgs {
-  pub to: Account,
-  pub fee: Option<candid::Nat>,
-  pub memo: Option<serde_bytes::ByteBuf>,
-  pub from_subaccount: Option<serde_bytes::ByteBuf>,
-  pub created_at_time: Option<u64>,
-  pub amount: candid::Nat,
+    pub to: Account,
+    pub fee: Option<candid::Nat>,
+    pub memo: Option<serde_bytes::ByteBuf>,
+    pub from_subaccount: Option<serde_bytes::ByteBuf>,
+    pub created_at_time: Option<u64>,
+    pub amount: candid::Nat,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum TransferError {
-  GenericError{ message: String, error_code: candid::Nat },
-  TemporarilyUnavailable,
-  BadBurn{ min_burn_amount: candid::Nat },
-  Duplicate{ duplicate_of: candid::Nat },
-  BadFee{ expected_fee: candid::Nat },
-  CreatedInFuture{ ledger_time: u64 },
-  TooOld,
-  InsufficientFunds{ balance: candid::Nat },
+    GenericError {
+        message: String,
+        error_code: candid::Nat,
+    },
+    TemporarilyUnavailable,
+    BadBurn {
+        min_burn_amount: candid::Nat,
+    },
+    Duplicate {
+        duplicate_of: candid::Nat,
+    },
+    BadFee {
+        expected_fee: candid::Nat,
+    },
+    CreatedInFuture {
+        ledger_time: u64,
+    },
+    TooOld,
+    InsufficientFunds {
+        balance: candid::Nat,
+    },
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
-pub struct AllowanceArgs { pub account: Account, pub spender: Account }
+pub struct AllowanceArgs {
+    pub account: Account,
+    pub spender: Account,
+}
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
-pub struct Allowance { pub allowance: candid::Nat, pub expires_at: Option<u64> }
+pub struct Allowance {
+    pub allowance: candid::Nat,
+    pub expires_at: Option<u64>,
+}
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct ApproveArgs {
-  pub fee: Option<candid::Nat>,
-  pub memo: Option<serde_bytes::ByteBuf>,
-  pub from_subaccount: Option<serde_bytes::ByteBuf>,
-  pub created_at_time: Option<u64>,
-  pub amount: candid::Nat,
-  pub expected_allowance: Option<candid::Nat>,
-  pub expires_at: Option<u64>,
-  pub spender: Account,
+    pub fee: Option<candid::Nat>,
+    pub memo: Option<serde_bytes::ByteBuf>,
+    pub from_subaccount: Option<serde_bytes::ByteBuf>,
+    pub created_at_time: Option<u64>,
+    pub amount: candid::Nat,
+    pub expected_allowance: Option<candid::Nat>,
+    pub expires_at: Option<u64>,
+    pub spender: Account,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum ApproveError {
-  GenericError{ message: String, error_code: candid::Nat },
-  TemporarilyUnavailable,
-  Duplicate{ duplicate_of: candid::Nat },
-  BadFee{ expected_fee: candid::Nat },
-  AllowanceChanged{ current_allowance: candid::Nat },
-  CreatedInFuture{ ledger_time: u64 },
-  TooOld,
-  Expired{ ledger_time: u64 },
-  InsufficientFunds{ balance: candid::Nat },
+    GenericError {
+        message: String,
+        error_code: candid::Nat,
+    },
+    TemporarilyUnavailable,
+    Duplicate {
+        duplicate_of: candid::Nat,
+    },
+    BadFee {
+        expected_fee: candid::Nat,
+    },
+    AllowanceChanged {
+        current_allowance: candid::Nat,
+    },
+    CreatedInFuture {
+        ledger_time: u64,
+    },
+    TooOld,
+    Expired {
+        ledger_time: u64,
+    },
+    InsufficientFunds {
+        balance: candid::Nat,
+    },
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct TransferFromArgs {
-  pub to: Account,
-  pub fee: Option<candid::Nat>,
-  pub spender_subaccount: Option<serde_bytes::ByteBuf>,
-  pub from: Account,
-  pub memo: Option<serde_bytes::ByteBuf>,
-  pub created_at_time: Option<u64>,
-  pub amount: candid::Nat,
+    pub to: Account,
+    pub fee: Option<candid::Nat>,
+    pub spender_subaccount: Option<serde_bytes::ByteBuf>,
+    pub from: Account,
+    pub memo: Option<serde_bytes::ByteBuf>,
+    pub created_at_time: Option<u64>,
+    pub amount: candid::Nat,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum TransferFromError {
-  GenericError{ message: String, error_code: candid::Nat },
-  TemporarilyUnavailable,
-  InsufficientAllowance{ allowance: candid::Nat },
-  BadBurn{ min_burn_amount: candid::Nat },
-  Duplicate{ duplicate_of: candid::Nat },
-  BadFee{ expected_fee: candid::Nat },
-  CreatedInFuture{ ledger_time: u64 },
-  TooOld,
-  InsufficientFunds{ balance: candid::Nat },
+    GenericError {
+        message: String,
+        error_code: candid::Nat,
+    },
+    TemporarilyUnavailable,
+    InsufficientAllowance {
+        allowance: candid::Nat,
+    },
+    BadBurn {
+        min_burn_amount: candid::Nat,
+    },
+    Duplicate {
+        duplicate_of: candid::Nat,
+    },
+    BadFee {
+        expected_fee: candid::Nat,
+    },
+    CreatedInFuture {
+        ledger_time: u64,
+    },
+    TooOld,
+    InsufficientFunds {
+        balance: candid::Nat,
+    },
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct GetArchivesArgs {
-  /// The last archive seen by the client.
-  /// The ledger will return archives coming
-  /// after this one if set, otherwise it
-  /// will return the first archives.
-  pub from: Option<Principal>,
+    /// The last archive seen by the client.
+    /// The ledger will return archives coming
+    /// after this one if set, otherwise it
+    /// will return the first archives.
+    pub from: Option<Principal>,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct GetArchivesResultItem {
-  /// The last block in the archive
-  pub end: candid::Nat,
-  /// The id of the archive
-  pub canister_id: Principal,
-  /// The first block in the archive
-  pub start: candid::Nat,
+    /// The last block in the archive
+    pub end: candid::Nat,
+    /// The id of the archive
+    pub canister_id: Principal,
+    /// The first block in the archive
+    pub start: candid::Nat,
 }
 pub type GetArchivesResult = Vec<GetArchivesResultItem>;
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
-pub struct GetBlocksArgsItem { pub start: candid::Nat, pub length: candid::Nat }
+pub struct GetBlocksArgsItem {
+    pub start: candid::Nat,
+    pub length: candid::Nat,
+}
 pub type GetBlocksArgs = Vec<GetBlocksArgsItem>;
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum Value {
-  Int(candid::Int),
-  Map(Vec<(String,Box<Value>,)>),
-  Nat(candid::Nat),
-  Nat64(u64),
-  Blob(serde_bytes::ByteBuf),
-  Text(String),
-  Array(Vec<Box<Value>>),
+    Int(candid::Int),
+    Map(Vec<(String, Box<Value>)>),
+    Nat(candid::Nat),
+    Nat64(u64),
+    Blob(serde_bytes::ByteBuf),
+    Text(String),
+    Array(Vec<Box<Value>>),
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct GetBlocksResultBlocksItem {
-  pub id: candid::Nat,
-  pub block: Box<Value>,
+    pub id: candid::Nat,
+    pub block: Box<Value>,
 }
 candid::define_function!(pub GetBlocksResultArchivedBlocksItemCallback : (
     GetBlocksArgs,
   ) -> (GetBlocksResult) query);
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct GetBlocksResultArchivedBlocksItem {
-  pub args: GetBlocksArgs,
-  pub callback: GetBlocksResultArchivedBlocksItemCallback,
+    pub args: GetBlocksArgs,
+    pub callback: GetBlocksResultArchivedBlocksItemCallback,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct GetBlocksResult {
-  /// Total number of blocks in the
-  /// block log.
-  pub log_length: candid::Nat,
-  pub blocks: Vec<GetBlocksResultBlocksItem>,
-  /// The archived_blocks vector is always going to be empty
-  /// for this ledger because there is no archive node.
-  pub archived_blocks: Vec<GetBlocksResultArchivedBlocksItem>,
+    /// Total number of blocks in the
+    /// block log.
+    pub log_length: candid::Nat,
+    pub blocks: Vec<GetBlocksResultBlocksItem>,
+    /// The archived_blocks vector is always going to be empty
+    /// for this ledger because there is no archive node.
+    pub archived_blocks: Vec<GetBlocksResultArchivedBlocksItem>,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct DataCertificate {
-  /// See https://internetcomputer.org/docs/current/references/ic-interface-spec#certification
-  pub certificate: serde_bytes::ByteBuf,
-  /// CBOR encoded hash_tree
-  pub hash_tree: serde_bytes::ByteBuf,
+    /// See https://internetcomputer.org/docs/current/references/ic-interface-spec#certification
+    pub certificate: serde_bytes::ByteBuf,
+    /// CBOR encoded hash_tree
+    pub hash_tree: serde_bytes::ByteBuf,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
-pub struct SupportedBlockType { pub url: String, pub block_type: String }
+pub struct SupportedBlockType {
+    pub url: String,
+    pub block_type: String,
+}
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct WithdrawArgs {
-  pub to: Principal,
-  pub from_subaccount: Option<serde_bytes::ByteBuf>,
-  pub created_at_time: Option<u64>,
-  pub amount: candid::Nat,
+    pub to: Principal,
+    pub from_subaccount: Option<serde_bytes::ByteBuf>,
+    pub created_at_time: Option<u64>,
+    pub amount: candid::Nat,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum WithdrawError {
-  FailedToWithdraw{
-    rejection_code: RejectionCode,
-    fee_block: Option<candid::Nat>,
-    rejection_reason: String,
-  },
-  GenericError{ message: String, error_code: candid::Nat },
-  TemporarilyUnavailable,
-  Duplicate{ duplicate_of: candid::Nat },
-  BadFee{ expected_fee: candid::Nat },
-  InvalidReceiver{ receiver: Principal },
-  CreatedInFuture{ ledger_time: u64 },
-  TooOld,
-  InsufficientFunds{ balance: candid::Nat },
+    FailedToWithdraw {
+        rejection_code: RejectionCode,
+        fee_block: Option<candid::Nat>,
+        rejection_reason: String,
+    },
+    GenericError {
+        message: String,
+        error_code: candid::Nat,
+    },
+    TemporarilyUnavailable,
+    Duplicate {
+        duplicate_of: candid::Nat,
+    },
+    BadFee {
+        expected_fee: candid::Nat,
+    },
+    InvalidReceiver {
+        receiver: Principal,
+    },
+    CreatedInFuture {
+        ledger_time: u64,
+    },
+    TooOld,
+    InsufficientFunds {
+        balance: candid::Nat,
+    },
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct WithdrawFromArgs {
-  pub to: Principal,
-  pub spender_subaccount: Option<serde_bytes::ByteBuf>,
-  pub from: Account,
-  pub created_at_time: Option<u64>,
-  pub amount: candid::Nat,
+    pub to: Principal,
+    pub spender_subaccount: Option<serde_bytes::ByteBuf>,
+    pub from: Account,
+    pub created_at_time: Option<u64>,
+    pub amount: candid::Nat,
 }
 #[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum WithdrawFromError {
-  GenericError{ message: String, error_code: candid::Nat },
-  TemporarilyUnavailable,
-  InsufficientAllowance{ allowance: candid::Nat },
-  Duplicate{ duplicate_of: BlockIndex },
-  InvalidReceiver{ receiver: Principal },
-  CreatedInFuture{ ledger_time: u64 },
-  TooOld,
-  FailedToWithdrawFrom{
-    withdraw_from_block: Option<candid::Nat>,
-    rejection_code: RejectionCode,
-    refund_block: Option<candid::Nat>,
-    approval_refund_block: Option<candid::Nat>,
-    rejection_reason: String,
-  },
-  InsufficientFunds{ balance: candid::Nat },
+    GenericError {
+        message: String,
+        error_code: candid::Nat,
+    },
+    TemporarilyUnavailable,
+    InsufficientAllowance {
+        allowance: candid::Nat,
+    },
+    Duplicate {
+        duplicate_of: BlockIndex,
+    },
+    InvalidReceiver {
+        receiver: Principal,
+    },
+    CreatedInFuture {
+        ledger_time: u64,
+    },
+    TooOld,
+    FailedToWithdrawFrom {
+        withdraw_from_block: Option<candid::Nat>,
+        rejection_code: RejectionCode,
+        refund_block: Option<candid::Nat>,
+        approval_refund_block: Option<candid::Nat>,
+        rejection_reason: String,
+    },
+    InsufficientFunds {
+        balance: candid::Nat,
+    },
 }
-
 
 pub struct Service(pub Principal);
 impl Service {
-  pub async fn create_canister(&self, arg0: &CreateCanisterArgs) -> CallResult<std::result::Result<CreateCanisterSuccess, CreateCanisterError>> {
-    Ok(Call::unbounded_wait(self.0, "create_canister")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn create_canister_from(&self, arg0: &CreateCanisterFromArgs) -> CallResult<std::result::Result<CreateCanisterSuccess, CreateCanisterFromError>> {
-    Ok(Call::unbounded_wait(self.0, "create_canister_from")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn deposit(&self, arg0: &DepositArgs) -> CallResult<DepositResult> {
-    Ok(Call::unbounded_wait(self.0, "deposit")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn http_request(&self, arg0: &HttpRequest) -> CallResult<HttpResponse> {
-    Ok(Call::unbounded_wait(self.0, "http_request")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn icrc1_balance_of(&self, arg0: &Account) -> CallResult<candid::Nat> {
-    Ok(Call::unbounded_wait(self.0, "icrc1_balance_of")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn icrc1_decimals(&self) -> CallResult<u8> {
-    Ok(Call::unbounded_wait(self.0, "icrc1_decimals")
-    .with_args(&()).await?.candid()?)
-  }
-  pub async fn icrc1_fee(&self) -> CallResult<candid::Nat> {
-    Ok(Call::unbounded_wait(self.0, "icrc1_fee")
-    .with_args(&()).await?.candid()?)
-  }
-  pub async fn icrc1_metadata(&self) -> CallResult<Vec<(String,MetadataValue,)>> {
-    Ok(Call::unbounded_wait(self.0, "icrc1_metadata")
-    .with_args(&()).await?.candid()?)
-  }
-  pub async fn icrc1_minting_account(&self) -> CallResult<Option<Account>> {
-    Ok(Call::unbounded_wait(self.0, "icrc1_minting_account")
-    .with_args(&()).await?.candid()?)
-  }
-  pub async fn icrc1_name(&self) -> CallResult<String> {
-    Ok(Call::unbounded_wait(self.0, "icrc1_name")
-    .with_args(&()).await?.candid()?)
-  }
-  pub async fn icrc1_supported_standards(&self) -> CallResult<Vec<SupportedStandard>> {
-    Ok(Call::unbounded_wait(self.0, "icrc1_supported_standards")
-    .with_args(&()).await?.candid()?)
-  }
-  pub async fn icrc1_symbol(&self) -> CallResult<String> {
-    Ok(Call::unbounded_wait(self.0, "icrc1_symbol")
-    .with_args(&()).await?.candid()?)
-  }
-  pub async fn icrc1_total_supply(&self) -> CallResult<candid::Nat> {
-    Ok(Call::unbounded_wait(self.0, "icrc1_total_supply")
-    .with_args(&()).await?.candid()?)
-  }
-  pub async fn icrc1_transfer(&self, arg0: &TransferArgs) -> CallResult<std::result::Result<BlockIndex, TransferError>> {
-    Ok(Call::unbounded_wait(self.0, "icrc1_transfer")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn icrc2_allowance(&self, arg0: &AllowanceArgs) -> CallResult<Allowance> {
-    Ok(Call::unbounded_wait(self.0, "icrc2_allowance")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn icrc2_approve(&self, arg0: &ApproveArgs) -> CallResult<std::result::Result<candid::Nat, ApproveError>> {
-    Ok(Call::unbounded_wait(self.0, "icrc2_approve")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn icrc2_transfer_from(&self, arg0: &TransferFromArgs) -> CallResult<std::result::Result<candid::Nat, TransferFromError>> {
-    Ok(Call::unbounded_wait(self.0, "icrc2_transfer_from")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn icrc3_get_archives(&self, arg0: &GetArchivesArgs) -> CallResult<GetArchivesResult> {
-    Ok(Call::unbounded_wait(self.0, "icrc3_get_archives")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn icrc3_get_blocks(&self, arg0: &GetBlocksArgs) -> CallResult<GetBlocksResult> {
-    Ok(Call::unbounded_wait(self.0, "icrc3_get_blocks")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn icrc3_get_tip_certificate(&self) -> CallResult<Option<DataCertificate>> {
-    Ok(Call::unbounded_wait(self.0, "icrc3_get_tip_certificate")
-    .with_args(&()).await?.candid()?)
-  }
-  pub async fn icrc3_supported_block_types(&self) -> CallResult<Vec<SupportedBlockType>> {
-    Ok(Call::unbounded_wait(self.0, "icrc3_supported_block_types")
-    .with_args(&()).await?.candid()?)
-  }
-  pub async fn withdraw(&self, arg0: &WithdrawArgs) -> CallResult<std::result::Result<BlockIndex, WithdrawError>> {
-    Ok(Call::unbounded_wait(self.0, "withdraw")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
-  pub async fn withdraw_from(&self, arg0: &WithdrawFromArgs) -> CallResult<std::result::Result<BlockIndex, WithdrawFromError>> {
-    Ok(Call::unbounded_wait(self.0, "withdraw_from")
-    .with_args(&(arg0,)).await?.candid()?)
-  }
+    pub async fn create_canister(
+        &self,
+        arg0: &CreateCanisterArgs,
+    ) -> CallResult<std::result::Result<CreateCanisterSuccess, CreateCanisterError>> {
+        Ok(Call::unbounded_wait(self.0, "create_canister")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn create_canister_from(
+        &self,
+        arg0: &CreateCanisterFromArgs,
+    ) -> CallResult<std::result::Result<CreateCanisterSuccess, CreateCanisterFromError>> {
+        Ok(Call::unbounded_wait(self.0, "create_canister_from")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn deposit(&self, arg0: &DepositArgs) -> CallResult<DepositResult> {
+        Ok(Call::unbounded_wait(self.0, "deposit")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn http_request(&self, arg0: &HttpRequest) -> CallResult<HttpResponse> {
+        Ok(Call::unbounded_wait(self.0, "http_request")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc1_balance_of(&self, arg0: &Account) -> CallResult<candid::Nat> {
+        Ok(Call::unbounded_wait(self.0, "icrc1_balance_of")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc1_decimals(&self) -> CallResult<u8> {
+        Ok(Call::unbounded_wait(self.0, "icrc1_decimals")
+            .with_args(&())
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc1_fee(&self) -> CallResult<candid::Nat> {
+        Ok(Call::unbounded_wait(self.0, "icrc1_fee")
+            .with_args(&())
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc1_metadata(&self) -> CallResult<Vec<(String, MetadataValue)>> {
+        Ok(Call::unbounded_wait(self.0, "icrc1_metadata")
+            .with_args(&())
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc1_minting_account(&self) -> CallResult<Option<Account>> {
+        Ok(Call::unbounded_wait(self.0, "icrc1_minting_account")
+            .with_args(&())
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc1_name(&self) -> CallResult<String> {
+        Ok(Call::unbounded_wait(self.0, "icrc1_name")
+            .with_args(&())
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc1_supported_standards(&self) -> CallResult<Vec<SupportedStandard>> {
+        Ok(Call::unbounded_wait(self.0, "icrc1_supported_standards")
+            .with_args(&())
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc1_symbol(&self) -> CallResult<String> {
+        Ok(Call::unbounded_wait(self.0, "icrc1_symbol")
+            .with_args(&())
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc1_total_supply(&self) -> CallResult<candid::Nat> {
+        Ok(Call::unbounded_wait(self.0, "icrc1_total_supply")
+            .with_args(&())
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc1_transfer(
+        &self,
+        arg0: &TransferArgs,
+    ) -> CallResult<std::result::Result<BlockIndex, TransferError>> {
+        Ok(Call::unbounded_wait(self.0, "icrc1_transfer")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc2_allowance(&self, arg0: &AllowanceArgs) -> CallResult<Allowance> {
+        Ok(Call::unbounded_wait(self.0, "icrc2_allowance")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc2_approve(
+        &self,
+        arg0: &ApproveArgs,
+    ) -> CallResult<std::result::Result<candid::Nat, ApproveError>> {
+        Ok(Call::unbounded_wait(self.0, "icrc2_approve")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc2_transfer_from(
+        &self,
+        arg0: &TransferFromArgs,
+    ) -> CallResult<std::result::Result<candid::Nat, TransferFromError>> {
+        Ok(Call::unbounded_wait(self.0, "icrc2_transfer_from")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc3_get_archives(
+        &self,
+        arg0: &GetArchivesArgs,
+    ) -> CallResult<GetArchivesResult> {
+        Ok(Call::unbounded_wait(self.0, "icrc3_get_archives")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc3_get_blocks(&self, arg0: &GetBlocksArgs) -> CallResult<GetBlocksResult> {
+        Ok(Call::unbounded_wait(self.0, "icrc3_get_blocks")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc3_get_tip_certificate(&self) -> CallResult<Option<DataCertificate>> {
+        Ok(Call::unbounded_wait(self.0, "icrc3_get_tip_certificate")
+            .with_args(&())
+            .await?
+            .candid()?)
+    }
+    pub async fn icrc3_supported_block_types(&self) -> CallResult<Vec<SupportedBlockType>> {
+        Ok(Call::unbounded_wait(self.0, "icrc3_supported_block_types")
+            .with_args(&())
+            .await?
+            .candid()?)
+    }
+    pub async fn withdraw(
+        &self,
+        arg0: &WithdrawArgs,
+    ) -> CallResult<std::result::Result<BlockIndex, WithdrawError>> {
+        Ok(Call::unbounded_wait(self.0, "withdraw")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
+    pub async fn withdraw_from(
+        &self,
+        arg0: &WithdrawFromArgs,
+    ) -> CallResult<std::result::Result<BlockIndex, WithdrawFromError>> {
+        Ok(Call::unbounded_wait(self.0, "withdraw_from")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
+    }
 }
-

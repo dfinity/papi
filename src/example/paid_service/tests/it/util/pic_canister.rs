@@ -220,10 +220,8 @@ impl PicCanisterBuilder {
 impl PicCanisterBuilder {
     /// Reads the backend Wasm bytes from the configured path.
     fn wasm_bytes(&self) -> Vec<u8> {
-        fs::read(self.wasm_path.clone()).unwrap_or_else(|_| panic!(
-            "Could not find the backend wasm: {}",
-            self.wasm_path
-        ))
+        fs::read(self.wasm_path.clone())
+            .unwrap_or_else(|_| panic!("Could not find the backend wasm: {}", self.wasm_path))
     }
 }
 // Builder

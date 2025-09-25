@@ -11,6 +11,8 @@ jobs:
   pr:
     name: 'PR'
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     env:
       TITLE: ${{ github.event.pull_request.title }}
     steps:
@@ -30,10 +32,14 @@ jobs:
     needs: ["pr"]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Checkout repo
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-      - uses: ./.github/actions/needs_success
+      - name: Check that all required steps have succeeded
+        uses: ./.github/actions/needs_success
         with:
           needs: '${{ toJson(needs) }}'

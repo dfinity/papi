@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - name: Install dfx
         uses: dfinity/setup-dfx@main
       - name: Start dfx

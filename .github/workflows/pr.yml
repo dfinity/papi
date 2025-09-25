@@ -11,7 +11,7 @@ permissions:
   contents: read
 jobs:
   pr:
-    name: 'PR'
+    name: 'pr'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -31,7 +31,7 @@ jobs:
               exit 1
           fi
   pr-pass:
-    name: 'PR pass'
+    name: 'pr-pass'
     needs: ["pr"]
     if: ${{ always() }}
     runs-on: ubuntu-24.04

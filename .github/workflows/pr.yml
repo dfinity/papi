@@ -7,6 +7,8 @@ on:
       - reopened
       - synchronize
       - labeled
+permissions:
+  contents: read
 jobs:
   pr:
     name: 'PR'
@@ -29,6 +31,7 @@ jobs:
               exit 1
           fi
   pr-pass:
+    name: 'PR pass'
     needs: ["pr"]
     if: ${{ always() }}
     runs-on: ubuntu-24.04

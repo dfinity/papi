@@ -42,7 +42,6 @@ impl PaymentGuardTrait for PatronPaysIcrc2CyclesPaymentGuard {
                     ledger: cycles_ledger_canister_id(),
                 }
             })?
-            .0
             .map_err(|error| {
                 eprintln!(
                     "Failed to withdraw from ledger canister at {}: {error:?}",

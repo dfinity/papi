@@ -17,7 +17,7 @@ impl PaymentGuardTrait for CallerPaysIcrc2TokensPaymentGuard {
     async fn deduct(&self, cost: TokenAmount) -> Result<(), PaymentError> {
         let caller = ic_cdk::api::msg_caller();
         ic_cycles_ledger_client::Service(self.ledger)
-            .icrc_2_transfer_from(&TransferFromArgs {
+            .icrc2_transfer_from(&TransferFromArgs {
                 from: Account {
                     owner: caller,
                     subaccount: None,
@@ -33,16 +33,15 @@ impl PaymentGuardTrait for CallerPaysIcrc2TokensPaymentGuard {
                 fee: None,
             })
             .await
-            .map_err(|(rejection_code, string)| {
+            .map_err(|err| {
                 eprintln!(
-                    "Failed to reach ledger canister at {}: {rejection_code:?}: {string}",
+                    "Failed to reach ledger canister at {}: {err:?}",
                     self.ledger
                 );
                 PaymentError::LedgerUnreachable {
                     ledger: self.ledger,
                 }
             })?
-            .0
             .map_err(|error| {
                 eprintln!(
                     "Failed to withdraw from ledger canister at {}: {error:?}",

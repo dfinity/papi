@@ -12,7 +12,7 @@ defaults:
     shell: bash -euxlo pipefail {0}
 jobs:
   integration:
-    name: integration
+    name: Integration tests
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout

@@ -287,7 +287,7 @@ checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
 name = "example-paid-service-api"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "serde",
@@ -296,7 +296,7 @@ dependencies = [
 
 [[package]]
 name = "example_app_backend"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "ic-cdk 0.17.2",
@@ -307,7 +307,7 @@ dependencies = [
 
 [[package]]
 name = "example_paid_service"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "example-paid-service-api",
@@ -656,7 +656,7 @@ dependencies = [
 
 [[package]]
 name = "ic-cycles-ledger-client"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "ic-cdk 0.17.2",
@@ -681,7 +681,7 @@ dependencies = [
 
 [[package]]
 name = "ic-papi"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "ic-papi-api",
  "ic-papi-guard",
@@ -689,7 +689,7 @@ dependencies = [
 
 [[package]]
 name = "ic-papi-api"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "hex",
@@ -701,7 +701,7 @@ dependencies = [
 
 [[package]]
 name = "ic-papi-guard"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "ic-cdk 0.17.2",

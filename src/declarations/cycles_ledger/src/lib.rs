@@ -425,7 +425,7 @@ impl Service {
     pub async fn create_canister(
         &self,
         arg0: &CreateCanisterArgs,
-    ) -> Result<(std::result::Result<CreateCanisterSuccess, CreateCanisterError>,)> {
+    ) -> Result<std::result::Result<CreateCanisterSuccess, CreateCanisterError>> {
         let response = Call::unbounded_wait(self.0, "create_canister")
             .with_arg(arg0)
             .await?;
@@ -435,7 +435,7 @@ impl Service {
     pub async fn create_canister_from(
         &self,
         arg0: &CreateCanisterFromArgs,
-    ) -> Result<(std::result::Result<CreateCanisterSuccess, CreateCanisterFromError>,)> {
+    ) -> Result<std::result::Result<CreateCanisterSuccess, CreateCanisterFromError>> {
         let response = Call::unbounded_wait(self.0, "create_canister_from")
             .with_arg(arg0)
             .await?;
@@ -502,13 +502,13 @@ impl Service {
     pub async fn icrc_1_transfer(
         &self,
         arg0: &TransferArgs,
-    ) -> Result<(std::result::Result<BlockIndex, TransferError>,)> {
+    ) -> Result<std::result::Result<BlockIndex, TransferError>> {
         let response = Call::unbounded_wait(self.0, "icrc1_transfer")
             .with_arg(arg0)
             .await?;
         Ok(response.candid()?)
     }
-    pub async fn icrc_2_allowance(&self, arg0: &AllowanceArgs) -> Result<(Allowance,)> {
+    pub async fn icrc_2_allowance(&self, arg0: &AllowanceArgs) -> Result<Allowance> {
         let response = Call::unbounded_wait(self.0, "icrc2_allowance")
             .with_arg(arg0)
             .await?;
@@ -517,7 +517,7 @@ impl Service {
     pub async fn icrc_2_approve(
         &self,
         arg0: &ApproveArgs,
-    ) -> Result<(std::result::Result<candid::Nat, ApproveError>,)> {
+    ) -> Result<std::result::Result<candid::Nat, ApproveError>> {
         let response = Call::unbounded_wait(self.0, "icrc2_approve")
             .with_arg(arg0)
             .await?;
@@ -526,7 +526,7 @@ impl Service {
     pub async fn icrc_2_transfer_from(
         &self,
         arg0: &TransferFromArgs,
-    ) -> Result<(std::result::Result<candid::Nat, TransferFromError>,)> {
+    ) -> Result<std::result::Result<candid::Nat, TransferFromError>> {
         let response = Call::unbounded_wait(self.0, "icrc2_transfer_from")
             .with_arg(arg0)
             .await?;
@@ -560,7 +560,7 @@ impl Service {
     pub async fn withdraw(
         &self,
         arg0: &WithdrawArgs,
-    ) -> Result<(std::result::Result<BlockIndex, WithdrawError>,)> {
+    ) -> Result<std::result::Result<BlockIndex, WithdrawError>> {
         let response = Call::unbounded_wait(self.0, "withdraw")
             .with_arg(arg0)
             .await?;
@@ -569,7 +569,7 @@ impl Service {
     pub async fn withdraw_from(
         &self,
         arg0: &WithdrawFromArgs,
-    ) -> Result<(std::result::Result<BlockIndex, WithdrawFromError>,)> {
+    ) -> Result<std::result::Result<BlockIndex, WithdrawFromError>> {
         let response = Call::unbounded_wait(self.0, "withdraw_from")
             .with_arg(arg0)
             .await?;

@@ -47,7 +47,7 @@ impl PaymentGuardTrait for PatronPaysIcrc2TokensPaymentGuard {
                 }
             })?;
 
-        result.0
+        result
             .map_err(|error| {
                 eprintln!(
                     "Failed to withdraw from ledger canister at {}: {error:?}",

@@ -33,7 +33,7 @@ impl PaymentGuardTrait for CallerPaysIcrc2CyclesPaymentGuard {
             })
             .await
             .map_err(|error| {
-                eprintln!(
+                ic_cdk::eprintln!(
                     "Failed to reach ledger canister at {}: {error:?}",
                     cycles_ledger_canister_id()
                 );
@@ -42,9 +42,9 @@ impl PaymentGuardTrait for CallerPaysIcrc2CyclesPaymentGuard {
                 }
             })?;
 
-        result.0
+        result
             .map_err(|error| {
-                eprintln!(
+                ic_cdk::eprintln!(
                     "Failed to withdraw from ledger canister at {}: {error:?}",
                     cycles_ledger_canister_id()
                 );

@@ -1,5 +1,5 @@
 use candid::Principal;
-use ic_cdk::api::{is_controller, msg_caller};
+use ic_cdk::api::{is_controller};
 use ic_cdk::call::Call;
 use ic_cdk_macros::{export_candid, update};
 use ic_papi_api::PaymentError;
@@ -12,7 +12,7 @@ async fn call_with_attached_cycles(
     call_params: (Principal, String, u64),
 ) -> Result<String, PaymentError> {
     assert!(
-        is_controller(&msg_caller()),
+        is_controller(&ic_cdk::api::msg_caller()),
         "The caller must be a controller."
     );
     let (canister_id, method, cycles) = call_params;

@@ -5,18 +5,22 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+permissions:
+  contents: read
 defaults:
   run:
     shell: bash -euxlo pipefail {0}
 jobs:
   format:
-    name: 'Format'
+    name: 'format'
     runs-on: ubuntu-24.04
     env:
       TITLE: ${{ github.event.pull_request.title }}
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
       - name: Install tools
         run: ./scripts/setup cargo-binstall shfmt yq cargo-sort
       - name: Install node dependencies
@@ -31,12 +35,15 @@ jobs:
                   exit 1
           }
   rust-tests:
+    name: 'rust-tests'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-24.04]
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
       - name: Have relevant files changed?
         uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: changes
@@ -63,12 +70,15 @@ jobs:
         shell: bash
         run: scripts/test-rs
   installation:
+    name: 'installation'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-24.04]
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
       - name: Have relevant files changed?
         uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: changes
@@ -85,7 +95,7 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-1
       - name: Install dfx
-        uses: dfinity/setup-dfx@main
+        uses: dfinity/setup-dfx@e50c04f104ee4285ec010f10609483cf41e4d365 # main
       - name: Start dfx
         run: dfx start --clean --background
       - name: Deploy all canisters
@@ -93,6 +103,7 @@ jobs:
       - name: Stop dfx
         run: dfx stop
   lint-github-actions:
+    name: 'lint-github-actions'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -121,11 +132,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   check-pass:
-    needs: ["format", "rust-tests", "installation"] # TODO: Add lint-github-actions
+    name: 'check-pass'
+    needs: ["format", "rust-tests", "installation", "lint-github-actions"]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/needs_success
         with:
           needs: '${{ toJson(needs) }}'

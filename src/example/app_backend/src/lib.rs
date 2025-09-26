@@ -22,7 +22,7 @@ async fn call_with_attached_cycles(
         .with_arg(arg)
         .await
         .unwrap();
-    let (ans,): (Result<String, PaymentError>,) = response.candid().unwrap();
+    let ans: Result<String, PaymentError> = response.candid().unwrap();
     ans
 }
 

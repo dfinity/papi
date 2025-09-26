@@ -23,7 +23,7 @@ impl PaymentGuardTrait for PatronPaysIcrc2TokensPaymentGuard {
             return Err(PaymentError::InvalidPatron);
         }
         // Note: The cycles ledger client is ICRC-2 compatible so can be used here.
-        ic_cycles_ledger_client::Service(self.ledger)
+        let result = ic_cycles_ledger_client::Service(self.ledger)
             .icrc_2_transfer_from(&TransferFromArgs {
                 from: self.patron.clone(),
                 to: Account {
@@ -45,8 +45,9 @@ impl PaymentGuardTrait for PatronPaysIcrc2TokensPaymentGuard {
                 PaymentError::LedgerUnreachable {
                     ledger: self.ledger,
                 }
-            })?
-            .0
+            })?;
+
+        result.0
             .map_err(|error| {
                 eprintln!(
                     "Failed to withdraw from ledger canister at {}: {error:?}",

@@ -23,7 +23,7 @@ impl PaymentGuardTrait for CallerPaysIcrc2CyclesPaymentGuard {
         }
         // The cycles ledger has a special `withdraw_from` method, similar to `transfer_from`,
         // but that adds the cycles to the canister rather than putting it into a ledger account.
-        ic_cycles_ledger_client::Service(cycles_ledger_canister_id())
+        let result = ic_cycles_ledger_client::Service(cycles_ledger_canister_id())
             .withdraw_from(&WithdrawFromArgs {
                 to: own_canister_id,
                 amount: Nat::from(fee),
@@ -40,8 +40,9 @@ impl PaymentGuardTrait for CallerPaysIcrc2CyclesPaymentGuard {
                 PaymentError::LedgerUnreachable {
                     ledger: cycles_ledger_canister_id(),
                 }
-            })?
-            .0
+            })?;
+
+        result.0
             .map_err(|error| {
                 eprintln!(
                     "Failed to withdraw from ledger canister at {}: {error:?}",

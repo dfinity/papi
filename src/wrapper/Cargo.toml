@@ -1,0 +1,10 @@
+[package]
+name = "ic-papi-wrapper"
+version = "0.0.1"
+
+[dependencies]
+lazy_static = { workspace = true }
+candid = { workspace = true }
+ic-cdk = { workspace = true }
+ic-papi-api = { workspace = true }
+ic-papi-guard = { workspace = true }

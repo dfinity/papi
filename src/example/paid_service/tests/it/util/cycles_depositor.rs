@@ -2,7 +2,7 @@
 use std::sync::Arc;
 
 use candid::{self, CandidType, Deserialize, Principal};
-use ic_cdk::call::CallResult as Result;
+use ic_cdk::call::{Call, CallResult as Result};
 use pocket_ic::PocketIc;
 
 use super::pic_canister::{PicCanister, PicCanisterTrait};
@@ -31,7 +31,10 @@ pub(crate) struct DepositResult {
 pub struct Service(pub Principal);
 impl Service {
     pub async fn deposit(&self, arg0: &DepositArg) -> Result<(DepositResult,)> {
-        ic_cdk::call(self.0, "deposit", (arg0,)).await
+        let response = Call::unbounded_wait(self.0, "deposit")
+            .with_arg(arg0)
+            .await?;
+        Ok(response.candid()?)
     }
 }
 

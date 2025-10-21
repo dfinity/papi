@@ -11,8 +11,8 @@ pub struct CallerPaysIcrc2CyclesPaymentGuard {}
 
 impl PaymentGuardTrait for CallerPaysIcrc2CyclesPaymentGuard {
     async fn deduct(&self, fee: TokenAmount) -> Result<(), PaymentError> {
-        let caller = ic_cdk::caller();
-        let own_canister_id = ic_cdk::api::id();
+        let caller = ic_cdk::api::msg_caller();
+        let own_canister_id = ic_cdk::api::canister_self();
         let payer_account = Account {
             owner: caller,
             subaccount: None,
@@ -23,7 +23,7 @@ impl PaymentGuardTrait for CallerPaysIcrc2CyclesPaymentGuard {
         }
         // The cycles ledger has a special `withdraw_from` method, similar to `transfer_from`,
         // but that adds the cycles to the canister rather than putting it into a ledger account.
-        ic_cycles_ledger_client::Service(cycles_ledger_canister_id())
+        let result = ic_cycles_ledger_client::Service(cycles_ledger_canister_id())
             .withdraw_from(&WithdrawFromArgs {
                 to: own_canister_id,
                 amount: Nat::from(fee),
@@ -32,18 +32,19 @@ impl PaymentGuardTrait for CallerPaysIcrc2CyclesPaymentGuard {
                 created_at_time: None,
             })
             .await
-            .map_err(|(rejection_code, string)| {
-                eprintln!(
-                    "Failed to reach ledger canister at {}: {rejection_code:?}: {string}",
+            .map_err(|error| {
+                ic_cdk::eprintln!(
+                    "Failed to reach ledger canister at {}: {error:?}",
                     cycles_ledger_canister_id()
                 );
                 PaymentError::LedgerUnreachable {
                     ledger: cycles_ledger_canister_id(),
                 }
-            })?
-            .0
+            })?;
+
+        result
             .map_err(|error| {
-                eprintln!(
+                ic_cdk::eprintln!(
                     "Failed to withdraw from ledger canister at {}: {error:?}",
                     cycles_ledger_canister_id()
                 );

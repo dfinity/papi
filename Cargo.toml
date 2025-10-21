@@ -24,7 +24,7 @@ serde = "1"
 serde_bytes = "0.11"
 ic-papi-api = { path = "src/api", version = "0.1.1" }
 ic-papi-guard = { path = "src/guard", version = "0.1.1" }
-ic-stable-structures = "0.6.9"
+ic-stable-structures = "0.7.2"
 ic-ledger-types = "0.13.0"
 ic-cycles-ledger-client = { path = "src/declarations/cycles_ledger", version = "0.1.1" }
 example-paid-service-api = { path = "src/example/paid_service_api", version = "0.1.1" }

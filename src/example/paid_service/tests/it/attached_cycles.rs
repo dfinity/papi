@@ -41,7 +41,7 @@ fn test_setup_works() {
 #[test]
 fn inter_canister_call_succeeds_with_sufficient_cycles_only() {
     let setup = AttachedCyclesTestSetup::default();
-    for cycles in 995u64..1005 {
+    for cycles in 995u128..1005 {
         let args = (
             setup.api_canister.canister_id(),
             "cost_1000_attached_cycles".to_string(),

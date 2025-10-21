@@ -209,6 +209,7 @@ impl TestSetup {
             .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
     }
     /// Calls a paid service.
+    #[allow(clippy::result_large_err)]
     pub fn call_paid_service(
         &self,
         caller: Principal,

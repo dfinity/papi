@@ -15,8 +15,8 @@ pub struct PatronPaysIcrc2TokensPaymentGuard {
 
 impl PaymentGuardTrait for PatronPaysIcrc2TokensPaymentGuard {
     async fn deduct(&self, cost: TokenAmount) -> Result<(), PaymentError> {
-        let caller = ic_cdk::api::caller();
-        let own_canister_id = ic_cdk::api::id();
+        let caller = ic_cdk::api::msg_caller();
+        let own_canister_id = ic_cdk::api::canister_self();
         let spender_subaccount = principal2account(&caller);
         // The patron must not be the vendor itself (this canister).
         if self.patron.owner == own_canister_id {
@@ -24,10 +24,10 @@ impl PaymentGuardTrait for PatronPaysIcrc2TokensPaymentGuard {
         }
         // Note: The cycles ledger client is ICRC-2 compatible so can be used here.
         ic_cycles_ledger_client::Service(self.ledger)
-            .icrc_2_transfer_from(&TransferFromArgs {
+            .icrc2_transfer_from(&TransferFromArgs {
                 from: self.patron.clone(),
                 to: Account {
-                    owner: ic_cdk::api::id(),
+                    owner: ic_cdk::api::canister_self(),
                     subaccount: None,
                 },
                 amount: Nat::from(cost),
@@ -37,16 +37,15 @@ impl PaymentGuardTrait for PatronPaysIcrc2TokensPaymentGuard {
                 fee: None,
             })
             .await
-            .map_err(|(rejection_code, string)| {
+            .map_err(|err| {
                 eprintln!(
-                    "Failed to reach ledger canister at {}: {rejection_code:?}: {string}",
+                    "Failed to reach ledger canister at {}: {err:?}",
                     self.ledger
                 );
                 PaymentError::LedgerUnreachable {
                     ledger: self.ledger,
                 }
             })?
-            .0
             .map_err(|error| {
                 eprintln!(
                     "Failed to withdraw from ledger canister at {}: {error:?}",

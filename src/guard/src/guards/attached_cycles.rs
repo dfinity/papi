@@ -1,5 +1,5 @@
 use super::{PaymentError, PaymentGuardTrait};
-use ic_cdk::api::call::{msg_cycles_accept, msg_cycles_available};
+use ic_cdk::api::{msg_cycles_accept, msg_cycles_available};
 use ic_papi_api::caller::TokenAmount;
 
 /// The information required to charge attached cycles.

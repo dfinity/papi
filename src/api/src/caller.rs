@@ -35,4 +35,4 @@ pub struct PatronPaysIcrc2Tokens {
     pub patron: Account,
 }
 
-pub type TokenAmount = u64;
+pub type TokenAmount = u128;

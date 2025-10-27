@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Needs env vars:
-POCKET_IC_SERVER_VERSION="${POCKET_IC_SERVER_VERSION:-5.0.0}"
+POCKET_IC_SERVER_VERSION="${POCKET_IC_SERVER_VERSION:-10.0.0}"
 POCKET_IC_SERVER_PATH="${POCKET_IC_SERVER_PATH:-./pocket-ic}"
 
 if [[ $OSTYPE == "linux-gnu"* ]] || [[ $RUNNER_OS == "Linux" ]]; then

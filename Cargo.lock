@@ -135,9 +135,9 @@ checksum = "514de17de45fdb8dc022b1a7975556c53c86f9f0aa5f534b98977b171857c2c9"
 
 [[package]]
 name = "candid"
-version = "0.10.13"
+version = "0.10.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a253bab4a9be502c82332b60cbeee6202ad0692834efeec95fae9f29db33d692"
+checksum = "8037a01ec09d6c06883a38bad4f47b8d06158ad360b841e0ae5707c9884dfaf6"
 dependencies = [
  "anyhow",
  "binread",
@@ -158,9 +158,9 @@ dependencies = [
 
 [[package]]
 name = "candid_derive"
-version = "0.6.6"
+version = "0.10.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3de398570c386726e7a59d9887b68763c481477f9a043fb998a2e09d428df1a9"
+checksum = "fb45f4d5eff3805598ee633dd80f8afb306c023249d34b5b7dfdc2080ea1df2e"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -287,7 +287,7 @@ checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
 name = "example-paid-service-api"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "serde",
@@ -296,7 +296,7 @@ dependencies = [
 
 [[package]]
 name = "example_app_backend"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "ic-cdk 0.17.2",
@@ -307,7 +307,7 @@ dependencies = [
 
 [[package]]
 name = "example_paid_service"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "example-paid-service-api",
@@ -581,19 +581,6 @@ dependencies = [
 
 [[package]]
 name = "ic-cdk"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd8ecacd682fa05a985253592963306cb9799622d7b1cce4b1edb89c6ec85be1"
-dependencies = [
- "candid",
- "ic-cdk-macros 0.16.0",
- "ic0 0.23.0",
- "serde",
- "serde_bytes",
-]
-
-[[package]]
-name = "ic-cdk"
 version = "0.17.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "95a7344f41493cbf591f13ae9f90181076f808a83af799815c3074b19c693d2e"
@@ -628,20 +615,6 @@ dependencies = [
 
 [[package]]
 name = "ic-cdk-macros"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d4d857135deef20cc7ea8f3869a30cd9cfeb1392b3a81043790b2cd82adc3e0"
-dependencies = [
- "candid",
- "proc-macro2",
- "quote",
- "serde",
- "serde_tokenstream 0.2.1",
- "syn 2.0.90",
-]
-
-[[package]]
-name = "ic-cdk-macros"
 version = "0.17.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "84cbaa50fa36d3e0616114becf81faa95a099e0d60948ed6978f30f1c77399fd"
@@ -656,7 +629,7 @@ dependencies = [
 
 [[package]]
 name = "ic-cycles-ledger-client"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "ic-cdk 0.17.2",
@@ -666,14 +639,14 @@ dependencies = [
 
 [[package]]
 name = "ic-ledger-types"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a144b5b4c9e4b164b338440cfbdcf9f30ff45e3d48a3be62d2424996dc93d6f"
+checksum = "9a7103dea96107c8b1e49d6e80ab452ab48e9f3594d618dbb46449381f4f0a01"
 dependencies = [
  "candid",
  "crc32fast",
  "hex",
- "ic-cdk 0.16.0",
+ "ic-cdk 0.17.2",
  "serde",
  "serde_bytes",
  "sha2",
@@ -681,7 +654,7 @@ dependencies = [
 
 [[package]]
 name = "ic-papi"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "ic-papi-api",
  "ic-papi-guard",
@@ -689,7 +662,7 @@ dependencies = [
 
 [[package]]
 name = "ic-papi-api"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "hex",
@@ -701,7 +674,7 @@ dependencies = [
 
 [[package]]
 name = "ic-papi-guard"
-version = "0.1.1-alpha.1"
+version = "0.1.1"
 dependencies = [
  "candid",
  "ic-cdk 0.17.2",
@@ -713,9 +686,9 @@ dependencies = [
 
 [[package]]
 name = "ic-stable-structures"
-version = "0.6.9"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4d30d4cf17aff1024e13133897048bcba580e063c9000571ab766ca37e2996f4"
+checksum = "8ee3372ddc0cf2a747fc26ce2d075a240ed6bfab151e63bc70109e8967f7ce6f"
 dependencies = [
  "ic_principal",
 ]
@@ -1423,27 +1396,38 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.219"
+version = "1.0.228"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f0e2c6ed6606019b4e29e69dbaba95b11854410e5347d525002456dbbb786b6"
+checksum = "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e"
 dependencies = [
+ "serde_core",
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_bytes"
-version = "0.11.17"
+version = "0.11.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8437fd221bde2d4ca316d61b90e337e9e702b3820b87d63caa9ba6c02bd06d96"
+checksum = "a5d440709e79d88e51ac01c4b72fc6cb7314017bb7da9eeff678aa94c10e3ea8"
 dependencies = [
  "serde",
+ "serde_core",
+]
+
+[[package]]
+name = "serde_core"
+version = "1.0.228"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad"
+dependencies = [
+ "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.219"
+version = "1.0.228"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b0276cf7f2c73365f7157c8123c21cd9a50fbbd844757af28ca1f5925fc2a00"
+checksum = "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79"
 dependencies = [
  "proc-macro2",
  "quote",

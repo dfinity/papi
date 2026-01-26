@@ -1,6 +1,6 @@
 use candid::Principal;
 use ic_cdk::api::{call::call_with_payment128, is_controller};
-use ic_cdk_macros::{export_candid, update};
+use ic_cdk::{export_candid, update};
 use ic_papi_api::PaymentError;
 
 /// Calls an arbitrary method on an arbitrary canister with an arbitrary amount of cycles attached.

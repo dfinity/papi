@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 use candid::{self, decode_one, encode_args, encode_one, CandidType, Deserialize, Principal};
 use ic_cdk::api::call::CallResult;
-use pocket_ic::{PocketIc, WasmResult};
+use pocket_ic::PocketIc;
 
 use super::pic_canister::{PicCanister, PicCanisterTrait};
 

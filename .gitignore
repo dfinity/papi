@@ -26,16 +26,8 @@ pocket-ic.gz
 # Local branches
 branches
 
-# generated files
-**/declarations/
 
 # Build artefacts
-*.wasm.gz
-
-# Release artefacts
-release/
-
-# docker buildx
 out
 
 # Temp files

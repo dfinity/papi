@@ -1,17 +1,42 @@
+# Various IDEs and Editors
+.vscode/
+.idea/
+**/*~
+
+# Mac OSX temporary files
+.DS_Store
+**/.DS_Store
+
 # Rust build artefacts
 /target
+
 # npm dependencies
 node_modules
+
 # Testing tool
 pocket-ic
 pocket-ic.gz
+
 # dfx working dir
 .dfx
+
 # dfx env file
 .env
+
 # Local branches
 branches
+
+# generated files
+**/declarations/
+
 # Build artefacts
+*.wasm.gz
+
+# Release artefacts
+release/
+
+# docker buildx
 out
+
 # Temp files
 ,*

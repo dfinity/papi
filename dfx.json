@@ -7,9 +7,7 @@
       "type": "rust",
       "optimize": "cycles",
       "gzip": true,
-      "dependencies": [
-        "cycles_ledger"
-      ]
+      "dependencies": ["cycles_ledger"]
     },
     "example_app_backend": {
       "candid": "src/example/app_backend/example_app_backend.did",
@@ -29,9 +27,7 @@
       }
     },
     "cycles_depositor": {
-      "dependencies": [
-        "cycles_ledger"
-      ],
+      "dependencies": ["cycles_ledger"],
       "type": "custom",
       "build": "scripts/build.cycles_depositor.sh",
       "init_arg_file": "out/cycles_depositor.args.did",

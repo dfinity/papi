@@ -3,11 +3,7 @@
     "method": "curl",
     "version": "1.25.2",
     "url": "https://raw.githubusercontent.com/rust-lang/rustup/1.25.2/rustup-init.sh",
-    "pipe": [
-      [
-        "sh"
-      ]
-    ]
+    "pipe": [["sh"]]
   },
   "n": {
     "method": "curl",

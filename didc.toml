@@ -1,5 +1,9 @@
 # Examples: https://github.com/dfinity/candid/tree/master/tools/didc#toml-config
 
+[didc.rust]
+target = "custom"
+template = "didc.hbs"
+
 [rust]
 visibility = "pub"
-attributes = "#[derive(CandidType, Deserialize, Debug, Clone)]"
+attributes = "#[derive(CandidType, Deserialize, Debug, Clone, Eq, PartialEq)]"

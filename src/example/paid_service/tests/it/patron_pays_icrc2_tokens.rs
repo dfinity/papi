@@ -82,8 +82,8 @@ fn user_pays_tokens_for_user2() {
                 response,
                 Ok("Yes, you paid 1 billion cycles!".to_string()),
                 "Should have succeeded for caller {} with patron {}.",
-                caller.to_string(),
-                patron.to_string(),
+                caller,
+                patron,
             );
         }
         // The patron's account should have been debited.

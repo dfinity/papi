@@ -15,7 +15,7 @@ async fn call_with_attached_cycles(
         "The caller must be a controller."
     );
     let (canister_id, method, cycles) = call_params;
-    Call::unbounded_wait(canister_id, &method)
+    Call::bounded_wait(canister_id, &method)
         .with_cycles(cycles)
         .await
         .unwrap()

@@ -17,19 +17,18 @@ version = "0.2.0-alpha.1.1"
 
 [workspace.dependencies]
 pocket-ic = "10.0.0"
-candid = "0.10.19"
+candid = "0.10.20"
 ic-cdk = "0.18.7"
 ic-cdk-executor = "1.0.2"
-ic-cdk-macros = "0.18.7"
+ic-cdk-macros = "0.19.0"
 serde = "1"
 serde_bytes = "0.11"
 ic-papi-api = { path = "src/api", version = "0.2.0-alpha.1.1" }
 ic-papi-guard = { path = "src/guard", version = "0.2.0-alpha.1.1" }
-ic-stable-structures = "0.6.9"
-ic-ledger-types = "0.13.0"
+ic-stable-structures = "0.7.2"
+ic-ledger-types = "0.14.0"
 ic-cycles-ledger-client = { path = "src/declarations/cycles_ledger", version = "0.2.0-alpha.1.1" }
 example-paid-service-api = { path = "src/example/paid_service_api", version = "0.2.0-alpha.1.1" }
-lazy_static = { version = "1.5.0" }
 hex = { version = "0.4.3" }
 
 [profile.release]

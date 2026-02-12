@@ -23,7 +23,6 @@ ic-cdk-macros = { workspace = true }
 ic-papi-api = { workspace = true }
 ic-papi-guard = { workspace = true }
 ic-stable-structures = { workspace = true }
-lazy_static = { workspace = true }
 serde = { workspace = true }
 serde_bytes = { workspace = true }
 

@@ -369,7 +369,6 @@ dependencies = [
  "ic-papi-api",
  "ic-papi-guard",
  "ic-stable-structures",
- "lazy_static",
  "pocket-ic",
  "serde",
  "serde_bytes",

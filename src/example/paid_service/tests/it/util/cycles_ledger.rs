@@ -335,7 +335,7 @@ pub enum Value {
     Nat64(u64),
     Blob(serde_bytes::ByteBuf),
     Text(String),
-    Array(Vec<Box<Value>>),
+    Array(Vec<Value>),
 }
 #[derive(CandidType, Deserialize, Debug)]
 pub struct GetBlocksResultBlocksItem {
@@ -520,7 +520,7 @@ impl Service {
             .await?;
         Ok(response.candid()?)
     }
-    pub async fn icrc_1_transfer(
+    pub async fn icrc1_transfer(
         &self,
         arg0: &TransferArgs,
     ) -> CallResult<(std::result::Result<BlockIndex, TransferError>,)> {
@@ -535,7 +535,7 @@ impl Service {
             .await?;
         Ok(response.candid()?)
     }
-    pub async fn icrc_2_approve(
+    pub async fn icrc2_approve(
         &self,
         arg0: &ApproveArgs,
     ) -> CallResult<(std::result::Result<candid::Nat, ApproveError>,)> {
@@ -544,7 +544,7 @@ impl Service {
             .await?;
         Ok(response.candid()?)
     }
-    pub async fn icrc_2_transfer_from(
+    pub async fn icrc2_transfer_from(
         &self,
         arg0: &TransferFromArgs,
     ) -> CallResult<(std::result::Result<candid::Nat, TransferFromError>,)> {
@@ -553,7 +553,7 @@ impl Service {
             .await?;
         Ok(response.candid()?)
     }
-    pub async fn icrc_3_get_archives(
+    pub async fn icrc3_get_archives(
         &self,
         arg0: &GetArchivesArgs,
     ) -> CallResult<(GetArchivesResult,)> {
@@ -610,7 +610,7 @@ impl PicCanisterTrait for CyclesLedgerPic {
     }
     /// The ID of this canister.
     fn canister_id(&self) -> Principal {
-        self.canister_id.clone()
+        self.canister_id
     }
 }
 

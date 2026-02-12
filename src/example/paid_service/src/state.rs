@@ -1,27 +1,26 @@
 use candid::Principal;
 use example_paid_service_api::InitArgs;
 use ic_papi_guard::guards::any::{PaymentGuard, VendorPaymentConfig};
-use lazy_static::lazy_static;
 use std::cell::RefCell;
+use std::sync::LazyLock;
 
 thread_local! {
     pub static INIT_ARGS: RefCell<Option<InitArgs>> = const {RefCell::new(None)};
 }
-lazy_static! {
-    pub static ref PAYMENT_GUARD: PaymentGuard<5> = PaymentGuard {
-        supported: [
-            VendorPaymentConfig::AttachedCycles,
-            VendorPaymentConfig::CallerPaysIcrc2Cycles,
-            VendorPaymentConfig::PatronPaysIcrc2Cycles,
-            VendorPaymentConfig::CallerPaysIcrc2Tokens {
-                ledger: payment_ledger(),
-            },
-            VendorPaymentConfig::PatronPaysIcrc2Tokens {
-                ledger: payment_ledger(),
-            },
-        ],
-    };
-}
+
+pub static PAYMENT_GUARD: LazyLock<PaymentGuard<5>> = LazyLock::new(|| PaymentGuard {
+    supported: [
+        VendorPaymentConfig::AttachedCycles,
+        VendorPaymentConfig::CallerPaysIcrc2Cycles,
+        VendorPaymentConfig::PatronPaysIcrc2Cycles,
+        VendorPaymentConfig::CallerPaysIcrc2Tokens {
+            ledger: payment_ledger(),
+        },
+        VendorPaymentConfig::PatronPaysIcrc2Tokens {
+            ledger: payment_ledger(),
+        },
+    ],
+});
 
 pub fn init_element<F, T>(f: F) -> T
 where

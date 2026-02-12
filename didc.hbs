@@ -18,7 +18,7 @@ pub struct Service(pub Principal);
 impl Service {
   {{#each methods}}
   pub async fn {{this.original_name}}(&self{{#each this.args}}, {{this.0}}: &{{this.1}}{{/each}}) -> CallResult<{{#each this.rets}}{{this}}{{/each}}> {
-    Ok(Call::unbounded_wait(self.0, "{{escape_debug this.original_name}}")
+    Ok(Call::bounded_wait(self.0, "{{escape_debug this.original_name}}")
     .with_args(&({{#each this.args}}{{this.0}},{{/each}})).await?.candid()?)
   }
   {{/each}}

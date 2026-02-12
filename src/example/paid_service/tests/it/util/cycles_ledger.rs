@@ -448,7 +448,7 @@ impl Service {
         &self,
         arg0: &CreateCanisterArgs,
     ) -> CallResult<std::result::Result<CreateCanisterSuccess, CreateCanisterError>> {
-        Ok(Call::unbounded_wait(self.0, "create_canister")
+        Ok(Call::bounded_wait(self.0, "create_canister")
             .with_args(&(arg0,))
             .await?
             .candid()?)
@@ -457,73 +457,73 @@ impl Service {
         &self,
         arg0: &CreateCanisterFromArgs,
     ) -> CallResult<std::result::Result<CreateCanisterSuccess, CreateCanisterFromError>> {
-        Ok(Call::unbounded_wait(self.0, "create_canister_from")
+        Ok(Call::bounded_wait(self.0, "create_canister_from")
             .with_args(&(arg0,))
             .await?
             .candid()?)
     }
     pub async fn deposit(&self, arg0: &DepositArgs) -> CallResult<DepositResult> {
-        Ok(Call::unbounded_wait(self.0, "deposit")
+        Ok(Call::bounded_wait(self.0, "deposit")
             .with_args(&(arg0,))
             .await?
             .candid()?)
     }
     pub async fn http_request(&self, arg0: &HttpRequest) -> CallResult<HttpResponse> {
-        Ok(Call::unbounded_wait(self.0, "http_request")
+        Ok(Call::bounded_wait(self.0, "http_request")
             .with_args(&(arg0,))
             .await?
             .candid()?)
     }
     pub async fn icrc1_balance_of(&self, arg0: &Account) -> CallResult<candid::Nat> {
-        Ok(Call::unbounded_wait(self.0, "icrc1_balance_of")
+        Ok(Call::bounded_wait(self.0, "icrc1_balance_of")
             .with_args(&(arg0,))
             .await?
             .candid()?)
     }
     pub async fn icrc1_decimals(&self) -> CallResult<u8> {
-        Ok(Call::unbounded_wait(self.0, "icrc1_decimals")
+        Ok(Call::bounded_wait(self.0, "icrc1_decimals")
             .with_args(&())
             .await?
             .candid()?)
     }
     pub async fn icrc1_fee(&self) -> CallResult<candid::Nat> {
-        Ok(Call::unbounded_wait(self.0, "icrc1_fee")
+        Ok(Call::bounded_wait(self.0, "icrc1_fee")
             .with_args(&())
             .await?
             .candid()?)
     }
     pub async fn icrc1_metadata(&self) -> CallResult<Vec<(String, MetadataValue)>> {
-        Ok(Call::unbounded_wait(self.0, "icrc1_metadata")
+        Ok(Call::bounded_wait(self.0, "icrc1_metadata")
             .with_args(&())
             .await?
             .candid()?)
     }
     pub async fn icrc1_minting_account(&self) -> CallResult<Option<Account>> {
-        Ok(Call::unbounded_wait(self.0, "icrc1_minting_account")
+        Ok(Call::bounded_wait(self.0, "icrc1_minting_account")
             .with_args(&())
             .await?
             .candid()?)
     }
     pub async fn icrc1_name(&self) -> CallResult<String> {
-        Ok(Call::unbounded_wait(self.0, "icrc1_name")
+        Ok(Call::bounded_wait(self.0, "icrc1_name")
             .with_args(&())
             .await?
             .candid()?)
     }
     pub async fn icrc1_supported_standards(&self) -> CallResult<Vec<SupportedStandard>> {
-        Ok(Call::unbounded_wait(self.0, "icrc1_supported_standards")
+        Ok(Call::bounded_wait(self.0, "icrc1_supported_standards")
             .with_args(&())
             .await?
             .candid()?)
     }
     pub async fn icrc1_symbol(&self) -> CallResult<String> {
-        Ok(Call::unbounded_wait(self.0, "icrc1_symbol")
+        Ok(Call::bounded_wait(self.0, "icrc1_symbol")
             .with_args(&())
             .await?
             .candid()?)
     }
     pub async fn icrc1_total_supply(&self) -> CallResult<candid::Nat> {
-        Ok(Call::unbounded_wait(self.0, "icrc1_total_supply")
+        Ok(Call::bounded_wait(self.0, "icrc1_total_supply")
             .with_args(&())
             .await?
             .candid()?)
@@ -532,13 +532,13 @@ impl Service {
         &self,
         arg0: &TransferArgs,
     ) -> CallResult<std::result::Result<BlockIndex, TransferError>> {
-        Ok(Call::unbounded_wait(self.0, "icrc1_transfer")
+        Ok(Call::bounded_wait(self.0, "icrc1_transfer")
             .with_args(&(arg0,))
             .await?
             .candid()?)
     }
     pub async fn icrc2_allowance(&self, arg0: &AllowanceArgs) -> CallResult<Allowance> {
-        Ok(Call::unbounded_wait(self.0, "icrc2_allowance")
+        Ok(Call::bounded_wait(self.0, "icrc2_allowance")
             .with_args(&(arg0,))
             .await?
             .candid()?)
@@ -547,7 +547,7 @@ impl Service {
         &self,
         arg0: &ApproveArgs,
     ) -> CallResult<std::result::Result<candid::Nat, ApproveError>> {
-        Ok(Call::unbounded_wait(self.0, "icrc2_approve")
+        Ok(Call::bounded_wait(self.0, "icrc2_approve")
             .with_args(&(arg0,))
             .await?
             .candid()?)
@@ -556,7 +556,7 @@ impl Service {
         &self,
         arg0: &TransferFromArgs,
     ) -> CallResult<std::result::Result<candid::Nat, TransferFromError>> {
-        Ok(Call::unbounded_wait(self.0, "icrc2_transfer_from")
+        Ok(Call::bounded_wait(self.0, "icrc2_transfer_from")
             .with_args(&(arg0,))
             .await?
             .candid()?)
@@ -565,25 +565,25 @@ impl Service {
         &self,
         arg0: &GetArchivesArgs,
     ) -> CallResult<GetArchivesResult> {
-        Ok(Call::unbounded_wait(self.0, "icrc3_get_archives")
+        Ok(Call::bounded_wait(self.0, "icrc3_get_archives")
             .with_args(&(arg0,))
             .await?
             .candid()?)
     }
     pub async fn icrc3_get_blocks(&self, arg0: &GetBlocksArgs) -> CallResult<GetBlocksResult> {
-        Ok(Call::unbounded_wait(self.0, "icrc3_get_blocks")
+        Ok(Call::bounded_wait(self.0, "icrc3_get_blocks")
             .with_args(&(arg0,))
             .await?
             .candid()?)
     }
     pub async fn icrc3_get_tip_certificate(&self) -> CallResult<Option<DataCertificate>> {
-        Ok(Call::unbounded_wait(self.0, "icrc3_get_tip_certificate")
+        Ok(Call::bounded_wait(self.0, "icrc3_get_tip_certificate")
             .with_args(&())
             .await?
             .candid()?)
     }
     pub async fn icrc3_supported_block_types(&self) -> CallResult<Vec<SupportedBlockType>> {
-        Ok(Call::unbounded_wait(self.0, "icrc3_supported_block_types")
+        Ok(Call::bounded_wait(self.0, "icrc3_supported_block_types")
             .with_args(&())
             .await?
             .candid()?)
@@ -592,7 +592,7 @@ impl Service {
         &self,
         arg0: &WithdrawArgs,
     ) -> CallResult<std::result::Result<BlockIndex, WithdrawError>> {
-        Ok(Call::unbounded_wait(self.0, "withdraw")
+        Ok(Call::bounded_wait(self.0, "withdraw")
             .with_args(&(arg0,))
             .await?
             .candid()?)
@@ -601,7 +601,7 @@ impl Service {
         &self,
         arg0: &WithdrawFromArgs,
     ) -> CallResult<std::result::Result<BlockIndex, WithdrawFromError>> {
-        Ok(Call::unbounded_wait(self.0, "withdraw_from")
+        Ok(Call::bounded_wait(self.0, "withdraw_from")
             .with_args(&(arg0,))
             .await?
             .candid()?)

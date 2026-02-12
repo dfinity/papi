@@ -31,7 +31,7 @@ pub(crate) struct DepositResult {
 pub struct Service(pub Principal);
 impl Service {
     pub async fn deposit(&self, arg0: &DepositArg) -> Result<DepositResult> {
-        Ok(Call::unbounded_wait(self.0, "deposit")
+        Ok(Call::bounded_wait(self.0, "deposit")
             .with_arg(arg0)
             .await?
             .candid()?)

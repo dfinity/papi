@@ -49,8 +49,7 @@ lazy_static! {
             VendorPaymentConfig::CallerPaysIcrc2Cycles,
             VendorPaymentConfig::PatronPaysIcrc2Cycles,
         ],
-    };
-}
+});
 ```
 
 The API is protected like this:

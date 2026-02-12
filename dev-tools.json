@@ -30,7 +30,7 @@
   },
   "cargo-audit": {
     "method": "cargo-binstall",
-    "version": "0.13.1"
+    "version": "0.22.0"
   },
   "cargo-sort": {
     "method": "cargo-binstall",

@@ -41,10 +41,9 @@ Optionally, pre-payment is also supported. In this case, the `papi` library will
 
 This API requires payment in cycles, directly to the canister. The acceptable payment types are configured like this:
 
-```
-lazy_static! {
-    pub static ref PAYMENT_GUARD: PaymentGuard<3> = PaymentGuard {
-        supported: [
+```rust
+pub static PAYMENT_GUARD: LazyLock<PaymentGuard<3>> = LazyLock::new(|| PaymentGuard {
+     supported: [
             VendorPaymentConfig::AttachedCycles,
             VendorPaymentConfig::CallerPaysIcrc2Cycles,
             VendorPaymentConfig::PatronPaysIcrc2Cycles,

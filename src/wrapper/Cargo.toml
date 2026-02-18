@@ -9,3 +9,7 @@ crate-type = ["rlib", "cdylib"]
 [dependencies]
 candid = { workspace = true }
 ic-cdk = { workspace = true }
+
+[dev-dependencies]
+ic-cycles-ledger-client = { workspace = true }
+pocket-ic = { workspace = true }

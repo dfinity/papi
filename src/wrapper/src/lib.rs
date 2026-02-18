@@ -1,5 +1,4 @@
 use candid::Encode;
-use domain::types::*;
 use ic_cdk::export_candid;
 use ic_cdk::update;
 
@@ -9,6 +8,9 @@ pub mod payments;
 pub mod util;
 
 use crate::api::call::bridge_call;
+use crate::domain::types::Call0Args;
+use crate::domain::types::CallBlobArgs;
+use crate::domain::types::CallTextArgs;
 
 /// Proxies a call to a target method that takes **no arguments** (`()`), after charging a fee.
 ///
@@ -80,6 +82,7 @@ pub async fn call_blob(args: CallBlobArgs) -> Result<Vec<u8>, String> {
 /// # Errors
 /// This method is currently disabled due to a workspace dependency conflict with the Candid parser. Please use `call_blob` with pre-encoded arguments instead.
 #[update]
+#[allow(clippy::needless_pass_by_value)]
 pub fn call_text(args: CallTextArgs) -> Result<Vec<u8>, String> {
     let _ = args;
 

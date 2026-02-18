@@ -30,7 +30,7 @@ pub struct MethodKey {
 }
 
 /// Arguments for the `call0` function.
-#[derive(Debug, CandidType, Deserialize, Clone)]
+#[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub struct Call0Args {
     /// The principal of the canister to call.
     pub target: Principal,
@@ -45,7 +45,7 @@ pub struct Call0Args {
 }
 
 /// Arguments for the `call_blob` function.
-#[derive(Debug, CandidType, Deserialize, Clone)]
+#[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub struct CallBlobArgs {
     /// The principal of the canister to call.
     pub target: Principal,
@@ -62,7 +62,7 @@ pub struct CallBlobArgs {
 }
 
 /// Arguments for the `call_text` function.
-#[derive(Debug, CandidType, Deserialize, Clone)]
+#[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub struct CallTextArgs {
     /// The principal of the canister to call.
     pub target: Principal,

@@ -10,7 +10,7 @@ type PaymentError = variant {
     ledger : principal;
   };
   UnsupportedPaymentType;
-  InsufficientFunds : record { needed : nat64; available : nat64 };
+  InsufficientFunds : record { needed : nat; available : nat };
 };
 type RejectionCode = variant {
   NoError;
@@ -51,5 +51,8 @@ type WithdrawFromError = variant {
   InsufficientFunds : record { balance : nat };
 };
 service : {
-  call_with_attached_cycles : (record { principal; text; nat64 }) -> (Result);
+  // Calls an arbitrary method on an arbitrary canister with an arbitrary amount of cycles attached.
+  // 
+  // Note: This is for demonstration purposes only.  To avoid cycle theft, the API may be called by a controller only.
+  call_with_attached_cycles : (record { principal; text; nat }) -> (Result);
 }

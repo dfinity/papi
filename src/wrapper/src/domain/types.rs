@@ -5,6 +5,8 @@ use ic_papi_guard::guards::any::VendorPaymentConfig;
 use serde::Deserialize;
 use serde_bytes::ByteBuf;
 
+use crate::domain::errors::BridgeError;
+
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub enum FeeDenom {
     Cycles,
@@ -95,8 +97,7 @@ impl From<Call0Args> for BridgeCallArgs {
         Self {
             target: args.target,
             method: args.method,
-            args: Encode!(&()).expect("Encoding of () should never fail"),
-            // .map_err(|e| domain::errors::BridgeError::from(e).to_string())?;
+            args: Encode!(&()).unwrap(),
             fee_amount: args.fee_amount,
             payment: args.payment,
             cycles_to_forward: args.cycles_to_forward,

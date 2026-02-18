@@ -841,6 +841,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-papi-wrapper"
+version = "0.0.1"
+dependencies = [
+ "candid",
+ "ic-cdk",
+ "ic-papi-api",
+ "ic-papi-guard",
+ "serde",
+ "serde_bytes",
+]
+
+[[package]]
 name = "ic-stable-structures"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

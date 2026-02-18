@@ -1,5 +1,5 @@
 [workspace]
-members = ["src/api", "src/declarations/cycles_ledger", "src/example/app_backend", "src/example/paid_service", "src/example/paid_service_api", "src/guard", "src/papi"]
+members = ["src/api", "src/declarations/cycles_ledger", "src/example/app_backend", "src/example/paid_service", "src/example/paid_service_api", "src/guard", "src/papi", "src/wrapper"]
 resolver = "2"
 
 [workspace.package]

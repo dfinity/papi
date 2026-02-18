@@ -1,5 +1,6 @@
 use candid::Principal;
 use ic_cdk::api::call::{call_raw, call_raw128};
+use ic_cdk::call::Call;
 
 /// Forwards a raw candid call to the target canister, optionally attaching cycles.
 ///
@@ -11,13 +12,7 @@ pub async fn forward_raw(
     args: Vec<u8>,
     cycles: u128,
 ) -> Result<Vec<u8>, String> {
-    if cycles > 0 {
-        call_raw128(target, method, args, cycles)
-            .await
-            .map_err(|(code, msg)| format!("{code:?} {msg}"))
-    } else {
-        call_raw(target, method, args, 0)
-            .await
-            .map_err(|(code, msg)| format!("{code:?} {msg}"))
-    }
+   Call::bounded_wait(target, method, args, cycles)
+        .await
+        .map_err(|(code, msg)| format!("{code:?} {msg}"))
 }

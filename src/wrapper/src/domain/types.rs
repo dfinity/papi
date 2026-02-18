@@ -5,8 +5,6 @@ use ic_papi_guard::guards::any::VendorPaymentConfig;
 use serde::Deserialize;
 use serde_bytes::ByteBuf;
 
-use crate::domain::errors::BridgeError;
-
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub enum FeeDenom {
     Cycles,

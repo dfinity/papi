@@ -17,12 +17,16 @@ use crate::domain::types::BridgeCallArgs;
 use crate::payments::guard_config::PAYMENT_GUARD;
 use crate::util::cycles::forward_raw;
 
-fn map_guard_err<E: core::fmt::Debug>(e: E) -> String {
-    BridgeError::GuardError(format!("{e:?}")).to_string()
+fn map_guard_err<E: core::fmt::Display>(e: E) -> String {
+    BridgeError::GuardError(e.to_string()).to_string()
 }
 
 /// Internal helper to unify the bridge logic: charge fee -> forward call.
 pub async fn bridge_call(args: BridgeCallArgs) -> Result<Vec<u8>, String> {
+    if args.target == ic_cdk::api::canister_self() {
+        return Err("Self-calls are not allowed through the bridge.".to_string());
+    }
+
     // 1) Charge fee using the payment guard
     let p = args.payment.unwrap_or(PaymentType::AttachedCycles);
     PAYMENT_GUARD

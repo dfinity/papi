@@ -17,5 +17,5 @@ pub async fn forward_raw(
         .with_raw_args(&args)
         .await
         .map(Response::into_bytes)
-        .map_err(|e| format!("{e:?}"))
+        .map_err(|e| e.to_string())
 }

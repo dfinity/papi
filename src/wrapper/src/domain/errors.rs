@@ -3,7 +3,6 @@
 /// Kept small because the canister is stateless; pricing/governance are pushed to the caller.
 use std::fmt;
 
-/// Errors returned by the bridge canister.
 #[derive(Debug)]
 pub enum BridgeError {
     /// Candid encoding/decoding failed.

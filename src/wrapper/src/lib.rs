@@ -9,63 +9,25 @@ pub mod util;
 use crate::api::call::bridge_call;
 use crate::domain::types::{BridgeCallArgs, Call0Args, CallBlobArgs, CallTextArgs};
 
-/// Proxies a call to a target method that takes **no arguments** (`()`), after charging a fee.
-///
-/// # Arguments
-/// * `args` - A [`Call0Args`] struct containing:
-///     * `target`: The principal of the canister to call.
-///     * `method`: The name of the method to call.
-///     * `fee_amount`: The amount of fee to charge.
-///     * `payment`: Optional payment configuration (defaults to `AttachedCycles`).
-///     * `cycles_to_forward`: Optional cycles to forward to the target canister.
-///
-/// # Returns
-/// Raw Candid reply blob from the target (decode on the client).
+/// Proxies a call to a target method that takes **no arguments**.
 #[update]
 pub async fn call0(args: Call0Args) -> Result<Vec<u8>, String> {
     bridge_call(args.into()).await
 }
 
-/// Proxies a call using a **Candid-encoded argument blob**, after charging a fee.
-///
-/// Use this when your client already encoded args with `IDL.encode` (agent-js)
-/// or `candid::Encode!` (Rust).
-///
-/// # Arguments
-/// * `args` - A [`CallBlobArgs`] struct containing:
-///     * `target`: The principal of the canister to call.
-///     * `method`: The name of the method to call.
-///     * `args_blob`: The Candid-encoded arguments as a byte buffer.
-///     * `fee_amount`: The amount of fee to charge.
-///     * `payment`: Optional payment configuration (defaults to `AttachedCycles`).
-///     * `cycles_to_forward`: Optional cycles to forward to the target canister.
+/// Proxies a call using a **Candid-encoded argument blob**.
 #[update]
 pub async fn call_blob(args: CallBlobArgs) -> Result<Vec<u8>, String> {
     bridge_call(args.into()).await
 }
 
-/// Proxies a call using **Candid text** (e.g., `"(\"hello\", 42, opt null)"`), after charging a fee.
-///
-/// This is convenient when you want to pass args “like in a .did example” without
-/// writing encoding code on the client.
-///
-/// # Arguments
-/// * `args` - A [`CallTextArgs`] struct containing:
-///     * `target`: The principal of the canister to call.
-///     * `method`: The name of the method to call.
-///     * `args_text`: The Candid text representation of the arguments.
-///     * `fee_amount`: The amount of fee to charge.
-///     * `payment`: Optional payment configuration (defaults to `AttachedCycles`).
-///     * `cycles_to_forward`: Optional cycles to forward to the target canister.
-///
-/// # Errors
-/// This method is currently disabled due to a workspace dependency conflict with the Candid parser. Please use `call_blob` with pre-encoded arguments instead.
+/// Proxies a call using **Candid text** (currently disabled).
 #[update]
 #[allow(clippy::needless_pass_by_value)]
 pub fn call_text(args: CallTextArgs) -> Result<Vec<u8>, String> {
     let _args: BridgeCallArgs = args.into();
 
-    Err("call_text is currently disabled because of a workspace dependency conflict with the Candid parser. Please use call_blob instead.".to_string())
+    Err("call_text is currently disabled due to a workspace dependency conflict with the Candid parser. Please use call_blob instead.".to_string())
 }
 
 export_candid!();

@@ -129,3 +129,68 @@ impl From<CallTextArgs> for BridgeCallArgs {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use candid::{Encode, Principal};
+
+    #[test]
+    fn test_call0_to_bridge_args() {
+        let args = Call0Args {
+            target: Principal::anonymous(),
+            method: "test".to_string(),
+            fee_amount: 100,
+            payment: Some(PaymentType::AttachedCycles),
+            cycles_to_forward: Some(50),
+        };
+        let bridge_args: BridgeCallArgs = args.clone().into();
+        assert_eq!(bridge_args.target, args.target);
+        assert_eq!(bridge_args.method, args.method);
+        assert_eq!(bridge_args.fee_amount, args.fee_amount);
+        assert_eq!(bridge_args.payment, args.payment);
+        assert_eq!(bridge_args.cycles_to_forward, args.cycles_to_forward);
+        // call0 should encode unit ()
+        assert_eq!(bridge_args.args, Encode!(&()).unwrap());
+    }
+
+    #[test]
+    fn test_call_blob_to_bridge_args() {
+        let blob = vec![1, 2, 3];
+        let args = CallBlobArgs {
+            target: Principal::anonymous(),
+            method: "test_blob".to_string(),
+            args_blob: ByteBuf::from(blob.clone()),
+            fee_amount: 200,
+            payment: None,
+            cycles_to_forward: None,
+        };
+        let bridge_args: BridgeCallArgs = args.clone().into();
+        assert_eq!(bridge_args.target, args.target);
+        assert_eq!(bridge_args.method, args.method);
+        assert_eq!(bridge_args.fee_amount, 200);
+        assert_eq!(bridge_args.payment, None);
+        assert_eq!(bridge_args.cycles_to_forward, None);
+        assert_eq!(bridge_args.args, blob);
+    }
+
+    #[test]
+    fn test_call_text_to_bridge_args() {
+        let args = CallTextArgs {
+            target: Principal::anonymous(),
+            method: "test_text".to_string(),
+            args_text: "(record { x = 42 })".to_string(),
+            fee_amount: 300,
+            payment: None,
+            cycles_to_forward: None,
+        };
+        let bridge_args: BridgeCallArgs = args.clone().into();
+        assert_eq!(bridge_args.target, args.target);
+        assert_eq!(bridge_args.method, args.method);
+        assert_eq!(bridge_args.fee_amount, args.fee_amount);
+        assert_eq!(bridge_args.payment, args.payment);
+        assert_eq!(bridge_args.cycles_to_forward, args.cycles_to_forward);
+        // call_text currently does not use args_text, so args should be empty
+        assert_eq!(bridge_args.args, Vec::<u8>::new());
+    }
+}

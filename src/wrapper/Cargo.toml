@@ -7,4 +7,5 @@ edition = { workspace = true }
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
+candid = { workspace = true }
 ic-cdk = { workspace = true }

@@ -1,7 +1,9 @@
-
 /// Errors returned by the bridge canister.
 ///
 /// Kept small because the canister is stateless; pricing/governance are pushed to the caller.
+use std::fmt;
+
+/// Errors returned by the bridge canister.
 #[derive(Debug)]
 pub enum BridgeError {
     /// Candid encoding/decoding failed.
@@ -12,13 +14,18 @@ pub enum BridgeError {
     GuardError(String),
 }
 
-impl ToString for BridgeError {
-    fn to_string(&self) -> String {
-        use BridgeError::*;
+impl fmt::Display for BridgeError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Candid(e) => format!("Candid: {e}"),
-            TargetRejected(e) => format!("TargetRejected: {e}"),
-            GuardError(e) => format!("GuardError: {e}"),
+            BridgeError::Candid(e) => write!(f, "Candid error: {e}"),
+            BridgeError::TargetRejected(e) => write!(f, "Target canister rejected call: {e}"),
+            BridgeError::GuardError(e) => write!(f, "Payment guard error: {e}"),
         }
+    }
+}
+
+impl From<candid::Error> for BridgeError {
+    fn from(e: candid::Error) -> Self {
+        BridgeError::Candid(e.to_string())
     }
 }

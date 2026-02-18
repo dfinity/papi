@@ -4,8 +4,8 @@
 use std::sync::Arc;
 
 use candid::{self, decode_one, encode_args, encode_one, CandidType, Deserialize, Principal};
-use ic_cdk::api::call::CallResult;
-use pocket_ic::{PocketIc, WasmResult};
+use ic_cdk::call::{Call, CallResult};
+use pocket_ic::PocketIc;
 
 use super::pic_canister::{PicCanister, PicCanisterTrait};
 
@@ -335,7 +335,7 @@ pub enum Value {
     Nat64(u64),
     Blob(serde_bytes::ByteBuf),
     Text(String),
-    Array(Vec<Box<Value>>),
+    Array(Vec<Value>),
 }
 #[derive(CandidType, Deserialize, Debug)]
 pub struct GetBlocksResultBlocksItem {
@@ -447,95 +447,164 @@ impl Service {
     pub async fn create_canister(
         &self,
         arg0: &CreateCanisterArgs,
-    ) -> CallResult<(std::result::Result<CreateCanisterSuccess, CreateCanisterError>,)> {
-        ic_cdk::call(self.0, "create_canister", (arg0,)).await
+    ) -> CallResult<std::result::Result<CreateCanisterSuccess, CreateCanisterError>> {
+        Ok(Call::bounded_wait(self.0, "create_canister")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
     pub async fn create_canister_from(
         &self,
         arg0: &CreateCanisterFromArgs,
-    ) -> CallResult<(std::result::Result<CreateCanisterSuccess, CreateCanisterFromError>,)> {
-        ic_cdk::call(self.0, "create_canister_from", (arg0,)).await
+    ) -> CallResult<std::result::Result<CreateCanisterSuccess, CreateCanisterFromError>> {
+        Ok(Call::bounded_wait(self.0, "create_canister_from")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
-    pub async fn deposit(&self, arg0: &DepositArgs) -> CallResult<(DepositResult,)> {
-        ic_cdk::call(self.0, "deposit", (arg0,)).await
+    pub async fn deposit(&self, arg0: &DepositArgs) -> CallResult<DepositResult> {
+        Ok(Call::bounded_wait(self.0, "deposit")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
-    pub async fn http_request(&self, arg0: &HttpRequest) -> CallResult<(HttpResponse,)> {
-        ic_cdk::call(self.0, "http_request", (arg0,)).await
+    pub async fn http_request(&self, arg0: &HttpRequest) -> CallResult<HttpResponse> {
+        Ok(Call::bounded_wait(self.0, "http_request")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_1_balance_of(&self, arg0: &Account) -> CallResult<(candid::Nat,)> {
-        ic_cdk::call(self.0, "icrc1_balance_of", (arg0,)).await
+    pub async fn icrc1_balance_of(&self, arg0: &Account) -> CallResult<candid::Nat> {
+        Ok(Call::bounded_wait(self.0, "icrc1_balance_of")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_1_decimals(&self) -> CallResult<(u8,)> {
-        ic_cdk::call(self.0, "icrc1_decimals", ()).await
+    pub async fn icrc1_decimals(&self) -> CallResult<u8> {
+        Ok(Call::bounded_wait(self.0, "icrc1_decimals")
+            .with_args(&())
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_1_fee(&self) -> CallResult<(candid::Nat,)> {
-        ic_cdk::call(self.0, "icrc1_fee", ()).await
+    pub async fn icrc1_fee(&self) -> CallResult<candid::Nat> {
+        Ok(Call::bounded_wait(self.0, "icrc1_fee")
+            .with_args(&())
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_1_metadata(&self) -> CallResult<(Vec<(String, MetadataValue)>,)> {
-        ic_cdk::call(self.0, "icrc1_metadata", ()).await
+    pub async fn icrc1_metadata(&self) -> CallResult<Vec<(String, MetadataValue)>> {
+        Ok(Call::bounded_wait(self.0, "icrc1_metadata")
+            .with_args(&())
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_1_minting_account(&self) -> CallResult<(Option<Account>,)> {
-        ic_cdk::call(self.0, "icrc1_minting_account", ()).await
+    pub async fn icrc1_minting_account(&self) -> CallResult<Option<Account>> {
+        Ok(Call::bounded_wait(self.0, "icrc1_minting_account")
+            .with_args(&())
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_1_name(&self) -> CallResult<(String,)> {
-        ic_cdk::call(self.0, "icrc1_name", ()).await
+    pub async fn icrc1_name(&self) -> CallResult<String> {
+        Ok(Call::bounded_wait(self.0, "icrc1_name")
+            .with_args(&())
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_1_supported_standards(&self) -> CallResult<(Vec<SupportedStandard>,)> {
-        ic_cdk::call(self.0, "icrc1_supported_standards", ()).await
+    pub async fn icrc1_supported_standards(&self) -> CallResult<Vec<SupportedStandard>> {
+        Ok(Call::bounded_wait(self.0, "icrc1_supported_standards")
+            .with_args(&())
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_1_symbol(&self) -> CallResult<(String,)> {
-        ic_cdk::call(self.0, "icrc1_symbol", ()).await
+    pub async fn icrc1_symbol(&self) -> CallResult<String> {
+        Ok(Call::bounded_wait(self.0, "icrc1_symbol")
+            .with_args(&())
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_1_total_supply(&self) -> CallResult<(candid::Nat,)> {
-        ic_cdk::call(self.0, "icrc1_total_supply", ()).await
+    pub async fn icrc1_total_supply(&self) -> CallResult<candid::Nat> {
+        Ok(Call::bounded_wait(self.0, "icrc1_total_supply")
+            .with_args(&())
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_1_transfer(
+    pub async fn icrc1_transfer(
         &self,
         arg0: &TransferArgs,
-    ) -> CallResult<(std::result::Result<BlockIndex, TransferError>,)> {
-        ic_cdk::call(self.0, "icrc1_transfer", (arg0,)).await
+    ) -> CallResult<std::result::Result<BlockIndex, TransferError>> {
+        Ok(Call::bounded_wait(self.0, "icrc1_transfer")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_2_allowance(&self, arg0: &AllowanceArgs) -> CallResult<(Allowance,)> {
-        ic_cdk::call(self.0, "icrc2_allowance", (arg0,)).await
+    pub async fn icrc2_allowance(&self, arg0: &AllowanceArgs) -> CallResult<Allowance> {
+        Ok(Call::bounded_wait(self.0, "icrc2_allowance")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_2_approve(
+    pub async fn icrc2_approve(
         &self,
         arg0: &ApproveArgs,
-    ) -> CallResult<(std::result::Result<candid::Nat, ApproveError>,)> {
-        ic_cdk::call(self.0, "icrc2_approve", (arg0,)).await
+    ) -> CallResult<std::result::Result<candid::Nat, ApproveError>> {
+        Ok(Call::bounded_wait(self.0, "icrc2_approve")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_2_transfer_from(
+    pub async fn icrc2_transfer_from(
         &self,
         arg0: &TransferFromArgs,
-    ) -> CallResult<(std::result::Result<candid::Nat, TransferFromError>,)> {
-        ic_cdk::call(self.0, "icrc2_transfer_from", (arg0,)).await
+    ) -> CallResult<std::result::Result<candid::Nat, TransferFromError>> {
+        Ok(Call::bounded_wait(self.0, "icrc2_transfer_from")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_3_get_archives(
+    pub async fn icrc3_get_archives(
         &self,
         arg0: &GetArchivesArgs,
-    ) -> CallResult<(GetArchivesResult,)> {
-        ic_cdk::call(self.0, "icrc3_get_archives", (arg0,)).await
+    ) -> CallResult<GetArchivesResult> {
+        Ok(Call::bounded_wait(self.0, "icrc3_get_archives")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_3_get_blocks(&self, arg0: &GetBlocksArgs) -> CallResult<(GetBlocksResult,)> {
-        ic_cdk::call(self.0, "icrc3_get_blocks", (arg0,)).await
+    pub async fn icrc3_get_blocks(&self, arg0: &GetBlocksArgs) -> CallResult<GetBlocksResult> {
+        Ok(Call::bounded_wait(self.0, "icrc3_get_blocks")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_3_get_tip_certificate(&self) -> CallResult<(Option<DataCertificate>,)> {
-        ic_cdk::call(self.0, "icrc3_get_tip_certificate", ()).await
+    pub async fn icrc3_get_tip_certificate(&self) -> CallResult<Option<DataCertificate>> {
+        Ok(Call::bounded_wait(self.0, "icrc3_get_tip_certificate")
+            .with_args(&())
+            .await?
+            .candid()?)
     }
-    pub async fn icrc_3_supported_block_types(&self) -> CallResult<(Vec<SupportedBlockType>,)> {
-        ic_cdk::call(self.0, "icrc3_supported_block_types", ()).await
+    pub async fn icrc3_supported_block_types(&self) -> CallResult<Vec<SupportedBlockType>> {
+        Ok(Call::bounded_wait(self.0, "icrc3_supported_block_types")
+            .with_args(&())
+            .await?
+            .candid()?)
     }
     pub async fn withdraw(
         &self,
         arg0: &WithdrawArgs,
-    ) -> CallResult<(std::result::Result<BlockIndex, WithdrawError>,)> {
-        ic_cdk::call(self.0, "withdraw", (arg0,)).await
+    ) -> CallResult<std::result::Result<BlockIndex, WithdrawError>> {
+        Ok(Call::bounded_wait(self.0, "withdraw")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
     pub async fn withdraw_from(
         &self,
         arg0: &WithdrawFromArgs,
-    ) -> CallResult<(std::result::Result<BlockIndex, WithdrawFromError>,)> {
-        ic_cdk::call(self.0, "withdraw_from", (arg0,)).await
+    ) -> CallResult<std::result::Result<BlockIndex, WithdrawFromError>> {
+        Ok(Call::bounded_wait(self.0, "withdraw_from")
+            .with_args(&(arg0,))
+            .await?
+            .candid()?)
     }
 }
 
@@ -551,7 +620,7 @@ impl PicCanisterTrait for CyclesLedgerPic {
     }
     /// The ID of this canister.
     fn canister_id(&self) -> Principal {
-        self.canister_id.clone()
+        self.canister_id
     }
 }
 

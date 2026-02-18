@@ -1,5 +1,5 @@
 use candid::{decode_one, encode_one, CandidType, Deserialize, Principal};
-use pocket_ic::{PocketIc, WasmResult};
+use pocket_ic::PocketIc;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -24,15 +24,10 @@ pub trait PicCanisterTrait {
             .map_err(|e| {
                 format!(
                     "Update call error. RejectionCode: {:?}, Error: {}",
-                    e.code, e.description
+                    e.reject_code, e.reject_message
                 )
             })
-            .and_then(|reply| match reply {
-                WasmResult::Reply(reply) => {
-                    decode_one(&reply).map_err(|e| format!("Decoding failed: {e}"))
-                }
-                WasmResult::Reject(error) => Err(error),
-            })
+            .and_then(|bytes| decode_one(&bytes).map_err(|e| format!("Decoding failed: {e}")))
     }
 
     /// Makes a query call to the canister.
@@ -46,15 +41,10 @@ pub trait PicCanisterTrait {
             .map_err(|e| {
                 format!(
                     "Query call error. RejectionCode: {:?}, Error: {}",
-                    e.code, e.description
+                    e.reject_code, e.reject_message
                 )
             })
-            .and_then(|reply| match reply {
-                WasmResult::Reply(reply) => {
-                    decode_one(&reply).map_err(|_| "Decoding failed".to_string())
-                }
-                WasmResult::Reject(error) => Err(error),
-            })
+            .and_then(|bytes| decode_one(&bytes).map_err(|_| "Decoding failed".to_string()))
     }
     fn workspace_dir() -> PathBuf {
         let output = std::process::Command::new(env!("CARGO"))
@@ -103,7 +93,7 @@ impl PicCanisterTrait for PicCanister {
     }
     /// The ID of this canister.
     fn canister_id(&self) -> Principal {
-        self.canister_id.clone()
+        self.canister_id
     }
 }
 
@@ -220,10 +210,8 @@ impl PicCanisterBuilder {
 impl PicCanisterBuilder {
     /// Reads the backend Wasm bytes from the configured path.
     fn wasm_bytes(&self) -> Vec<u8> {
-        fs::read(self.wasm_path.clone()).expect(&format!(
-            "Could not find the backend wasm: {}",
-            self.wasm_path
-        ))
+        fs::read(self.wasm_path.clone())
+            .unwrap_or_else(|_| panic!("Could not find the backend wasm: {}", self.wasm_path))
     }
 }
 // Builder
@@ -256,7 +244,7 @@ impl PicCanisterBuilder {
     fn set_controllers(&mut self, pic: &PocketIc) {
         if let Some(controllers) = self.controllers.clone() {
             let canister_id = self.canister_id(pic);
-            pic.set_controllers(canister_id.clone(), None, controllers)
+            pic.set_controllers(canister_id, None, controllers)
                 .expect("Test setup error: Failed to set controllers");
         }
     }

@@ -24,3 +24,8 @@ updates:
     commit-message:
       prefix: "chore(npm deps): "
       prefix-development: "chore(npm deps-dev): "
+    groups:
+      ic-identity:
+        patterns:
+          - "@dfinity/identity"
+          - "@dfinity/auth-client"

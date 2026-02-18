@@ -30,7 +30,7 @@
   },
   "cargo-audit": {
     "method": "cargo-binstall",
-    "version": "0.13.1"
+    "version": "0.22.0"
   },
   "cargo-sort": {
     "method": "cargo-binstall",
@@ -43,5 +43,14 @@
   "cargo-tarpaulin": {
     "method": "cargo-binstall",
     "version": "0.26.1"
+  },
+  "didc": {
+    "method": "curl",
+    "version": "0.5.1",
+    "url": "https://github.com/dfinity/candid/releases/download/2025-08-04/didc-linux64"
+  },
+  "zizmor": {
+    "method": "cargo-binstall",
+    "version": "1.5.2"
   }
 }

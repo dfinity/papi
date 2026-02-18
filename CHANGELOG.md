@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.1] - 2025-07-03
+## [0.1.1] - 2025-01-27
+
+### Changed
+
+- Promoted 0.1.1-alpha.1 to stable release 0.1.1
+- Removed alpha pre-release suffix
+- Addressed zizmor linter warnings (excessive permissions and anonymous definitions)
+
+### Updated
+
+- Updated candid dependency from 0.10.13 to 0.10.19
+- Updated ic-cdk dependency from 0.17.1 to 0.17.2
+- Updated ic-stable-structures dependency from 0.6.7 to 0.6.9
 
 ### Added
 

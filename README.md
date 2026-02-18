@@ -21,7 +21,7 @@ The following cryptocurrencies are currently supported:
 | ICP Cycles | XDR    | The native utility token of the Internet Computer, tied in price to the IMF XDR basket of currencies. |
 | ICP        | ICP    | The governance token of the Internet Computer.                                                        |
 
-And many more. All tokens that support the ICRC-2 standard can be used.  We are considering how best to add other currencies such as native Eth; ck* tokens provide fast and inexpensive settlement but there will be use cases where native tokens may be wanted.
+And many more. All tokens that support the ICRC-2 standard can be used. We are considering how best to add other currencies such as native Eth; ck\* tokens provide fast and inexpensive settlement but there will be use cases where native tokens may be wanted.
 
 ### Chain keys: ckBTC, ckETH, ckUSDC, ...
 
@@ -29,7 +29,7 @@ APIs require high speed, low latency and low transaction fees. Otherwise the use
 
 ### Technical Integration
 
-You will need to define a default currency for payment and annotate API methods with how much you would like to charge for each call.  The payment method can be either passed explicitly by the caller or you can specify one fixed payment method in your canister.  Payment is currently supported by attached cycles or ICRC2 transfer; more methods are likely to be added in future. For ICRC-2, the customer will have to approve the payment in advance. In the case of payment with ICP cycles, payment is attached directly to the API call.
+You will need to define a default currency for payment and annotate API methods with how much you would like to charge for each call. The payment method can be either passed explicitly by the caller or you can specify one fixed payment method in your canister. Payment is currently supported by attached cycles or ICRC2 transfer; more methods are likely to be added in future. For ICRC-2, the customer will have to approve the payment in advance. In the case of payment with ICP cycles, payment is attached directly to the API call.
 
 <!-- NOT IMPLEMENTED YET
 This flow can be customized by providing explicit payment parameters. For every API method you have, another will be added with the `paid_` prefix and the payment parameter. For example, if you have an API method `is_prime(x: u32) -> bool`, a method will be added `paid_is_prime(payment_details, u32) -> Result<bool, PaymentError>`. The default flow has the advantage that you do not need to alter your API in any way. With this explicit payment mechanism you have more options, such as support for multiple currencies and payment by accounts other than the caller.
@@ -39,20 +39,20 @@ Optionally, pre-payment is also supported. In this case, the `papi` library will
 
 #### Examples
 
-This API requires payment in cycles, directly to the canister.  The acceptable payment types are configured like this:
-```
-lazy_static! {
-    pub static ref PAYMENT_GUARD: PaymentGuard<3> = PaymentGuard {
-        supported: [
+This API requires payment in cycles, directly to the canister. The acceptable payment types are configured like this:
+
+```rust
+pub static PAYMENT_GUARD: LazyLock<PaymentGuard<3>> = LazyLock::new(|| PaymentGuard {
+     supported: [
             VendorPaymentConfig::AttachedCycles,
             VendorPaymentConfig::CallerPaysIcrc2Cycles,
             VendorPaymentConfig::PatronPaysIcrc2Cycles,
         ],
-    };
-}
+});
 ```
 
 The API is protected like this:
+
 ```
 #[update]
 is_prime(x: u32, payment: Option<PaymentType>) -> Result<bool, PaymentError> {
@@ -124,4 +124,4 @@ Your canister will retrieve the pre-approved payment before proceeding with the 
 
 This repository is released under the [Apache2 license](./LICENSE).
 
-Unfortunately we are unable to accept contributions yet.  When we do, we will provide a contribution guide.
+Unfortunately we are unable to accept contributions yet. When we do, we will provide a contribution guide.

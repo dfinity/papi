@@ -7,10 +7,14 @@ on:
       - reopened
       - synchronize
       - labeled
+permissions:
+  contents: read
 jobs:
   pr:
-    name: 'PR'
+    name: 'pr'
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     env:
       TITLE: ${{ github.event.pull_request.title }}
     steps:
@@ -27,11 +31,18 @@ jobs:
               exit 1
           fi
   pr-pass:
+    name: 'pr-pass'
     needs: ["pr"]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/needs_success
+      - name: Checkout repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Check that all required steps have succeeded
+        uses: ./.github/actions/needs_success
         with:
           needs: '${{ toJson(needs) }}'

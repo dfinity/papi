@@ -5,18 +5,22 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+permissions:
+  contents: read
 defaults:
   run:
     shell: bash -euxlo pipefail {0}
 jobs:
   format:
-    name: 'Format'
+    name: 'format'
     runs-on: ubuntu-24.04
     env:
       TITLE: ${{ github.event.pull_request.title }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Install tools
         run: ./scripts/setup cargo-binstall shfmt yq cargo-sort
       - name: Install node dependencies
@@ -25,20 +29,23 @@ jobs:
         run: ./scripts/fmt
       - name: Check formatted
         run: |
-          test -z "$(git status --porcelain | grep -v --file .relaxedfmt)" || {
-                  echo "FIX: Please run ./scripts/fmt"
-                  git diff
-                  exit 1
+          test -z "$(git status --porcelain)" || {
+            echo "FIX: Please run ./scripts/fmt"
+            git diff
+            exit 1
           }
   rust-tests:
+    name: 'rust-tests'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-24.04]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Have relevant files changed?
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: changes
         with:
           filters: |
@@ -47,7 +54,7 @@ jobs:
                - '**/*.rs'
                - '**/Cargo.*'
                - 'rust-toolchain.toml'
-      - uses: actions/cache@v4
+      - uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
         if: steps.changes.outputs.test == 'true'
         with:
           path: |
@@ -63,20 +70,23 @@ jobs:
         shell: bash
         run: scripts/test-rs
   installation:
+    name: 'installation'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-24.04]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Have relevant files changed?
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: changes
         with:
           filters: |
             test:
                - '!**/*.md'
-      - uses: actions/cache@v4
+      - uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
         if: steps.changes.outputs.test == 'true'
         with:
           path: |
@@ -85,19 +95,48 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-1
       - name: Install dfx
-        uses: dfinity/setup-dfx@main
+        uses: dfinity/setup-dfx@e50c04f104ee4285ec010f10609483cf41e4d365 # main
       - name: Start dfx
         run: dfx start --clean --background
       - name: Deploy all canisters
         run: dfx deploy
       - name: Stop dfx
         run: dfx stop
+  lint-github-actions:
+    name: 'lint-github-actions'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: change
+        with:
+          filters: |
+            actions:
+              - '.github/**/*'
+              - '**/*.yml'
+              - '**/*.yaml'
+      - name: Install zizmor
+        if: steps.change.outputs.actions == 'true'
+        run: ./scripts/setup cargo-binstall zizmor
+      - name: Lint GitHub workflows
+        if: steps.change.outputs.actions == 'true'
+        run: scripts/lint-github
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   check-pass:
-    needs: ["format", "rust-tests", "installation"]
+    name: 'check-pass'
+    needs: ["format", "rust-tests", "installation", "lint-github-actions"]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/needs_success
         with:
           needs: '${{ toJson(needs) }}'

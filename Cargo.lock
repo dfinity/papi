@@ -879,6 +879,8 @@ version = "0.0.1"
 dependencies = [
  "candid",
  "ic-cdk",
+ "ic-papi-api",
+ "ic-papi-guard",
 ]
 
 [[package]]

@@ -1,14 +1,3 @@
-//! Public, stateless API for payment-wrapped proxy calls.
-//!
-//! You choose *how* to pass arguments:
-//!  - `call0`   : target takes no args → we send `()`
-//!  - `call_blob`: you provide a Candid-encoded arg blob
-//!  - `call_text`: you provide Candid text like `("(42, \"hi\")")`
-//!
-//! In all cases you also pass:
-//!  - `fee_amount` (u128, in the unit implied by your `PaymentType` variant)
-//!  - `payment`   (which variant determines cycles vs token, patron vs caller)
-//!  - optional `cycles_to_forward` (for targets that expect cycles)
 
 use ic_papi_api::PaymentType;
 

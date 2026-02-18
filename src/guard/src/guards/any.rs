@@ -20,7 +20,7 @@ pub struct PaymentGuard<const CAP: usize> {
 }
 
 /// Vendor payment configuration, including details that may not necessarily be shared with the customer.
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, CandidType, Deserialize)]
 pub enum VendorPaymentConfig {
     /// Cycles are received by the vendor canister.
     AttachedCycles,

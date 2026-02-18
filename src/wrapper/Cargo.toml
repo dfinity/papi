@@ -1,5 +1,5 @@
 [package]
-name = "ic-papi-wrapper"
+name = "ic_papi_wrapper"
 version = "0.0.1"
 edition = { workspace = true }
 

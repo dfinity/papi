@@ -1,0 +1,11 @@
+[package]
+name = "ic_papi_wrapper"
+version = "0.0.1"
+edition = { workspace = true }
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
+candid = { workspace = true }
+ic-cdk = { workspace = true }

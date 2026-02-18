@@ -1,4 +1,3 @@
-use candid::Encode;
 use ic_cdk::export_candid;
 use ic_cdk::update;
 
@@ -8,9 +7,7 @@ pub mod payments;
 pub mod util;
 
 use crate::api::call::bridge_call;
-use crate::domain::types::Call0Args;
-use crate::domain::types::CallBlobArgs;
-use crate::domain::types::CallTextArgs;
+use crate::domain::types::{BridgeCallArgs, Call0Args, CallBlobArgs, CallTextArgs};
 
 /// Proxies a call to a target method that takes **no arguments** (`()`), after charging a fee.
 ///
@@ -26,17 +23,7 @@ use crate::domain::types::CallTextArgs;
 /// Raw Candid reply blob from the target (decode on the client).
 #[update]
 pub async fn call0(args: Call0Args) -> Result<Vec<u8>, String> {
-    let call_args = Encode!().map_err(|e| domain::errors::BridgeError::from(e).to_string())?;
-
-    bridge_call(
-        args.target,
-        args.method,
-        call_args,
-        args.fee_amount,
-        args.payment,
-        args.cycles_to_forward,
-    )
-    .await
+    bridge_call(args.into()).await
 }
 
 /// Proxies a call using a **Candid-encoded argument blob**, after charging a fee.
@@ -54,15 +41,7 @@ pub async fn call0(args: Call0Args) -> Result<Vec<u8>, String> {
 ///     * `cycles_to_forward`: Optional cycles to forward to the target canister.
 #[update]
 pub async fn call_blob(args: CallBlobArgs) -> Result<Vec<u8>, String> {
-    bridge_call(
-        args.target,
-        args.method,
-        args.args_blob.into_vec(),
-        args.fee_amount,
-        args.payment,
-        args.cycles_to_forward,
-    )
-    .await
+    bridge_call(args.into()).await
 }
 
 /// Proxies a call using **Candid text** (e.g., `"(\"hello\", 42, opt null)"`), after charging a fee.
@@ -84,7 +63,7 @@ pub async fn call_blob(args: CallBlobArgs) -> Result<Vec<u8>, String> {
 #[update]
 #[allow(clippy::needless_pass_by_value)]
 pub fn call_text(args: CallTextArgs) -> Result<Vec<u8>, String> {
-    let _ = args;
+    let _args: BridgeCallArgs = args.into();
 
     Err("call_text is currently disabled because of a workspace dependency conflict with the Candid parser. Please use call_blob instead.".to_string())
 }

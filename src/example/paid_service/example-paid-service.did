@@ -14,7 +14,7 @@ type PaymentError = variant {
     ledger : principal;
   };
   UnsupportedPaymentType;
-  InsufficientFunds : record { needed : nat64; available : nat64 };
+  InsufficientFunds : record { needed : nat; available : nat };
 };
 type PaymentType = variant {
   PatronPaysIcrc2Tokens : PatronPaysIcrc2Tokens;
@@ -62,9 +62,15 @@ type WithdrawFromError = variant {
   InsufficientFunds : record { balance : nat };
 };
 service : (opt InitArgs) -> {
+  // An API method that requires 1 billion cycles using an ICRC-2 approve with default parameters.
   caller_pays_1b_icrc2_cycles : () -> (Result);
+  // An API method that requires 1 billion tokens (in this case cycles) using an ICRC-2 approve with default parameters.
+  // 
+  // The tokens will be transferred to the vendor's main account on the ledger.
   caller_pays_1b_icrc2_tokens : () -> (Result);
+  // An API method that requires cycles to be attached directly to the call.
   cost_1000_attached_cycles : () -> (Result);
+  // An API method that requires 1 billion cycles, paid in whatever way the client chooses.
   cost_1b : (PaymentType) -> (Result);
   free : () -> (text);
 }

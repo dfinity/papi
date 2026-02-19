@@ -880,9 +880,9 @@ dependencies = [
  "candid",
  "ic-cdk",
  "ic-cycles-ledger-client",
- "pocket-ic",
  "ic-papi-api",
  "ic-papi-guard",
+ "pocket-ic",
 ]
 
 [[package]]

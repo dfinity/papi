@@ -1,4 +1,3 @@
-
 use ic_papi_api::PaymentType;
 
 use crate::domain::errors::BridgeError;

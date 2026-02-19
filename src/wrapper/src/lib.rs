@@ -30,4 +30,6 @@ pub fn call_text(args: CallTextArgs) -> Result<Vec<u8>, String> {
     Err("call_text is currently disabled due to a workspace dependency conflict with the Candid parser. Please use call_blob instead.".to_string())
 }
 
+pub mod payments;
+
 export_candid!();

@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 
 /// Return the ICRC-2 ledger principal used when the *payment type* is token-based.
 ///
-/// Replace this with your real ledger principal.
+/// Replace this with the real ledger principal.
 fn payment_ledger() -> Principal {
     Principal::from_text("aaaaa-aa").unwrap() // TODO: set real ledger
 }

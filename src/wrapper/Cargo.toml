@@ -9,3 +9,5 @@ crate-type = ["rlib", "cdylib"]
 [dependencies]
 candid = { workspace = true }
 ic-cdk = { workspace = true }
+ic-papi-api = { workspace = true }
+ic-papi-guard = { workspace = true }

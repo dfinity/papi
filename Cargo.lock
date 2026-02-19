@@ -879,8 +879,10 @@ version = "0.0.1"
 dependencies = [
  "candid",
  "ic-cdk",
+ "ic-cycles-ledger-client",
  "ic-papi-api",
  "ic-papi-guard",
+ "pocket-ic",
 ]
 
 [[package]]

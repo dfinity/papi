@@ -11,3 +11,7 @@ candid = { workspace = true }
 ic-cdk = { workspace = true }
 ic-papi-api = { workspace = true }
 ic-papi-guard = { workspace = true }
+
+[dev-dependencies]
+ic-cycles-ledger-client = { workspace = true }
+pocket-ic = { workspace = true }

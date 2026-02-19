@@ -883,6 +883,8 @@ dependencies = [
  "ic-papi-api",
  "ic-papi-guard",
  "pocket-ic",
+ "serde",
+ "serde_bytes",
 ]
 
 [[package]]

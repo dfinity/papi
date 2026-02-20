@@ -18,7 +18,8 @@ function generate_did() {
   echo "Deriving candid file from Rust for $canister"
   #local manifest_path="$(cargo_manifest_path "$canister")"
   #local candid_file="${manifest_path%Cargo.toml}$canister.did"
-  local candid_file="$(did_file_location_from_dfx_json "$canister")"
+  local candid_file
+  candid_file="$(did_file_location_from_dfx_json "$canister")"
 
   test -e "target/wasm32-unknown-unknown/release/$canister.wasm" ||
     cargo build -p "$canister" \
@@ -32,6 +33,6 @@ function generate_did() {
 
 CANISTERS=(example_app_backend example_paid_service)
 
-for canister in ${CANISTERS[@]}; do
+for canister in "${CANISTERS[@]}"; do
   generate_did "$canister"
 done

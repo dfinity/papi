@@ -841,6 +841,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-papi-wrapper"
+version = "0.0.1"
+dependencies = [
+ "candid",
+ "ic-cdk",
+ "ic-cycles-ledger-client",
+ "ic-papi-api",
+ "ic-papi-guard",
+ "pocket-ic",
+ "serde",
+ "serde_bytes",
+]
+
+[[package]]
 name = "ic-stable-structures"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -872,20 +886,6 @@ name = "ic0"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1499d08fd5be8f790d477e1865d63bab6a8d748300e141270c4296e6d5fdd6bc"
-
-[[package]]
-name = "ic_papi_wrapper"
-version = "0.0.1"
-dependencies = [
- "candid",
- "ic-cdk",
- "ic-cycles-ledger-client",
- "ic-papi-api",
- "ic-papi-guard",
- "pocket-ic",
- "serde",
- "serde_bytes",
-]
 
 [[package]]
 name = "ic_principal"

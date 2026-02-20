@@ -1,6 +1,11 @@
 {
   "dfx": "0.29.1",
   "canisters": {
+    "ic_papi_wrapper": {
+      "candid": "src/wrapper/ic_papi_wrapper.did",
+      "package": "ic-papi-wrapper",
+      "type": "rust"
+    },
     "example_paid_service": {
       "candid": "src/example/paid_service/example-paid-service.did",
       "package": "example_paid_service",

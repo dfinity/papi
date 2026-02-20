@@ -31,7 +31,7 @@ function generate_did() {
   echo "Written: $candid_file"
 }
 
-CANISTERS=(example_app_backend example_paid_service)
+CANISTERS=(ic_papi_wrapper example_app_backend example_paid_service)
 
 for canister in "${CANISTERS[@]}"; do
   generate_did "$canister"

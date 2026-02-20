@@ -1,11 +1,6 @@
 {
   "dfx": "0.29.1",
   "canisters": {
-    "wrapper": {
-      "candid": "src/wrapper/ic_papi_wrapper.did",
-      "package": "ic-papi-wrapper",
-      "type": "rust"
-    },
     "example_paid_service": {
       "candid": "src/example/paid_service/example-paid-service.did",
       "package": "example_paid_service",
@@ -17,6 +12,11 @@
     "example_app_backend": {
       "candid": "src/example/app_backend/example_app_backend.did",
       "package": "example_app_backend",
+      "type": "rust"
+    },
+    "wrapper": {
+      "candid": "src/wrapper/ic_papi_wrapper.did",
+      "package": "ic-papi-wrapper",
       "type": "rust"
     },
     "cycles_ledger": {
@@ -47,7 +47,7 @@
     }
   },
   "output_env_file": ".env",
- "version": 1,
+  "version": 1,
   "networks": {
     "staging": {
       "providers": ["https://icp0.io"],

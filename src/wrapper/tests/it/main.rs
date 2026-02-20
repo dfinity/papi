@@ -1,3 +1,4 @@
+mod bridge_tests;
 mod util;
 
 #[test]

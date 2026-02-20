@@ -10,6 +10,7 @@ fn map_guard_err<E: core::fmt::Display>(e: E) -> String {
 }
 
 /// Internal helper to unify the bridge logic: charge fee -> forward call.
+// TODO: The caller may have to provide more type information than they are used to. Normally dfx will use the target canister's candid file to convert to the correct types; without that information it will guess more simply and won't always get this conversion right.
 pub async fn bridge_call(args: BridgeCallArgs) -> Result<Vec<u8>, String> {
     if args.target == ic_cdk::api::canister_self() {
         return Err("Self-calls are not allowed through the bridge.".to_string());

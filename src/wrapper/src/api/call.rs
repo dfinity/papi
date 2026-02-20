@@ -5,8 +5,8 @@ use crate::domain::types::BridgeCallArgs;
 use crate::payments::guard_config::PAYMENT_GUARD;
 use crate::util::cycles::forward_raw;
 
-fn map_guard_err<E: core::fmt::Display>(e: E) -> String {
-    BridgeError::GuardError(e.to_string()).to_string()
+fn map_guard_err<E: core::fmt::Debug>(e: E) -> String {
+    BridgeError::GuardError(format!("{e:?}")).to_string()
 }
 
 /// Internal helper to unify the bridge logic: charge fee -> forward call.

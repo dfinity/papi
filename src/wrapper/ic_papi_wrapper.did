@@ -1,0 +1,42 @@
+type Account = record { owner : principal; subaccount : opt blob };
+type Call0Args = record {
+  method : text;
+  cycles_to_forward : opt nat;
+  target : principal;
+  fee_amount : nat;
+  payment : opt PaymentType;
+};
+type CallBlobArgs = record {
+  method : text;
+  args_blob : blob;
+  cycles_to_forward : opt nat;
+  target : principal;
+  fee_amount : nat;
+  payment : opt PaymentType;
+};
+type CallTextArgs = record {
+  method : text;
+  args_text : text;
+  cycles_to_forward : opt nat;
+  target : principal;
+  fee_amount : nat;
+  payment : opt PaymentType;
+};
+type CallerPaysIcrc2Tokens = record { ledger : principal };
+type PatronPaysIcrc2Tokens = record { ledger : principal; patron : Account };
+type PaymentType = variant {
+  PatronPaysIcrc2Tokens : PatronPaysIcrc2Tokens;
+  AttachedCycles;
+  CallerPaysIcrc2Cycles;
+  CallerPaysIcrc2Tokens : CallerPaysIcrc2Tokens;
+  PatronPaysIcrc2Cycles : Account;
+};
+type Result = variant { Ok : blob; Err : text };
+service : {
+  // Proxies a call to a target method that takes **no arguments**.
+  call0 : (Call0Args) -> (Result);
+  // Proxies a call using a **Candid-encoded argument blob**.
+  call_blob : (CallBlobArgs) -> (Result);
+  // Proxies a call using **Candid text** (currently disabled).
+  call_text : (CallTextArgs) -> (Result);
+}

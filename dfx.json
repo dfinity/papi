@@ -14,6 +14,11 @@
       "package": "example_app_backend",
       "type": "rust"
     },
+    "wrapper": {
+      "candid": "src/wrapper/ic_papi_wrapper.did",
+      "package": "ic-papi-wrapper",
+      "type": "rust"
+    },
     "cycles_ledger": {
       "type": "custom",
       "candid": "https://github.com/dfinity/cycles-ledger/releases/download/cycles-ledger-v1.0.1/cycles-ledger.did",
@@ -42,5 +47,15 @@
     }
   },
   "output_env_file": ".env",
-  "version": 1
+  "version": 1,
+  "networks": {
+    "staging": {
+      "providers": ["https://icp0.io"],
+      "type": "persistent"
+    },
+    "local": {
+      "bind": "127.0.0.1:4943",
+      "type": "ephemeral"
+    }
+  }
 }

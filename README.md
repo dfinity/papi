@@ -120,6 +120,134 @@ dfx canister call "$MATH_CANISTER_ID" paid_is_prime '
 
 Your canister will retrieve the pre-approved payment before proceeding with the API call.
 
+## The Wrapper Canister
+
+### What it is
+
+The **wrapper** is a standalone ICP canister that adds payment enforcement to **any existing canister** — with zero changes to that canister's code. Instead of modifying an API canister to integrate `papi` directly, you deploy the wrapper in front of it. Callers send their requests to the wrapper, which charges the fee and then proxies the call through to the real destination.
+
+This makes `papi` accessible even for canisters you do not own, for third-party APIs, or for teams who prefer to keep business logic and payment logic completely separate.
+
+### How it works
+
+The wrapper exposes a small set of generic proxy methods:
+
+| Method      | Description                                          |
+| ----------- | ---------------------------------------------------- |
+| `call0`     | Proxy a call that takes **no arguments**             |
+| `call_blob` | Proxy a call with a **Candid-encoded argument blob** |
+
+Every proxy method follows the same two-step internal logic:
+
+1. **Charge the fee** – the payment guard deducts the requested amount from the caller (or from a designated payer) using any supported payment type (attached cycles, ICRC-2 approve, patron pays, …).
+2. **Forward the call** – once the fee is settled, the wrapper performs a raw inter-canister call to the target canister and method, passing the arguments and any optional cycles through transparently.
+
+If the fee deduction fails the call is rejected immediately and the target canister is never reached. Self-calls (calling the wrapper itself) are blocked.
+
+### Flow diagram
+
+```mermaid
+sequenceDiagram
+    participant Caller
+    participant Payer
+    participant Wrapper as Wrapper Canister (papi)
+    participant Ledger as Token Ledger (ICRC-2)
+    participant Target as Destination Canister
+
+    Note over Payer,Ledger: Optional – only needed for patron-pays or ICRC-2 flows
+    Payer->>Ledger: icrc2_approve(spender=Wrapper, amount=fee)
+
+    Caller->>Wrapper: call_blob / call0(target, method, args, fee, payment?)
+    activate Wrapper
+    Wrapper->>Ledger: icrc2_transfer_from (or deduct attached cycles)
+    Ledger-->>Wrapper: ok
+    Wrapper->>Target: raw canister call (method, args)
+    Target-->>Wrapper: response bytes
+    deactivate Wrapper
+    Wrapper-->>Caller: Result<response, error>
+```
+
+> **Payer ≠ Caller** — in the simplest case both roles are fulfilled by the same identity. When using `PatronPaysIcrc2Cycles` the payer pre-approves a budget on behalf of the caller, so the caller never has to hold or manage funds directly.
+
+### Usage
+
+#### 1. Deploy or locate the wrapper canister
+
+You can deploy the wrapper yourself from `src/wrapper`, or use the shared instance already published to the IC mainnet (see `canister_ids.json`).
+
+#### 2. Call a payable endpoint
+
+**Paying with attached cycles (simplest):**
+
+```bash
+dfx canister call "$WRAPPER_ID" call0 \
+  '(record {
+    target         = principal "'$TARGET_CANISTER_ID'";
+    method         = "my_method";
+    fee_amount     = 1_000_000 : nat;
+    payment        = null;          # defaults to AttachedCycles
+    cycles_to_forward = null;
+  })' \
+  --with-cycles 1000000
+```
+
+**Paying with an ICRC-2 token (e.g. ckUSDC) — caller pays:**
+
+```bash
+# 1. Approve the wrapper to spend from your account
+dfx canister call $LEDGER icrc2_approve '(record {
+  amount  = 5_000_000;
+  spender = record { owner = principal "'$WRAPPER_ID'" };
+})'
+
+# 2. Call through the wrapper
+dfx canister call "$WRAPPER_ID" call_blob '(record {
+  target        = principal "'$TARGET_CANISTER_ID'";
+  method        = "store_data";
+  args_blob     = blob "\44\49\44\4c\00\00";
+  fee_amount    = 5_000_000 : nat;
+  payment       = opt variant { CallerPaysIcrc2Cycles };
+  cycles_to_forward = null;
+})'
+```
+
+**Patron pays on behalf of the caller:**
+
+```bash
+# Payer approves a per-caller budget
+dfx canister call $LEDGER icrc2_approve '(record {
+  amount           = 10_000_000;
+  from_subaccount  = opt blob "'$CALLER_SUBACCOUNT'";
+  spender          = record { owner = principal "'$WRAPPER_ID'" };
+})'
+
+# Caller references the payer when calling through the wrapper
+dfx canister call "$WRAPPER_ID" call0 '(record {
+  target        = principal "'$TARGET_CANISTER_ID'";
+  method        = "my_method";
+  fee_amount    = 1_000_000 : nat;
+  payment       = opt variant {
+    PatronPaysIcrc2Cycles = record { owner = principal "'$PAYER_ID'" }
+  };
+  cycles_to_forward = null;
+})'
+```
+
+#### Key parameters
+
+| Parameter           | Type              | Description                                                |
+| ------------------- | ----------------- | ---------------------------------------------------------- |
+| `target`            | `Principal`       | The canister to forward the call to                        |
+| `method`            | `Text`            | The method name on the target canister                     |
+| `fee_amount`        | `Nat`             | Fee charged by the wrapper before forwarding               |
+| `payment`           | `opt PaymentType` | Payment mechanism; defaults to `AttachedCycles` if omitted |
+| `args_blob`         | `Blob`            | Candid-encoded arguments (for `call_blob`)                 |
+| `cycles_to_forward` | `opt Nat`         | Additional cycles to pass to the target alongside the call |
+
+The response is returned as `Result<blob, text>`: the raw Candid-encoded response bytes on success, or an error string describing what went wrong (guard failure or target rejection).
+
+---
+
 ## Licence & Contribution
 
 This repository is released under the [Apache2 license](./LICENSE).

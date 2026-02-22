@@ -26,27 +26,3 @@ pub enum PaymentError {
     },
     InvalidPatron,
 }
-
-impl std::fmt::Display for PaymentError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            PaymentError::UnsupportedPaymentType => write!(f, "Unsupported payment type"),
-            PaymentError::LedgerUnreachable { ledger } => {
-                write!(f, "Ledger unreachable: {ledger}")
-            }
-            PaymentError::LedgerWithdrawFromError { ledger, error } => {
-                write!(f, "Ledger {ledger} withdraw_from error: {error:?}")
-            }
-            PaymentError::LedgerTransferFromError { ledger, error } => {
-                write!(f, "Ledger {ledger} transfer_from error: {error:?}")
-            }
-            PaymentError::InsufficientFunds { needed, available } => {
-                write!(
-                    f,
-                    "Insufficient funds: needed {needed}, available {available}"
-                )
-            }
-            PaymentError::InvalidPatron => write!(f, "Invalid patron"),
-        }
-    }
-}

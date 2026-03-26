@@ -3,16 +3,8 @@ name: Publish to crates.io
 on:
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
-
 permissions:
   contents: read
-
-defaults:
-  run:
-    shell: bash -euxlo pipefail {0}
 
 jobs:
   publish-crates:

@@ -1,34 +1,64 @@
 type Account = record { owner : principal; subaccount : opt blob };
+// Arguments for the `call0` function.
 type Call0Args = record {
+  // The name of the method to call.
   method : text;
+  // Optional cycles to forward to the target canister.
   cycles_to_forward : opt nat;
+  // The principal of the canister to call.
   target : principal;
+  // The amount of fee to charge.
   fee_amount : nat;
+  // Optional payment configuration (defaults to `AttachedCycles`).
   payment : opt PaymentType;
 };
+// Arguments for the `call_blob` function.
 type CallBlobArgs = record {
+  // The name of the method to call.
   method : text;
+  // The Candid-encoded arguments as a byte buffer.
   args_blob : blob;
+  // Optional cycles to forward to the target canister.
   cycles_to_forward : opt nat;
+  // The principal of the canister to call.
   target : principal;
+  // The amount of fee to charge.
   fee_amount : nat;
+  // Optional payment configuration (defaults to `AttachedCycles`).
   payment : opt PaymentType;
 };
+// Arguments for the `call_text` function.
 type CallTextArgs = record {
+  // The name of the method to call.
   method : text;
+  // The Candid text representation of the arguments.
   args_text : text;
+  // Optional cycles to forward to the target canister.
   cycles_to_forward : opt nat;
+  // The principal of the canister to call.
   target : principal;
+  // The amount of fee to charge.
   fee_amount : nat;
+  // Optional payment configuration (defaults to `AttachedCycles`).
   payment : opt PaymentType;
 };
 type CallerPaysIcrc2Tokens = record { ledger : principal };
 type PatronPaysIcrc2Tokens = record { ledger : principal; patron : Account };
+// How a caller states that they will pay.
 type PaymentType = variant {
+  // A patron is paying, on behalf of the caller, from an account on the specified ledger.
   PatronPaysIcrc2Tokens : PatronPaysIcrc2Tokens;
+  // The caller is paying with cycles attached to the call.
+  // 
+  // Note: This is available to inter-canister aclls only; not to ingress messages.
+  // 
+  // Note: The API does not require additional arguments to support this payment type.
   AttachedCycles;
+  // The caller is paying with cycles from their main account on the cycles ledger.
   CallerPaysIcrc2Cycles;
+  // The caller is paying with tokens from their main account on the specified ledger.
   CallerPaysIcrc2Tokens : CallerPaysIcrc2Tokens;
+  // A patron is paying with cycles on behalf of the caller.
   PatronPaysIcrc2Cycles : Account;
 };
 type Result = variant { Ok : blob; Err : text };

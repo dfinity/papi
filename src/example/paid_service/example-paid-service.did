@@ -16,11 +16,21 @@ type PaymentError = variant {
   UnsupportedPaymentType;
   InsufficientFunds : record { needed : nat; available : nat };
 };
+// How a caller states that they will pay.
 type PaymentType = variant {
+  // A patron is paying, on behalf of the caller, from an account on the specified ledger.
   PatronPaysIcrc2Tokens : PatronPaysIcrc2Tokens;
+  // The caller is paying with cycles attached to the call.
+  // 
+  // Note: This is available to inter-canister aclls only; not to ingress messages.
+  // 
+  // Note: The API does not require additional arguments to support this payment type.
   AttachedCycles;
+  // The caller is paying with cycles from their main account on the cycles ledger.
   CallerPaysIcrc2Cycles;
+  // The caller is paying with tokens from their main account on the specified ledger.
   CallerPaysIcrc2Tokens : CallerPaysIcrc2Tokens;
+  // A patron is paying with cycles on behalf of the caller.
   PatronPaysIcrc2Cycles : Account;
 };
 type RejectionCode = variant {

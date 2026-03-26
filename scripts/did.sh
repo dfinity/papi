@@ -13,25 +13,31 @@ did_file_location_from_dfx_json() {
   jq -r --arg v "$1" '.canisters[$v].candid' dfx.json
 }
 
+cargo_package_from_dfx_json() {
+  jq -r --arg v "$1" '.canisters[$v].package' dfx.json
+}
+
 function generate_did() {
   local canister=$1
-  echo "Deriving candid file from Rust for $canister"
-  #local manifest_path="$(cargo_manifest_path "$canister")"
-  #local candid_file="${manifest_path%Cargo.toml}$canister.did"
+  local package
+  package="$(cargo_package_from_dfx_json "$canister")"
+  local wasm_name="${package//-/_}"
+
+  echo "Deriving candid file from Rust for $package"
   local candid_file
   candid_file="$(did_file_location_from_dfx_json "$canister")"
 
-  test -e "target/wasm32-unknown-unknown/release/$canister.wasm" ||
-    cargo build -p "$canister" \
+  test -e "target/wasm32-unknown-unknown/release/$wasm_name.wasm" ||
+    cargo build \
       --target wasm32-unknown-unknown \
-      --release --package "$canister"
+      --release --package "$package"
 
   # cargo install candid-extractor
-  candid-extractor "target/wasm32-unknown-unknown/release/$canister.wasm" >"$candid_file"
+  candid-extractor "target/wasm32-unknown-unknown/release/$wasm_name.wasm" >"$candid_file"
   echo "Written: $candid_file"
 }
 
-CANISTERS=(example_app_backend example_paid_service ic_papi_wrapper)
+CANISTERS=(example_app_backend example_paid_service wrapper)
 
 for canister in "${CANISTERS[@]}"; do
   generate_did "$canister"

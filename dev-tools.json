@@ -38,7 +38,7 @@
   },
   "candid-extractor": {
     "method": "cargo-binstall",
-    "version": "0.1.4"
+    "version": "0.1.6"
   },
   "cargo-tarpaulin": {
     "method": "cargo-binstall",

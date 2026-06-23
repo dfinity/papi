@@ -16,7 +16,7 @@ publish = true
 version = "0.2.0-alpha.1.1"
 
 [workspace.dependencies]
-pocket-ic = "13.0.0"
+pocket-ic = "14.0.0"
 candid = "0.10.29"
 ic-cdk = "0.20.1"
 ic-cdk-executor = "2.0.0"

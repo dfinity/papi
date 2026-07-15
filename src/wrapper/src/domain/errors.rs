@@ -11,6 +11,8 @@ pub enum BridgeError {
     TargetRejected(String),
     /// Fee deduction failed (insufficient cycles/allowance/etc.).
     GuardError(String),
+    /// The requested target canister may not be reached through the bridge.
+    ForbiddenTarget(String),
 }
 
 impl fmt::Display for BridgeError {
@@ -19,6 +21,7 @@ impl fmt::Display for BridgeError {
             BridgeError::Candid(e) => write!(f, "Candid error: {e}"),
             BridgeError::TargetRejected(e) => write!(f, "Target canister rejected call: {e}"),
             BridgeError::GuardError(e) => write!(f, "Payment guard error: {e}"),
+            BridgeError::ForbiddenTarget(e) => write!(f, "Forbidden target: {e}"),
         }
     }
 }

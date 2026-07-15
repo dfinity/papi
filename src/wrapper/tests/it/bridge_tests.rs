@@ -23,6 +23,24 @@ fn bridge_call_fails_if_target_is_self() {
 }
 
 #[test]
+fn bridge_call_fails_if_target_is_management_canister() {
+    let setup = TestSetup::default();
+    let args = Call0Args {
+        target: Principal::management_canister(),
+        method: "update_settings".to_string(),
+        fee_amount: 0,
+        payment: Some(PaymentType::AttachedCycles),
+        cycles_to_forward: None,
+    };
+
+    let result: Result<Result<Vec<u8>, String>, String> =
+        setup.wrapper.update(setup.user, "call0", args);
+    let inner_result = result.expect("Failed to reach canister");
+    let err = inner_result.expect_err("Should have returned an error");
+    assert!(err.contains("the management canister may not be reached through the bridge."));
+}
+
+#[test]
 fn bridge_call_fails_if_insufficient_cycles() {
     let setup = TestSetup::default();
     let args = Call0Args {

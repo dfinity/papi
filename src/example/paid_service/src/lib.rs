@@ -31,11 +31,23 @@ fn pre_upgrade() {
         .expect("Failed to save init args to stable memory");
 }
 
-/// Restores the init args from stable memory after a canister upgrade.
+/// Restores the init args after a canister upgrade.
+///
+/// Resolution order:
+/// 1. Args passed explicitly at upgrade time. This lets an operator upgrade from a version that
+///    never persisted its args (e.g. one without `pre_upgrade`) and supply them in the same step.
+/// 2. Args persisted to stable memory by `pre_upgrade`.
+///
+/// Restoring from stable memory is tolerant of a missing or malformed payload: upgrading from a
+/// version that did not run `pre_upgrade` leaves stable memory without a valid
+/// `(Option<InitArgs>,)`, so we fall back to `None` rather than trapping and aborting the upgrade.
 #[post_upgrade]
-fn post_upgrade() {
-    let (init_args,): (Option<InitArgs>,) =
-        ic_cdk::storage::stable_restore().expect("Failed to restore init args from stable memory");
+fn post_upgrade(init_args: Option<InitArgs>) {
+    let init_args = init_args.or_else(|| {
+        ic_cdk::storage::stable_restore::<(Option<InitArgs>,)>()
+            .map(|(init_args,)| init_args)
+            .unwrap_or_default()
+    });
     if let Some(init_args) = init_args {
         set_init_args(init_args);
     }

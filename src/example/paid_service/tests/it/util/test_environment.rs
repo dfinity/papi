@@ -209,14 +209,16 @@ impl TestSetup {
             .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
     }
     /// Upgrades the paid service canister in place, exercising the pre/post-upgrade hooks.
-    pub fn upgrade_paid_service(&self) {
+    ///
+    /// `init_args` are forwarded to the `post_upgrade` hook. Pass `None` to rely on the state
+    /// persisted to stable memory by `pre_upgrade`; pass `Some(..)` to supply the args explicitly.
+    pub fn upgrade_paid_service(&self, init_args: Option<InitArgs>) {
         self.pic
             .upgrade_canister(
                 self.paid_service.canister_id(),
                 std::fs::read(PicCanister::cargo_wasm_path("example_paid_service"))
                     .expect("Could not read the paid service wasm"),
-                // The `post_upgrade` hook takes no arguments; it restores state from stable memory.
-                vec![],
+                encode_one(init_args).expect("Failed to encode the upgrade args"),
                 None,
             )
             .expect("Failed to upgrade the paid service canister");

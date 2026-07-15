@@ -15,11 +15,12 @@ use crate::util::cycles::forward_raw;
 /// Note that not every management-canister method is controller-gated: some
 /// (e.g. `raw_rand`, threshold `sign_with_ecdsa`/`sign_with_schnorr`, the
 /// Bitcoin API) could be legitimate paid targets. Even so, the bridge is
-/// currently a target *denylist* (`target != self`), so exposing individual
-/// safe methods must not be done by unblocking the whole principal — the
-/// growing management API makes that too easy to get wrong. Instead, opt
-/// specific methods in via the `MethodConfig`/`MethodKey` allowlist in
-/// `domain::types`. Until that allowlist is wired up, block `aaaaa-aa` outright.
+/// currently a target *denylist* (it forbids only itself and `aaaaa-aa`), so
+/// exposing individual safe methods must not be done by unblocking the whole
+/// principal — the growing management API makes that too easy to get wrong.
+/// Instead, opt specific methods in via the `MethodConfig`/`MethodKey`
+/// allowlist in `domain::types`. Until that allowlist is wired up, block
+/// `aaaaa-aa` outright.
 const MANAGEMENT_CANISTER_ID: Principal = Principal::management_canister();
 
 fn map_guard_err<E: core::fmt::Debug>(e: E) -> String {

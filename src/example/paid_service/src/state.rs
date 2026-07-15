@@ -38,3 +38,8 @@ pub fn payment_ledger() -> Principal {
 pub fn set_init_args(init_args: InitArgs) {
     INIT_ARGS.set(Some(init_args));
 }
+
+/// Returns the current init args, if any have been set.
+pub fn get_init_args() -> Option<InitArgs> {
+    INIT_ARGS.with(|init_args| init_args.borrow().clone())
+}

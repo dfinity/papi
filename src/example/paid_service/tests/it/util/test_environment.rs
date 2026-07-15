@@ -208,6 +208,19 @@ impl TestSetup {
             .expect("Failed to call the ledger to approve")
             .expect("Failed to approve the paid service to spend the user's ICRC-2 tokens");
     }
+    /// Upgrades the paid service canister in place, exercising the pre/post-upgrade hooks.
+    pub fn upgrade_paid_service(&self) {
+        self.pic
+            .upgrade_canister(
+                self.paid_service.canister_id(),
+                std::fs::read(PicCanister::cargo_wasm_path("example_paid_service"))
+                    .expect("Could not read the paid service wasm"),
+                // The `post_upgrade` hook takes no arguments; it restores state from stable memory.
+                vec![],
+                None,
+            )
+            .expect("Failed to upgrade the paid service canister");
+    }
     /// Calls a paid service.
     #[allow(clippy::result_large_err)]
     pub fn call_paid_service(

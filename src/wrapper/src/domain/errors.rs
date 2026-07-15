@@ -15,6 +15,8 @@ pub enum BridgeError {
     /// cycle-denominated, so the forwarded cycles would come out of the wrapper's
     /// own balance rather than being funded by the payment.
     ForwardRequiresCyclePayment,
+    /// The requested target canister may not be reached through the bridge.
+    ForbiddenTarget(String),
 }
 
 impl fmt::Display for BridgeError {
@@ -34,6 +36,7 @@ impl fmt::Display for BridgeError {
                  (AttachedCycles, CallerPaysIcrc2Cycles or PatronPaysIcrc2Cycles); \
                  token payments do not credit the wrapper's cycle balance."
             ),
+            BridgeError::ForbiddenTarget(e) => write!(f, "Forbidden target: {e}"),
         }
     }
 }

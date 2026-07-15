@@ -1,6 +1,6 @@
 use crate::util::pic_canister::PicCanisterTrait;
 use crate::util::test_environment::TestSetup;
-use candid::{decode_one, encode_args};
+use candid::{decode_one, encode_args, Principal};
 use ic_papi_api::PaymentType;
 use ic_papi_wrapper::domain::types::{Call0Args, FeeDenom, FeeSpec, MethodConfig, MethodKey};
 
@@ -18,6 +18,25 @@ fn bridge_call_fails_if_target_is_self() {
     let inner_result = result.expect("Failed to reach canister");
     let err = inner_result.expect_err("Should have returned an error");
     assert!(err.contains("Self-calls are not allowed through the bridge."));
+}
+
+#[test]
+fn bridge_call_fails_if_target_is_management_canister() {
+    // The management canister is a forbidden target: proxying to it would run
+    // with the bridge's own principal as caller. This is rejected before any
+    // pricing lookup, so no configuration is needed for the test.
+    let setup = TestSetup::default();
+    let args = Call0Args {
+        target: Principal::management_canister(),
+        method: "update_settings".to_string(),
+        payment: Some(PaymentType::AttachedCycles),
+    };
+
+    let result: Result<Result<Vec<u8>, String>, String> =
+        setup.wrapper.update(setup.user, "call0", args);
+    let inner_result = result.expect("Failed to reach canister");
+    let err = inner_result.expect_err("Should have returned an error");
+    assert!(err.contains("the management canister may not be reached through the bridge."));
 }
 
 #[test]

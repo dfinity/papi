@@ -24,25 +24,25 @@ pub struct MethodConfig {
     pub forward_cycles: Option<u128>,
 }
 
-#[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq, Hash)]
 pub struct MethodKey {
     pub target: Principal,
     pub method: String,
 }
 
 /// Arguments for the `call0` function.
+///
+/// Note: the fee and the cycles to forward are **not** caller-supplied; they are
+/// looked up from the operator-configured [`MethodConfig`] for `(target, method)`.
+/// The caller only chooses which supported payment type to pay with.
 #[derive(Debug, CandidType, Deserialize, Clone, Eq, PartialEq)]
 pub struct Call0Args {
     /// The principal of the canister to call.
     pub target: Principal,
     /// The name of the method to call.
     pub method: String,
-    /// The amount of fee to charge.
-    pub fee_amount: u128,
     /// Optional payment configuration (defaults to `AttachedCycles`).
     pub payment: Option<PaymentType>,
-    /// Optional cycles to forward to the target canister.
-    pub cycles_to_forward: Option<u128>,
 }
 
 /// Arguments for the `call_blob` function.
@@ -54,12 +54,8 @@ pub struct CallBlobArgs {
     pub method: String,
     /// The Candid-encoded arguments as a byte buffer.
     pub args_blob: ByteBuf,
-    /// The amount of fee to charge.
-    pub fee_amount: u128,
     /// Optional payment configuration (defaults to `AttachedCycles`).
     pub payment: Option<PaymentType>,
-    /// Optional cycles to forward to the target canister.
-    pub cycles_to_forward: Option<u128>,
 }
 
 /// Arguments for the `call_text` function.
@@ -71,12 +67,8 @@ pub struct CallTextArgs {
     pub method: String,
     /// The Candid text representation of the arguments.
     pub args_text: String,
-    /// The amount of fee to charge.
-    pub fee_amount: u128,
     /// Optional payment configuration (defaults to `AttachedCycles`).
     pub payment: Option<PaymentType>,
-    /// Optional cycles to forward to the target canister.
-    pub cycles_to_forward: Option<u128>,
 }
 
 /// Internal arguments for the bridge call logic.
@@ -85,9 +77,7 @@ pub struct BridgeCallArgs {
     pub target: Principal,
     pub method: String,
     pub args: Vec<u8>,
-    pub fee_amount: u128,
     pub payment: Option<PaymentType>,
-    pub cycles_to_forward: Option<u128>,
 }
 
 impl From<Call0Args> for BridgeCallArgs {
@@ -96,9 +86,7 @@ impl From<Call0Args> for BridgeCallArgs {
             target: args.target,
             method: args.method,
             args: Encode!(&()).unwrap(),
-            fee_amount: args.fee_amount,
             payment: args.payment,
-            cycles_to_forward: args.cycles_to_forward,
         }
     }
 }
@@ -109,9 +97,7 @@ impl From<CallBlobArgs> for BridgeCallArgs {
             target: args.target,
             method: args.method,
             args: args.args_blob.into_vec(),
-            fee_amount: args.fee_amount,
             payment: args.payment,
-            cycles_to_forward: args.cycles_to_forward,
         }
     }
 }
@@ -123,9 +109,7 @@ impl From<CallTextArgs> for BridgeCallArgs {
             method: args.method,
             // Note: args_text is not used yet as call_text is disabled
             args: vec![],
-            fee_amount: args.fee_amount,
             payment: args.payment,
-            cycles_to_forward: args.cycles_to_forward,
         }
     }
 }
@@ -140,16 +124,12 @@ mod tests {
         let args = Call0Args {
             target: Principal::anonymous(),
             method: "test".to_string(),
-            fee_amount: 100,
             payment: Some(PaymentType::AttachedCycles),
-            cycles_to_forward: Some(50),
         };
         let bridge_args: BridgeCallArgs = args.clone().into();
         assert_eq!(bridge_args.target, args.target);
         assert_eq!(bridge_args.method, args.method);
-        assert_eq!(bridge_args.fee_amount, args.fee_amount);
         assert_eq!(bridge_args.payment, args.payment);
-        assert_eq!(bridge_args.cycles_to_forward, args.cycles_to_forward);
         // call0 should encode unit ()
         assert_eq!(bridge_args.args, Encode!(&()).unwrap());
     }
@@ -161,16 +141,12 @@ mod tests {
             target: Principal::anonymous(),
             method: "test_blob".to_string(),
             args_blob: ByteBuf::from(blob.clone()),
-            fee_amount: 200,
             payment: None,
-            cycles_to_forward: None,
         };
         let bridge_args: BridgeCallArgs = args.clone().into();
         assert_eq!(bridge_args.target, args.target);
         assert_eq!(bridge_args.method, args.method);
-        assert_eq!(bridge_args.fee_amount, 200);
         assert_eq!(bridge_args.payment, None);
-        assert_eq!(bridge_args.cycles_to_forward, None);
         assert_eq!(bridge_args.args, blob);
     }
 
@@ -180,16 +156,12 @@ mod tests {
             target: Principal::anonymous(),
             method: "test_text".to_string(),
             args_text: "(record { x = 42 })".to_string(),
-            fee_amount: 300,
             payment: None,
-            cycles_to_forward: None,
         };
         let bridge_args: BridgeCallArgs = args.clone().into();
         assert_eq!(bridge_args.target, args.target);
         assert_eq!(bridge_args.method, args.method);
-        assert_eq!(bridge_args.fee_amount, args.fee_amount);
         assert_eq!(bridge_args.payment, args.payment);
-        assert_eq!(bridge_args.cycles_to_forward, args.cycles_to_forward);
         // call_text currently does not use args_text, so args should be empty
         assert_eq!(bridge_args.args, Vec::<u8>::new());
     }

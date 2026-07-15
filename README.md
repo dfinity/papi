@@ -137,12 +137,17 @@ The wrapper exposes a small set of generic proxy methods:
 | `call0`     | Proxy a call that takes **no arguments**             |
 | `call_blob` | Proxy a call with a **Candid-encoded argument blob** |
 
-Every proxy method follows the same two-step internal logic:
+Every proxy method follows the same internal logic:
 
-1. **Charge the fee** – the payment guard deducts the requested amount from the caller (or from a designated payer) using any supported payment type (attached cycles, ICRC-2 approve, patron pays, …).
-2. **Forward the call** – once the fee is settled, the wrapper performs a raw inter-canister call to the target canister and method, passing the arguments and any optional cycles through transparently.
+1. **Look up the price** – the wrapper reads the operator-configured `MethodConfig` for the `(target, method)` pair. The fee and the cycles to forward are set by the wrapper operator, **not** by the caller. If no configuration exists the call is rejected.
+2. **Charge the fee** – the payment guard deducts the configured fee from the caller (or from a designated payer) using the supported payment type the caller selects (attached cycles, ICRC-2 approve, patron pays, …).
+3. **Forward the call** – once the fee is settled, the wrapper performs a raw inter-canister call to the target canister and method, attaching the configured number of cycles.
+
+The caller only chooses **which payment method** to use; it can never set the fee or the forwarded-cycle amount. This is what prevents a caller from paying a trivial fee while forwarding a large amount (which would drain the wrapper's cycle balance). When a method forwards cycles, the operator configuration must denominate the fee in cycles and set it to at least the forwarded amount; the wrapper enforces this at configuration time.
 
 If the fee deduction fails the call is rejected immediately and the target canister is never reached. Self-calls (calling the wrapper itself) are blocked.
+
+Configuration is controller-only, via `set_method_config` / `remove_method_config`, and is inspectable via the `get_method_config` / `list_method_configs` queries. It is persisted across canister upgrades.
 
 ### Flow diagram
 
@@ -157,8 +162,9 @@ sequenceDiagram
     Note over Payer,Ledger: Optional – only needed for patron-pays or ICRC-2 flows
     Payer->>Ledger: icrc2_approve(spender=Wrapper, amount=fee)
 
-    Caller->>Wrapper: call_blob / call0(target, method, args, fee, payment?)
+    Caller->>Wrapper: call_blob / call0(target, method, args, payment?)
     activate Wrapper
+    Note over Wrapper: Look up operator-configured fee & forward cycles
     Wrapper->>Ledger: icrc2_transfer_from (or deduct attached cycles)
     Ledger-->>Wrapper: ok
     Wrapper->>Target: raw canister call (method, args)
@@ -175,18 +181,33 @@ sequenceDiagram
 
 You can deploy the wrapper yourself from `src/wrapper`, or use the shared instance already published to the IC mainnet (see `canister_ids.json`).
 
-#### 2. Call a payable endpoint
+#### 2. Configure the price (operator / controller only)
+
+Before a `(target, method)` can be proxied, a controller of the wrapper registers its price. `forward_cycles` is optional; when set, the fee must be denominated in cycles and cover it.
+
+```bash
+dfx canister call "$WRAPPER_ID" set_method_config '(
+  record { target = principal "'$TARGET_CANISTER_ID'"; method = "my_method" },
+  record {
+    fee            = record { amount = 1_000_000 : nat; denom = variant { Cycles } };
+    supported      = vec { variant { AttachedCycles }; variant { CallerPaysIcrc2Cycles } };
+    forward_cycles = opt (1_000_000 : nat);
+  }
+)'
+```
+
+#### 3. Call a payable endpoint
+
+The caller supplies only the `(target, method)`, the arguments, and which payment type to use — never a fee or cycle amount.
 
 **Paying with attached cycles (simplest):**
 
 ```bash
 dfx canister call "$WRAPPER_ID" call0 \
   '(record {
-    target         = principal "'$TARGET_CANISTER_ID'";
-    method         = "my_method";
-    fee_amount     = 1_000_000 : nat;
-    payment        = null;          # defaults to AttachedCycles
-    cycles_to_forward = null;
+    target  = principal "'$TARGET_CANISTER_ID'";
+    method  = "my_method";
+    payment = null;          # defaults to AttachedCycles
   })' \
   --with-cycles 1000000
 ```
@@ -202,12 +223,10 @@ dfx canister call $LEDGER icrc2_approve '(record {
 
 # 2. Call through the wrapper
 dfx canister call "$WRAPPER_ID" call_blob '(record {
-  target        = principal "'$TARGET_CANISTER_ID'";
-  method        = "store_data";
-  args_blob     = blob "\44\49\44\4c\00\00";
-  fee_amount    = 5_000_000 : nat;
-  payment       = opt variant { CallerPaysIcrc2Cycles };
-  cycles_to_forward = null;
+  target    = principal "'$TARGET_CANISTER_ID'";
+  method    = "store_data";
+  args_blob = blob "\44\49\44\4c\00\00";
+  payment   = opt variant { CallerPaysIcrc2Cycles };
 })'
 ```
 
@@ -223,28 +242,34 @@ dfx canister call $LEDGER icrc2_approve '(record {
 
 # Caller references the payer when calling through the wrapper
 dfx canister call "$WRAPPER_ID" call0 '(record {
-  target        = principal "'$TARGET_CANISTER_ID'";
-  method        = "my_method";
-  fee_amount    = 1_000_000 : nat;
-  payment       = opt variant {
+  target  = principal "'$TARGET_CANISTER_ID'";
+  method  = "my_method";
+  payment = opt variant {
     PatronPaysIcrc2Cycles = record { owner = principal "'$PAYER_ID'" }
   };
-  cycles_to_forward = null;
 })'
 ```
 
 #### Key parameters
 
-| Parameter           | Type              | Description                                                |
-| ------------------- | ----------------- | ---------------------------------------------------------- |
-| `target`            | `Principal`       | The canister to forward the call to                        |
-| `method`            | `Text`            | The method name on the target canister                     |
-| `fee_amount`        | `Nat`             | Fee charged by the wrapper before forwarding               |
-| `payment`           | `opt PaymentType` | Payment mechanism; defaults to `AttachedCycles` if omitted |
-| `args_blob`         | `Blob`            | Candid-encoded arguments (for `call_blob`)                 |
-| `cycles_to_forward` | `opt Nat`         | Additional cycles to pass to the target alongside the call |
+Call parameters (per proxy call):
 
-The response is returned as `Result<blob, text>`: the raw Candid-encoded response bytes on success, or an error string describing what went wrong (guard failure or target rejection).
+| Parameter   | Type              | Description                                                |
+| ----------- | ----------------- | ---------------------------------------------------------- |
+| `target`    | `Principal`       | The canister to forward the call to                        |
+| `method`    | `Text`            | The method name on the target canister                     |
+| `payment`   | `opt PaymentType` | Payment mechanism; defaults to `AttachedCycles` if omitted |
+| `args_blob` | `Blob`            | Candid-encoded arguments (for `call_blob`)                 |
+
+Configuration parameters (per `(target, method)`, set by the operator via `set_method_config`):
+
+| Field            | Type                       | Description                                                       |
+| ---------------- | -------------------------- | ---------------------------------------------------------------- |
+| `fee`            | `record { amount; denom }` | The fee charged before forwarding, and its denomination          |
+| `supported`      | `vec VendorPaymentConfig`  | Payment types the operator accepts for this method               |
+| `forward_cycles` | `opt Nat`                  | Cycles attached to the forwarded call; must be covered by `fee`  |
+
+The response is returned as `Result<blob, text>`: the raw Candid-encoded response bytes on success, or an error string describing what went wrong (method not configured, guard failure, or target rejection).
 
 ---
 

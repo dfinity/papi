@@ -84,6 +84,7 @@ pub fn set_method_config(key: MethodKey, config: MethodConfig) -> Result<(), Str
 
 /// Remove the price for a `(target, method)` pair, returning any prior value.
 #[update]
+#[allow(clippy::needless_pass_by_value)]
 pub fn remove_method_config(key: MethodKey) -> Result<Option<MethodConfig>, String> {
     ensure_controller()?;
     Ok(state::remove_config(&key))
@@ -91,12 +92,15 @@ pub fn remove_method_config(key: MethodKey) -> Result<Option<MethodConfig>, Stri
 
 /// Read the price configured for a `(target, method)` pair.
 #[query]
+#[must_use]
+#[allow(clippy::needless_pass_by_value)]
 pub fn get_method_config(key: MethodKey) -> Option<MethodConfig> {
     state::get_config(&key)
 }
 
 /// List every configured `(target, method)` price.
 #[query]
+#[must_use]
 pub fn list_method_configs() -> Vec<(MethodKey, MethodConfig)> {
     state::list_configs()
 }
@@ -113,8 +117,19 @@ fn pre_upgrade() {
 
 #[post_upgrade]
 fn post_upgrade() {
-    if let Ok((configs,)) = ic_cdk::storage::stable_restore::<(Vec<(MethodKey, MethodConfig)>,)>() {
-        state::replace_all(configs);
+    match ic_cdk::storage::stable_restore::<(Vec<(MethodKey, MethodConfig)>,)>() {
+        Ok((configs,)) => state::replace_all(configs),
+        // Do not trap: trapping in `post_upgrade` would make the canister
+        // permanently un-upgradable. But a silent failure would bring the
+        // wrapper up with an empty registry, causing every call to fail with
+        // "No price is configured" and no explanation. Log loudly so operators
+        // can diagnose the lost configuration.
+        Err(err) => {
+            ic_cdk::println!(
+                "post_upgrade: failed to restore method configs from stable memory, \
+                 starting with an EMPTY registry. All calls will fail until reconfigured. Error: {err}"
+            );
+        }
     }
 }
 

@@ -226,7 +226,7 @@ dfx canister call "$WRAPPER_ID" call_blob '(record {
   target    = principal "'$TARGET_CANISTER_ID'";
   method    = "store_data";
   args_blob = blob "\44\49\44\4c\00\00";
-  payment   = opt variant { CallerPaysIcrc2Cycles };
+  payment   = opt variant { CallerPaysIcrc2Tokens = record { ledger = principal "'$LEDGER'" } };
 })'
 ```
 
@@ -263,11 +263,13 @@ Call parameters (per proxy call):
 
 Configuration parameters (per `(target, method)`, set by the operator via `set_method_config`):
 
-| Field            | Type                       | Description                                                       |
-| ---------------- | -------------------------- | ---------------------------------------------------------------- |
-| `fee`            | `record { amount; denom }` | The fee charged before forwarding, and its denomination          |
-| `supported`      | `vec VendorPaymentConfig`  | Payment types the operator accepts for this method               |
-| `forward_cycles` | `opt Nat`                  | Cycles attached to the forwarded call; must be covered by `fee`  |
+| Field            | Type                       | Description                                                     |
+| ---------------- | -------------------------- | --------------------------------------------------------------- |
+| `fee`            | `record { amount; denom }` | The fee charged before forwarding, and its denomination         |
+| `supported`      | `vec VendorPaymentConfig`  | Informational only for now — see note below                     |
+| `forward_cycles` | `opt Nat`                  | Cycles attached to the forwarded call; must be covered by `fee` |
+
+> **Note on `supported`:** this field is not yet enforced per method. `bridge_call` currently validates the caller's payment type against the wrapper's global `PAYMENT_GUARD`, not against `MethodConfig.supported`. Until per-method enforcement is wired in, any payment type the global guard accepts is accepted for every configured method, regardless of what `supported` lists.
 
 The response is returned as `Result<blob, text>`: the raw Candid-encoded response bytes on success, or an error string describing what went wrong (method not configured, guard failure, or target rejection).
 

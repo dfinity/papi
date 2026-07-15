@@ -16,6 +16,7 @@ thread_local! {
 }
 
 /// Look up the operator configuration for a `(target, method)` pair.
+#[must_use]
 pub fn get_config(key: &MethodKey) -> Option<MethodConfig> {
     CONFIGS.with(|c| c.borrow().get(key).cloned())
 }
@@ -28,11 +29,13 @@ pub fn set_config(key: MethodKey, config: MethodConfig) {
 }
 
 /// Remove the configuration for a `(target, method)` pair, returning any prior value.
+#[must_use]
 pub fn remove_config(key: &MethodKey) -> Option<MethodConfig> {
     CONFIGS.with(|c| c.borrow_mut().remove(key))
 }
 
 /// Snapshot of all configured `(target, method)` prices.
+#[must_use]
 pub fn list_configs() -> Vec<(MethodKey, MethodConfig)> {
     CONFIGS.with(|c| {
         c.borrow()
